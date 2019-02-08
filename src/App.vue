@@ -1,8 +1,7 @@
 <template lang="pug">
   #app
     Navbar
-    .container
-      router-view(:key="$route.fullPath")
+    router-view(:key="$route.fullPath")
 </template>
 
 <script>
@@ -17,5 +16,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/css/main.scss';
+@import '@/css/main.scss';
 </style>

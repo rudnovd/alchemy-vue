@@ -1,6 +1,8 @@
 <template lang='pug'>
-  .jumbotron
-    h1 Admin dashboard
+  b-container
+    b-row: b-col(cols='12')
+      .jumbotron
+        h1 Admin dashboard
 </template>
 
 <script>

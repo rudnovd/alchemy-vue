@@ -2,13 +2,13 @@ import Vue from 'vue'
 
 import Router from 'vue-router'
 
-import Home from '@/views/Home.vue'
+const home = () => import(/* webpackChunkName: "home" */ '@/router/routes/Home.vue')
 
-import Game from '@/views/Game.vue'
+const game = () => import(/* webpackChunkName: "game" */ '@/router/routes/Game.vue')
 
-const adminDashboard = () => import(/* webpackChunkName: "adminDashboard" */ '@/views/AdminDashboard.vue')
+const adminDashboard = () => import(/* webpackChunkName: "adminDashboard" */ '@/router/routes/AdminDashboard.vue')
 
-const adminEditor = () => import(/* webpackChunkName: "adminEditor" */ '@/views/AdminEditor.vue')
+const adminEditor = () => import(/* webpackChunkName: "adminEditor" */ '@/router/routes/AdminEditor.vue')
 
 Vue.use(Router)
 
@@ -19,12 +19,12 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: home
     },
     {
       path: '/game',
       name: 'game',
-      component: Game
+      component: game
     },
     {
       path: '/admin/dashboard',

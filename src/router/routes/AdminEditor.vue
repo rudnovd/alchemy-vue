@@ -1,0 +1,467 @@
+<template lang="pug">
+  b-container
+    b-row: b-col(cols='12')
+      b-btn.mb-3(variant='success' @click='$refs.createNewElementModal.show()') Create element
+
+      //- Modal window
+      b-modal(
+        title='Create new element'
+        ref='createNewElementModal'
+        size='xl'
+        hide-header-close=true
+        no-close-on-backdrop=true
+        no-close-on-esc=true
+        ok-title='Create'
+        ok-variant='success'
+        cancel-variant='danger'
+        @show='createElementFetchData'
+        @ok='createElementCreate'
+        @cancel='createElementClearModal')
+
+        //- Loading section
+        b-row.justify-content-md-center(v-if='createElement.loading')
+          b-col.loading(cols='12' md='auto')
+            half-circle-spinner(:animation-duration='1000' :size='50' color='#41B460')
+
+        //- Error section
+        b-row.justify-content-md-center(v-if='createElement.error')
+          b-col.error(cols='12' md='auto') {{ error }}
+
+        //- Modal content
+        b-row(v-if='!createElement.loading')
+
+          //- Forms
+          b-col(md='4')
+            form
+
+              //- Input name
+              b-form-group.mb-4#selectNameGroup(label='Name:' label-for='selectName')
+                b-form-input#selectName(
+                  required
+                  type='text'
+                  v-model='createElement.post.name'
+                  :state='createElementNameState'
+                  placeholder='Fire')
+
+              //- Select category
+              b-form-group#selectCategoryGroup(label='Category:' label-for='selectCategory')
+                b-form-select#selectCategory(
+                  required
+                  type='text'
+                  v-model='createElement.post.categoryId'
+                  :options='createElement.categories'
+                  :state='createElementCategoryState')
+
+          //- All elements list
+          b-col(md='8')
+            b-card(no-body)
+              b-tabs(card pills vertical end small nav-wrapper-class='w-25')
+                b-tab(:title='category.text' v-for='category in createElement.categories' :key='category.id')
+                  a.badge.badge-pill.badge-light.mr-2.mb-2(
+                    href='#'
+                    v-for='element in elements'
+                    :key='element.id'
+                    v-if='element.category == category.text'
+                    @click='createElement.post.name = element.name')
+                    | {{ element.name }}
+
+    //- Search and records per page row
+    b-row.mb-3
+
+      //- Search input
+      b-col.mr-auto(cols='4')
+        b-input-group
+          b-form-input(v-model='table.search.filter' placeholder='Search')
+          b-input-group-append
+            b-btn(:disabled='!table.search.filter' @click='table.search.filter = ""') Clear
+
+      //- Select records per page
+      b-col(cols="2")
+        b-form-select(:options='table.pagination.pageOptions' v-model='table.pagination.perPage')
+
+    //- Elements row
+    b-row: b-col(cols='12')
+      //- Table with data
+      b-table(
+        v-if='!loading'
+        show-empty
+        responsive
+        hover
+        flex
+        fixed=false
+        :items='elements'
+        :fields='table.fields'
+        :current-page='table.pagination.currentPage'
+        :per-page='table.pagination.perPage'
+        :filter='table.search.filter')
+        template(slot='action' slot-scope='actionRow')
+          b-button-group(vertical)
+
+            //- Edit element button
+            b-btn.mb-1(variant='warning' size='sm' @click='editElementShowModal(actionRow)')
+              font-awesome-icon(icon='edit')
+
+            //- Delete element button
+            b-btn(variant='danger' size='sm' @click='deleteElementShowModal(actionRow)')
+              font-awesome-icon(icon='trash')
+
+      //- Pagination for table
+      b-pagination(
+        align='center'
+        :total-rows='table.totalRows'
+        v-model='table.pagination.currentPage'
+        :per-page='table.pagination.perPage')
+
+      //- Delete element modal
+      b-modal(
+        title='Delete element'
+        size='md'
+        ref='deleteElementModal'
+        hide-header-close=true
+        no-close-on-backdrop=true
+        no-close-on-esc=true
+        ok-title='Delete'
+        ok-variant='success'
+        cancel-variant='danger'
+        @ok='deleteElementDelete'
+        @cancel='deleteElementCloseModal')
+
+        //- Modal content
+        b-row.justify-content-md-center
+
+          b-col(cols='12' md='auto')
+            h4 Delete element
+              strong.text-danger  {{ deleteElement.delete.name }}
+              |?
+
+    //- Edit element modal window
+    b-modal(
+      title="Edit element"
+      ref="editElementModal"
+      size="xl"
+      hide-header-close=true
+      no-close-on-backdrop=true
+      no-close-on-esc=true
+      ok-title="Save"
+      ok-variant="success"
+      cancel-variant="danger"
+      @show='editElementFetchData'
+      @ok="editElementEdit"
+      @cancel="editElementCloseModal")
+
+      //- Loading section
+      b-row.justify-content-md-center(v-if="editElement.loading")
+        b-col.loading(cols="12" md="auto")
+          half-circle-spinner(:animation-duration="1000" :size="50" color="#41B460")
+
+      //- Error section
+      b-row.justify-content-md-center(v-if="editElement.error")
+        b-col.error(cols="12" md="auto") {{ editElement.error }}
+
+      //- Modal content
+      b-row(v-if="!editElement.loading")
+
+        //- Forms
+        b-col(md="4")
+          form
+
+            //- Input name
+            b-form-group.mb-4#editNameGroup(label='Name:' label-for='editName')
+              b-form-input#editName(
+                required
+                type='text'
+                v-model="editElement.edit.name"
+                :state="editElementNameState"
+                placeholder='Fire')
+
+            //- Select category
+            //- b-form-group#editCategoryGroup(label="Category:" label-for="editCategory")
+            //-   b-form-select#editCategory(required
+            //-                             type="text"
+            //-                             v-model="propElementData.category"
+            //-                             :options="data.categories.options"
+            //-                             :state="categoryState")
+
+        //- All elements list
+        b-col(md='8')
+          b-card(no-body)
+            b-tabs(card pills vertical end small nav-wrapper-class='w-25')
+              b-tab(:title='category.text' v-for='category in editElement.categories' :key='category.id')
+                a.badge.badge-pill.badge-light.mr-2.mb-2(
+                  href='#'
+                  v-for='element in elements'
+                  :key='element.id'
+                  v-if='element.category == category.text'
+                  @click='editElement.edit.name = element.name')
+                  | {{ element.name }}
+</template>
+
+<script>
+import { HalfCircleSpinner } from 'epic-spinners'
+
+import { getElements, getCategories, postElement, deleteElement, putElement } from '@/js/api.js'
+
+export default {
+  name: 'AdminEditor',
+  components: {
+    HalfCircleSpinner
+  },
+  created () {
+    this.fetchData()
+  },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'fetchData'
+  },
+  computed: {
+    createElementNameState () {
+      if (!this.createElement.post.name) {
+        return false
+      } else {
+        this.createElement.post.name.trim()
+
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].name === this.createElement.post.name || this.elements[i].name.toLowerCase() === this.createElement.post.name) {
+            return false
+          }
+        }
+        return true
+      }
+    },
+    createElementCategoryState () {
+      if (this.createElement.post.categoryId) {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    editElementNameState () {
+      if (!this.editElement.edit.name) {
+        return false
+      } else {
+        this.editElement.edit.name.trim()
+
+        for (let i = 0; i < this.elements.length; i++) {
+          if (this.elements[i].name === this.editElement.edit.name || this.elements[i].name.toLowerCase() === this.editElement.edit.name) {
+            return false
+          }
+        }
+        return true
+      }
+    }
+  },
+  data () {
+    return {
+      loading: true,
+      error: null,
+
+      elements: [],
+
+      table: {
+        totalRows: 0,
+
+        fields: [
+          {
+            key: 'image',
+            class: 'align-middle text-center',
+            label: 'Icon'
+          },
+          {
+            key: 'category',
+            class: 'align-middle text-center',
+            sortable: true
+          },
+          {
+            key: 'name',
+            class: 'align-middle text-center',
+            sortable: true
+          },
+          {
+            key: 'receipt',
+            label: 'Receipt',
+            class: 'align-middle text-center',
+            sortable: false
+          },
+          {
+            key: 'description',
+            label: 'Description',
+            class: 'align-middle text-center',
+            sortable: false
+          },
+          {
+            key: 'action',
+            label: 'Action',
+            class: 'align-middle text-center',
+            sortable: false
+          }
+        ],
+        pagination: {
+          perPage: 10,
+          currentPage: 1,
+          pageOptions: [5, 10, 25, 50]
+        },
+        search: {
+          filter: null
+        }
+      },
+
+      post: {
+        categoryId: null,
+        name: null
+      },
+
+      createElement: {
+        loading: true,
+        error: null,
+
+        categories: [],
+
+        post: {
+          name: null,
+          categoryId: null
+        }
+      },
+
+      deleteElement: {
+        loading: true,
+        error: null,
+
+        delete: {
+          _id: null,
+          name: null
+        }
+      },
+
+      editElement: {
+        loading: true,
+        error: null,
+
+        categories: [],
+
+        edit: {
+          _id: null,
+          name: null
+        }
+      }
+    }
+  },
+  methods: {
+    fetchData () {
+      getElements().then(response => {
+        if (response.status === 200) {
+          this.elements = response.data.response
+
+          this.table.totalRows = this.elements.length
+
+          this.loading = false
+        }
+      })
+    },
+    onTableSearch (filteredItems) {
+      this.table.totalRows = filteredItems.length
+      this.table.pagination.currentPage = 1
+    },
+
+    // Create element methods
+    createElementFetchData () {
+      getCategories().then(response => {
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            this.createElement.categories.push({
+              value: response.data.response[i]._id,
+              text: response.data.response[i].name
+            })
+          }
+          this.createElement.loading = false
+        }
+      })
+    },
+    createElementCreate (event) {
+      if (this.createElementNameState === true && this.createElementCategoryState === true) {
+        this.createElement.post.name = this.createElement.post.name.trim()
+
+        postElement(this.createElement.post.name, this.createElement.post.categoryId).then(response => {
+          if (response.status === 201) {
+            this.fetchData()
+
+            this.createElementClearModal()
+          }
+        })
+      } else {
+        event.preventDefault()
+      }
+    },
+    createElementClearModal () {
+      this.createElement.categories = []
+
+      this.createElement.post.name = null
+      this.createElement.post.categoryId = null
+    },
+
+    // Delete element methods
+    deleteElementDelete () {
+      deleteElement(this.deleteElement.delete._id).then(response => {
+        if (response.status === 200) {
+          for (let i = 0; i < this.elements.length; i++) {
+            if (this.deleteElement.delete._id === this.elements[i]._id) {
+              this.elements.splice(i, 1)
+              return true
+            }
+          }
+        } else {
+          event.preventDefault()
+        }
+      })
+    },
+    deleteElementShowModal (row) {
+      this.deleteElement.delete._id = row.item._id
+      this.deleteElement.delete.name = row.item.name
+      this.$refs.deleteElementModal.show()
+    },
+    deleteElementCloseModal () {
+      this.$refs.deleteElementModal.hide()
+    },
+
+    // Edit element methods
+    editElementFetchData () {
+      getCategories().then(response => {
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            this.editElement.categories.push({
+              value: response.data.response[i]._id,
+              text: response.data.response[i].name
+            })
+          }
+          this.editElement.loading = false
+        }
+      })
+    },
+    editElementEdit (event) {
+      if (this.editElementNameState === true) {
+        putElement(this.editElement.edit._id, this.editElement.edit.name).then(response => {
+          if (response.status === 201) {
+            this.fetchData()
+
+            this.editElementCloseModal()
+          }
+        })
+      } else {
+        event.preventDefault()
+      }
+    },
+    editElementShowModal (row) {
+      this.editElement.edit._id = row.item._id
+      this.editElement.edit.name = row.item.name
+      this.$refs.editElementModal.show()
+    },
+    editElementCloseModal () {
+      this.editElement.categories = []
+
+      this.editElement.edit._id = null
+      this.editElement.edit.name = null
+      this.$refs.editElementModal.hide()
+    }
+  }
+}
+</script>
