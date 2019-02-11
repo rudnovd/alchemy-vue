@@ -20,14 +20,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/css/colors.scss';
+
 .navbar {
   min-height: 5vh;
+  background: #222;
+  color: #9d9d9d;
 
   .navbar-nav.ml-auto {
     a.dropdown-item {
       color: black;
     }
     a.dropdown-item.active {
+      color: $alchemy-green;
       background: rgb(230, 230, 230);
       font-weight: bold;
     }

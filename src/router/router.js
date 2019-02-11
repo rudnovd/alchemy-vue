@@ -10,6 +10,8 @@ const adminDashboard = () => import(/* webpackChunkName: "adminDashboard" */ '@/
 
 const adminEditor = () => import(/* webpackChunkName: "adminEditor" */ '@/router/routes/AdminEditor.vue')
 
+const notFound = () => import(/* webpackChunkName: "notFound" */ '@/router/routes/404.vue')
+
 Vue.use(Router)
 
 export default new Router({
@@ -35,6 +37,11 @@ export default new Router({
       path: '/admin/editor',
       name: 'adminEditor',
       component: adminEditor
+    },
+    {
+      path: '*',
+      name: '404',
+      component: notFound
     }
   ]
 })

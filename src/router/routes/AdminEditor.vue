@@ -1,86 +1,29 @@
 <template lang="pug">
   b-container
-    b-row: b-col(cols='12')
-      b-btn.mb-3(variant='success' @click='$refs.createNewElementModal.show()') Create element
-
-      //- Modal window
-      b-modal(
-        title='Create new element'
-        ref='createNewElementModal'
-        size='xl'
-        hide-header-close=true
-        no-close-on-backdrop=true
-        no-close-on-esc=true
-        ok-title='Create'
-        ok-variant='success'
-        cancel-variant='danger'
-        @show='createElementFetchData'
-        @ok='createElementCreate'
-        @cancel='createElementClearModal')
-
-        //- Loading section
-        b-row.justify-content-md-center(v-if='createElement.loading')
-          b-col.loading(cols='12' md='auto')
-            half-circle-spinner(:animation-duration='1000' :size='50' color='#41B460')
-
-        //- Error section
-        b-row.justify-content-md-center(v-if='createElement.error')
-          b-col.error(cols='12' md='auto') {{ error }}
-
-        //- Modal content
-        b-row(v-if='!createElement.loading')
-
-          //- Forms
-          b-col(md='4')
-            form
-
-              //- Input name
-              b-form-group.mb-4#selectNameGroup(label='Name:' label-for='selectName')
-                b-form-input#selectName(
-                  required
-                  type='text'
-                  v-model='createElement.post.name'
-                  :state='createElementNameState'
-                  placeholder='Fire')
-
-              //- Select category
-              b-form-group#selectCategoryGroup(label='Category:' label-for='selectCategory')
-                b-form-select#selectCategory(
-                  required
-                  type='text'
-                  v-model='createElement.post.categoryId'
-                  :options='createElement.categories'
-                  :state='createElementCategoryState')
-
-          //- All elements list
-          b-col(md='8')
-            b-card(no-body)
-              b-tabs(card pills vertical end small nav-wrapper-class='w-25')
-                b-tab(:title='category.text' v-for='category in createElement.categories' :key='category.id')
-                  a.badge.badge-pill.badge-light.mr-2.mb-2(
-                    href='#'
-                    v-for='element in elements'
-                    :key='element.id'
-                    v-if='element.category == category.text'
-                    @click='createElement.post.name = element.name')
-                    | {{ element.name }}
 
     //- Search and records per page row
     b-row.mb-3
 
       //- Search input
-      b-col.mr-auto(cols='4')
+      b-col(cols='4')
         b-input-group
           b-form-input(v-model='table.search.filter' placeholder='Search')
           b-input-group-append
             b-btn(:disabled='!table.search.filter' @click='table.search.filter = ""') Clear
 
+      b-col(cols='4' sm='3' md='2' lg='2' xl='2')
+        b-btn.mb-3(variant='success' @click='$refs.createNewElementModal.show()') Create element
+
       //- Select records per page
-      b-col(cols="2")
+      b-col(cols='4' sm='3' md='2' lg='2' xl='2' offset-md='4')
         b-form-select(:options='table.pagination.pageOptions' v-model='table.pagination.perPage')
 
     //- Elements row
     b-row: b-col(cols='12')
+
+      //- Loading section
+      loading-spinner(size='large' v-if='loading')
+
       //- Table with data
       b-table(
         v-if='!loading'
@@ -95,10 +38,10 @@
         :per-page='table.pagination.perPage'
         :filter='table.search.filter')
         template(slot='action' slot-scope='actionRow')
-          b-button-group(vertical)
+          b-button-group(size="sm")
 
             //- Edit element button
-            b-btn.mb-1(variant='warning' size='sm' @click='editElementShowModal(actionRow)')
+            b-btn.mr-1(variant='warning' size='sm' @click='editElementShowModal(actionRow)')
               font-awesome-icon(icon='edit')
 
             //- Delete element button
@@ -112,29 +55,97 @@
         v-model='table.pagination.currentPage'
         :per-page='table.pagination.perPage')
 
-      //- Delete element modal
-      b-modal(
-        title='Delete element'
-        size='md'
-        ref='deleteElementModal'
-        hide-header-close=true
-        no-close-on-backdrop=true
-        no-close-on-esc=true
-        ok-title='Delete'
-        ok-variant='success'
-        cancel-variant='danger'
-        @ok='deleteElementDelete'
-        @cancel='deleteElementCloseModal')
+    //- Create element modal
+    b-modal(
+      title='Create new element'
+      ref='createNewElementModal'
+      size='xl'
+      hide-header-close=true
+      no-close-on-backdrop=true
+      no-close-on-esc=true
+      ok-title='Create'
+      ok-variant='success'
+      cancel-variant='danger'
+      @show='createElementFetchData'
+      @ok='createElementCreate'
+      @cancel='createElementClearModal')
 
-        //- Modal content
-        b-row.justify-content-md-center
+      //- Loading section
+      loading-spinner(size='large' v-if='loading')
 
-          b-col(cols='12' md='auto')
-            h4 Delete element
-              strong.text-danger  {{ deleteElement.delete.name }}
-              |?
+      //- Error section
+      b-row.justify-content-md-center(v-if='createElement.error')
+        b-col.error(cols='12' md='auto') {{ error }}
 
-    //- Edit element modal window
+      //- Modal content
+      b-row(v-if='!createElement.loading')
+
+        //- Forms
+        b-col(md='4')
+          form
+
+            //- Input name
+            b-form-group(horizontal
+              :label-cols="3"
+              label="Name:"
+              label-for="selectName")
+
+              b-form-input#selectName(
+                required
+                type='text'
+                v-model='createElement.post.name'
+                :state='createElementNameState'
+                placeholder='Fire')
+
+            //- Select category
+            b-form-group(horizontal
+              :label-cols="3"
+              label="Category:"
+              label-for="selectCategory")
+              b-form-select#selectCategory(
+                required
+                type='text'
+                v-model='createElement.post.categoryId'
+                :options='createElement.categories'
+                :state='createElementCategoryState')
+
+        //- All elements list
+        b-col(md='8')
+          b-card(no-body)
+            b-tabs(card pills vertical small nav-wrapper-class='w-25')
+              b-tab(:title='category.text' v-for='category in createElement.categories' :key='category.id')
+                b-btn.mr-2.mb-2(
+                  size="sm"
+                  variant="outline-success"
+                  v-for='element in elements'
+                  :key='element.id'
+                  v-if='element.category == category.text'
+                  @click='createElement.post.name = element.name')
+                  | {{ element.name }}
+
+    //- Delete element modal
+    b-modal(
+      size='md'
+      ref='deleteElementModal'
+      hide-header-close=true
+      no-close-on-backdrop=true
+      no-close-on-esc=true
+      ok-title='Delete'
+      ok-variant='success'
+      cancel-variant='danger'
+      hide-header=true
+      @ok='deleteElementDelete'
+      @cancel='deleteElementCloseModal')
+
+      //- Modal content
+      b-row.justify-content-md-center
+
+        b-col(cols='12' md='auto')
+          h4 Delete element
+            strong.text-danger  {{ deleteElement.delete.name }}
+            |?
+
+    //- Edit element modal
     b-modal(
       title="Edit element"
       ref="editElementModal"
@@ -150,9 +161,7 @@
       @cancel="editElementCloseModal")
 
       //- Loading section
-      b-row.justify-content-md-center(v-if="editElement.loading")
-        b-col.loading(cols="12" md="auto")
-          half-circle-spinner(:animation-duration="1000" :size="50" color="#41B460")
+      loading-spinner(size='large' v-if='loading')
 
       //- Error section
       b-row.justify-content-md-center(v-if="editElement.error")
@@ -166,12 +175,16 @@
           form
 
             //- Input name
-            b-form-group.mb-4#editNameGroup(label='Name:' label-for='editName')
+            b-form-group(horizontal
+              :label-cols="3"
+              label="Name:"
+              label-for="editName")
+
               b-form-input#editName(
                 required
                 type='text'
-                v-model="editElement.edit.name"
-                :state="editElementNameState"
+                v-model='editElement.edit.name'
+                :state='editElementNameState'
                 placeholder='Fire')
 
             //- Select category
@@ -185,10 +198,11 @@
         //- All elements list
         b-col(md='8')
           b-card(no-body)
-            b-tabs(card pills vertical end small nav-wrapper-class='w-25')
+            b-tabs(card pills vertical small nav-wrapper-class='w-25')
               b-tab(:title='category.text' v-for='category in editElement.categories' :key='category.id')
-                a.badge.badge-pill.badge-light.mr-2.mb-2(
-                  href='#'
+                b-btn.mr-2.mb-2(
+                  size="sm"
+                  variant="outline-success"
                   v-for='element in elements'
                   :key='element.id'
                   v-if='element.category == category.text'
@@ -197,15 +211,11 @@
 </template>
 
 <script>
-import { HalfCircleSpinner } from 'epic-spinners'
 
 import { getElements, getCategories, postElement, deleteElement, putElement } from '@/js/api.js'
 
 export default {
   name: 'AdminEditor',
-  components: {
-    HalfCircleSpinner
-  },
   created () {
     this.fetchData()
   },
@@ -263,11 +273,6 @@ export default {
 
         fields: [
           {
-            key: 'image',
-            class: 'align-middle text-center',
-            label: 'Icon'
-          },
-          {
             key: 'category',
             class: 'align-middle text-center',
             sortable: true
@@ -278,8 +283,8 @@ export default {
             sortable: true
           },
           {
-            key: 'receipt',
-            label: 'Receipt',
+            key: 'recipe',
+            label: 'Recipe',
             class: 'align-middle text-center',
             sortable: false
           },
@@ -403,12 +408,13 @@ export default {
     deleteElementDelete () {
       deleteElement(this.deleteElement.delete._id).then(response => {
         if (response.status === 200) {
-          for (let i = 0; i < this.elements.length; i++) {
-            if (this.deleteElement.delete._id === this.elements[i]._id) {
-              this.elements.splice(i, 1)
-              return true
-            }
-          }
+          this.fetchData()
+          // for (let i = 0; i < this.elements.length; i++) {
+          //   if (this.deleteElement.delete._id === this.elements[i]._id) {
+          //     this.elements.splice(i, 1)
+          //     return true
+          //   }
+          // }
         } else {
           event.preventDefault()
         }
