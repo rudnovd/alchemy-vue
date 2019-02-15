@@ -4,7 +4,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: `/`,
   routes: [
@@ -122,3 +122,13 @@ export default new Router({
     }
   ]
 })
+
+// Do before load router
+router.beforeEach((to, from, next) => {
+  // Set page title
+  document.title = to.meta.title
+
+  next()
+})
+
+export default router

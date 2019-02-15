@@ -9,13 +9,6 @@
 
 <script>
 export default {
-  name: `home`,
-
-  beforeRouteEnter (to, from, next) {
-    // Set page title
-    document.title = to.meta.title
-
-    next()
-  }
+  name: 'home'
 }
 </script>

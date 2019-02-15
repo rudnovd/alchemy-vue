@@ -7,13 +7,6 @@
 
 <script>
 export default {
-  name: 'AdminDashboard',
-
-  beforeRouteEnter (to, from, next) {
-    // Set page title
-    document.title = to.meta.title
-
-    next()
-  }
+  name: 'AdminDashboard'
 }
 </script>

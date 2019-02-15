@@ -7,13 +7,6 @@
 
 <script>
 export default {
-  name: 'Errors',
-
-  beforeRouteEnter (to, from, next) {
-    // Set page title
-    document.title = to.meta.title
-
-    next()
-  }
+  name: 'Errors'
 }
 </script>

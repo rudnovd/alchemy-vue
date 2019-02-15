@@ -212,12 +212,6 @@ export default {
   created () {
     this.fetchData()
   },
-  beforeRouteEnter (to, from, next) {
-    // Set page title
-    document.title = to.meta.title
-
-    next()
-  },
   watch: {
     // call again the method if the route changes
     '$route': 'fetchData'
