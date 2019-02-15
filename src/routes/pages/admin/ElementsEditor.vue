@@ -11,6 +11,7 @@
           b-input-group-append
             b-btn(:disabled='!table.search.filter' @click='table.search.filter = ""') Clear
 
+      //- Create modal button
       b-col(cols='4' sm='3' md='2' lg='2' xl='2')
         b-btn.mb-3(variant='success' @click='$refs.createNewElementModal.show()') Create element
 
@@ -85,7 +86,8 @@
           form
 
             //- Input name
-            b-form-group(horizontal
+            b-form-group(
+              horizontal
               :label-cols="3"
               label="Name:"
               label-for="selectName")
@@ -98,7 +100,8 @@
                 placeholder='Fire')
 
             //- Select category
-            b-form-group(horizontal
+            b-form-group(
+              horizontal
               :label-cols="3"
               label="Category:"
               label-for="selectCategory")
@@ -175,25 +178,15 @@
           form
 
             //- Input name
-            b-form-group(horizontal
-              :label-cols="3"
-              label="Name:"
-              label-for="editName")
-
-              b-form-input#editName(
-                required
-                type='text'
-                v-model='editElement.edit.name'
-                :state='editElementNameState'
-                placeholder='Fire')
+            b-form-group(:label-cols="3" horizontal label="Name:" label-for="editName")
+              b-form-input#editName(required type='text' v-model='editElement.edit.name' :state='editElementNameState' placeholder='Fire')
 
             //- Select category
-            //- b-form-group#editCategoryGroup(label="Category:" label-for="editCategory")
-            //-   b-form-select#editCategory(required
-            //-                             type="text"
-            //-                             v-model="propElementData.category"
-            //-                             :options="data.categories.options"
-            //-                             :state="categoryState")
+            b-form-group(:label-cols="3" horizontal  label="Category:" label-for="editCategory")
+              b-form-select#editCategory(required type='text' v-model='editElement.edit.activeCategory' :state='editElementCategoryState')
+                option(v-for='category in editElement.categories'
+
+                  :value='category.value') {{ editElement }}
 
         //- All elements list
         b-col(md='8')
@@ -218,6 +211,12 @@ export default {
   name: 'AdminEditor',
   created () {
     this.fetchData()
+  },
+  beforeRouteEnter (to, from, next) {
+    // Set page title
+    document.title = to.meta.title
+
+    next()
   },
   watch: {
     // call again the method if the route changes
@@ -258,6 +257,14 @@ export default {
           }
         }
         return true
+      }
+    },
+
+    editElementCategoryState () {
+      if (this.editElement.edit.activeCategory) {
+        return true
+      } else {
+        return false
       }
     }
   },
@@ -346,7 +353,9 @@ export default {
 
         edit: {
           _id: null,
-          name: null
+          name: null,
+
+          activeCategory: null
         }
       }
     }
@@ -409,12 +418,6 @@ export default {
       deleteElement(this.deleteElement.delete._id).then(response => {
         if (response.status === 200) {
           this.fetchData()
-          // for (let i = 0; i < this.elements.length; i++) {
-          //   if (this.deleteElement.delete._id === this.elements[i]._id) {
-          //     this.elements.splice(i, 1)
-          //     return true
-          //   }
-          // }
         } else {
           event.preventDefault()
         }
@@ -459,6 +462,20 @@ export default {
     editElementShowModal (row) {
       this.editElement.edit._id = row.item._id
       this.editElement.edit.name = row.item.name
+
+      // this.editElementFetchData()
+
+      console.log(this.editElement.categories)
+      
+      for (let i = 0; i < this.editElement.categories.length; i++) {
+        console.log('a', this.editElement.categories[i].text)
+        if (row.item.category === this.editElement.categories[i].text) {
+          this.editElement.edit.activeCategory = { value: this.editElement.categories[i].value, text: this.editElement.categories[i].text }
+          break
+        }
+      }
+      // console.log(this.editElement)
+
       this.$refs.editElementModal.show()
     },
     editElementCloseModal () {
@@ -466,6 +483,7 @@ export default {
 
       this.editElement.edit._id = null
       this.editElement.edit.name = null
+
       this.$refs.editElementModal.hide()
     }
   }

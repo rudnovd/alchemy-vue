@@ -10,7 +10,7 @@
       b-nav-item-dropdown(text='Username' right)
         b-dropdown-item(to="/game") Game
         b-dropdown-item(to="/admin/dashboard") Dashboard
-        b-dropdown-item(to="/admin/editor") Editor
+        b-dropdown-item(to="/admin/editor/elements") Editor
 </template>
 
 <script>

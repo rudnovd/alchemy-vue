@@ -2,9 +2,9 @@ import Vue from 'vue'
 
 import App from '@/App.vue'
 
-import router from '@/router/router'
+import router from '@/routes/router.js'
 
-import store from '@/state/store.js'
+import store from '@/states/store.js'
 
 import BootstrapVue from 'bootstrap-vue'
 

@@ -7,6 +7,13 @@
 
 <script>
 export default {
-  name: 'Game'
+  name: 'Game',
+
+  beforeRouteEnter (to, from, next) {
+    // Set page title
+    document.title = to.meta.title
+
+    next()
+  }
 }
 </script>
