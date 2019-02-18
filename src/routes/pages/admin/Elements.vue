@@ -81,33 +81,55 @@
         b-col(md='4')
 
           //- Input name
-          b-form-group(
-            horizontal
-            :label-cols='3'
-            label='Name:'
-            label-for='createElementName')
+          b-row(): b-col(md='12')
+            b-form-group(
+              horizontal
+              :label-cols='3'
+              label='Name:'
+              label-for='createElementName')
 
-            b-form-input#createElementName(
-              required
-              type='text'
-              v-model='data.create.name'
-              :state='validateName(data.create.name, data.elements)'
-              placeholder='Fire')
+              b-form-input#createElementName(
+                required
+                type='text'
+                v-model='data.create.name'
+                :state='validateName(data.create.name, data.elements)'
+                placeholder='Fire')
 
           //- Select category
-          b-form-group(
-            horizontal
-            :label-cols='3'
-            label='Category:'
-            label-for='createElementCategory')
+          b-row(): b-col(md='12')
+            b-form-group(
+              horizontal
+              :label-cols='3'
+              label='Category:'
+              label-for='createElementCategory')
 
-            b-form-select#createElementCategory(
-              required
-              type='text'
-              v-model='data.create.categoryId'
-              :state='validateNull(data.create.categoryId)')
-              option(v-for='category in data.categories' :value='category._id')
-                |{{ category.name }}
+              b-form-select#createElementCategory(
+                v-if='!data.newCategory.active'
+                required
+                type='text'
+                v-model='data.create.categoryId'
+                :state='validateNull(data.create.categoryId)')
+                option(v-for='category in data.categories' :value='category._id')
+                  |{{ category.name }}
+
+              b-form-input#createElementCategory(
+                v-if='data.newCategory.active'
+                required
+                type='text'
+                v-model='data.newCategory.name'
+                :state='validateName(data.newCategory.name, data.categories)'
+                placeholder='Elements')
+
+          //- New category button
+          b-row(v-if='data.newCategory.active === false'): b-col(md='12')
+            b-btn.float-right(variant='light' size='sm' @click='data.newCategory.active = true; data.create.categoryId = null')
+              font-awesome-icon(icon='plus')
+              |  New category
+
+          b-row(v-if='data.newCategory.active === true'): b-col(md='12')
+            b-btn.float-right(variant='light' size='sm' @click='data.newCategory.active = false; data.newCategory.name = null')
+              font-awesome-icon(icon='clipboard')
+              |  Choose category
 
         //- All elements list
         b-col(md='8')
@@ -197,7 +219,7 @@
 
 <script>
 
-import { getElements, getCategories, postElement, deleteElement, putElement } from '@/js/api.js'
+import { getElements, getCategories, postElement, postCategory, putElement, deleteElement } from '@/js/api.js'
 
 export default {
   name: 'AdminEditor',
@@ -281,6 +303,11 @@ export default {
           _id: null,
           name: null,
           categoryId: null
+        },
+
+        newCategory: {
+          active: false,
+          name: null
         }
       }
     }
@@ -346,6 +373,14 @@ export default {
             this.createElementModalHide()
           } else {
             this.data.create.error = true
+          }
+        })
+      } else if (this.data.newCategory.name) {
+        postCategory(this.data.newCategory.name).then(response => {
+          if (response.status === 201) {
+            this.data.create.categoryId = response.data.response._id
+            this.createElement()
+            this.data.newCategory.name = null
           }
         })
       } else {
