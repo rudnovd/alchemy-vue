@@ -26,11 +26,12 @@ export async function postElement (name, category) {
   }
 }
 
-export async function putElement (elementId, name) {
+export async function putElement (elementId, newName, newCategory) {
   try {
     let form = new FormData()
     form.set('elementId', elementId)
-    form.set('name', name)
+    form.set('name', newName)
+    form.set('category', newCategory)
 
     const response = await axios({
       method: 'put',
