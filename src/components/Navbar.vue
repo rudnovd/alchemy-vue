@@ -11,28 +11,58 @@
         b-dropdown-item(to='/game') Game
 
         b-dropdown-divider
-        b-dropdown-header Dashboards
-        b-dropdown-item(to='/admin/dashboard/all') Dashboard
-        b-dropdown-item(to='/admin/dashboard/elements') Elements
-        b-dropdown-item(to='/admin/dashboard/categories') Categories
-        b-dropdown-item(to='/admin/dashboard/recipes') Recipes
-        b-dropdown-item(to='/admin/dashboard/users') Users
-
+        b-dropdown-item(to='/admin/dashboard') Dashboard
+        b-dropdown-item(to='/admin/elements') Elements
+        b-dropdown-item(to='/admin/recipes') Recipes
+        b-dropdown-item(to='/admin/users') Users
         b-dropdown-divider
-        b-dropdown-header Controls
-        b-dropdown-item(to='/admin/control/users') Users
-        b-dropdown-item(to='/admin/control/feedback') Feedback
+        b-dropdown-item(@click='loginModalShow') Log in
+        b-dropdown-item Logout
 
-        b-dropdown-divider
-        b-dropdown-header Editors
-        b-dropdown-item(to='/admin/editor/elements') Elements
-        b-dropdown-item(to='/admin/editor/categories') Categories
-        b-dropdown-item(to='/admin/editor/recipes') Recipes
+    //- Login modal
+    b-modal#loginModal(
+      ref='loginModal'
+      size='md'
+      no-close-on-backdrop=true
+      hide-footer=true
+      centered=true)
+
+      //- Modal content
+      b-row.justify-content-md-center
+
+        b-col(cols='10')
+          //- Input name
+          b-form-group(label='Username' label-for='username')
+            b-form-input#username(required type='text' v-model='data.username')
+
+          //- Input password
+          b-form-group(label='Password' label-for='password')
+            b-form-input#password(required type='password' v-model='data.password')
+
+          p.text-center Don't remember your password?
+
+          b-btn.mt-4.mb-3(block variant='success') Log in
 </template>
 
 <script>
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  data () {
+    return {
+      data: {
+        username: null,
+        password: null
+      }
+    }
+  },
+  methods: {
+    loginModalShow () {
+      this.$refs.loginModal.show()
+    },
+    loginModalHide () {
+      this.$refs.loginModal.hide()
+    }
+  }
 }
 </script>
 

@@ -1,4 +1,4 @@
-<template lang="pug">
+<template lang='pug'>
   b-container
 
     //- Search and records per page row
@@ -36,7 +36,7 @@
         :per-page='data.table.pagination.perPage'
         :filter='data.table.search')
         template(slot='action' slot-scope='actionRow')
-          b-button-group(size="sm")
+          b-button-group(size='sm')
 
             //- Edit element button
             b-btn.mr-1(variant='warning' size='sm' @click='editElementModalShow(actionRow)')
@@ -83,9 +83,9 @@
           //- Input name
           b-form-group(
             horizontal
-            :label-cols="3"
-            label="Name:"
-            label-for="createElementName")
+            :label-cols='3'
+            label='Name:'
+            label-for='createElementName')
 
             b-form-input#createElementName(
               required
@@ -97,9 +97,9 @@
           //- Select category
           b-form-group(
             horizontal
-            :label-cols="3"
-            label="Category:"
-            label-for="createElementCategory")
+            :label-cols='3'
+            label='Category:'
+            label-for='createElementCategory')
 
             b-form-select#createElementCategory(
               required
@@ -115,8 +115,8 @@
             b-tabs(card pills vertical small nav-wrapper-class='w-25')
               b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
                 b-btn.mr-2.mb-2(
-                  size="sm"
-                  variant="outline-success"
+                  size='sm'
+                  variant='outline-success'
                   v-for='element in data.elements'
                   :key='element._id'
                   v-if='element.category === category.name'
@@ -125,35 +125,35 @@
 
     //- Edit element modal
     b-modal(
-      title="Edit element"
-      ref="editElementModal"
-      size="xl"
+      title='Edit element'
+      ref='editElementModal'
+      size='xl'
       hide-header-close=true
       no-close-on-backdrop=true
       no-close-on-esc=true
-      ok-title="Save"
-      ok-variant="success"
-      cancel-variant="danger"
+      ok-title='Save'
+      ok-variant='success'
+      cancel-variant='danger'
       @show='getCategories'
-      @ok="editElement"
-      @cancel="editElementModalHide")
+      @ok='editElement'
+      @cancel='editElementModalHide')
 
       //- Loading section
       loading-spinner(size='large' v-if='data.edit.loading')
 
       //- Error section
-      b-row.justify-content-md-center(v-if="editElement.error"): b-col.error(cols="12" md="auto") {{ data.edit.error }}
+      b-row.justify-content-md-center(v-if='editElement.error'): b-col.error(cols='12' md='auto') {{ data.edit.error }}
 
       //- Modal content
-      b-row(v-if="!editElement.loading")
+      b-row(v-if='!editElement.loading')
 
-        b-col(md="4")
+        b-col(md='4')
           //- Input name
-          b-form-group(:label-cols="3" horizontal label="Name:" label-for="editElementName")
+          b-form-group(:label-cols='3' horizontal label='Name:' label-for='editElementName')
             b-form-input#editElementName(required type='text' v-model='data.edit.name' :state='validateName(data.edit.name, data.elements)' placeholder='Fire')
 
           //- Select category
-          b-form-group(:label-cols="3" horizontal  label="Category:" label-for="editCategory")
+          b-form-group(:label-cols='3' horizontal  label='Category:' label-for='editCategory')
             b-form-select#editCategory(required type='text' v-model='data.edit.categoryId' :state='validateNull(data.edit.categoryId)')
               option(v-for='category in data.categories' :value='category._id')
                 |{{ category.name }}
@@ -164,8 +164,8 @@
             b-tabs(card pills vertical small nav-wrapper-class='w-25')
               b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
                 b-btn.mr-2.mb-2(
-                  size="sm"
-                  variant="outline-success"
+                  size='sm'
+                  variant='outline-success'
                   v-for='element in data.elements'
                   :key='element._id'
                   v-if='element.category === category.name'

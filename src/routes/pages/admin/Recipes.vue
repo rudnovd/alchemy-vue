@@ -2,11 +2,11 @@
   b-container
     b-row: b-col(cols='12')
       .jumbotron
-        h1 AdminRecipesEditor
+        h1 Recipes
 </template>
 
 <script>
 export default {
-  name: 'AdminRecipesEditor'
+  name: 'Recipes'
 }
 </script>

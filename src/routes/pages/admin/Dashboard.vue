@@ -2,11 +2,11 @@
   b-container
     b-row: b-col(cols='12')
       .jumbotron
-        h1 Admin dashboard
+        h1 Dashboard
 </template>
 
 <script>
 export default {
-  name: 'AdminDashboard'
+  name: 'Dashboard'
 }
 </script>

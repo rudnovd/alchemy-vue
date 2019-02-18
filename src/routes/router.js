@@ -25,9 +25,9 @@ const router = new Router({
       }
     },
 
-    // Admin dashboard routes
+    // Admin routes
     {
-      path: '/admin/dashboard/all',
+      path: '/admin/dashboard/',
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
         title: 'Dashboard',
@@ -35,78 +35,26 @@ const router = new Router({
       }
     },
     {
-      path: '/admin/dashboard/elements',
-      component: () => import(/* webpackChunkName: 'ElementsDashboard' */ '@/routes/pages/admin/ElementsDashboard'),
+      path: '/admin/elements',
+      component: () => import(/* webpackChunkName: 'Elements' */ '@/routes/pages/admin/Elements'),
       meta: {
-        title: 'Elements dashboard',
+        title: 'Elements',
         public: false
       }
     },
     {
-      path: '/admin/dashboard/categories',
-      component: () => import(/* webpackChunkName: 'CategoriesDashboard' */ '@/routes/pages/admin/CategoriesDashboard'),
+      path: '/admin/recipes',
+      component: () => import(/* webpackChunkName: 'Recipes' */ '@/routes/pages/admin/Recipes'),
       meta: {
-        title: 'Categories dashboard',
+        title: 'Recipes',
         public: false
       }
     },
     {
-      path: '/admin/dashboard/recipes',
-      component: () => import(/* webpackChunkName: 'RecipesDashboard' */ '@/routes/pages/admin/RecipesDashboard'),
+      path: '/admin/users',
+      component: () => import(/* webpackChunkName: 'Users' */ '@/routes/pages/admin/Users'),
       meta: {
-        title: 'Recipes dashboard',
-        public: false
-      }
-    },
-    {
-      path: '/admin/dashboard/users',
-      component: () => import(/* webpackChunkName: 'UsersDashboard' */ '@/routes/pages/admin/UsersDashboard'),
-      meta: {
-        title: 'Users dashboard',
-        public: false
-      }
-    },
-
-    // Admin control routes
-    {
-      path: '/admin/control/users',
-      component: () => import(/* webpackChunkName: 'UsersControl' */ '@/routes/pages/admin/UsersControl'),
-      meta: {
-        title: 'Users control',
-        public: false
-      }
-    },
-    {
-      path: '/admin/control/feedback',
-      component: () => import(/* webpackChunkName: 'FeedbackControl' */ '@/routes/pages/admin/FeedbackControl'),
-      meta: {
-        title: 'Feedback control',
-        public: false
-      }
-    },
-
-    // Admin editor routes
-    {
-      path: '/admin/editor/elements',
-      component: () => import(/* webpackChunkName: 'ElementsEditor' */ '@/routes/pages/admin/ElementsEditor'),
-      meta: {
-        title: 'Elements editor',
-        public: false
-      }
-    },
-    {
-      path: '/admin/editor/categories',
-      component: () => import(/* webpackChunkName: 'CategoriesEditor' */ '@/routes/pages/admin/CategoriesEditor'),
-      meta: {
-        title: 'Categories editor',
-        public: false
-      }
-    },
-    {
-      path: '/admin/editor/recipes',
-      component: () => import(/* webpackChunkName: 'RecipesEditor' */ '@/routes/pages/admin/RecipesEditor.vue'),
-      meta: {
-        title: 'Recipes editor',
+        title: 'Users',
         public: false
       }
     },
