@@ -27,7 +27,7 @@ const router = new Router({
 
     // Admin dashboard routes
     {
-      path: '/admin/dashboard',
+      path: '/admin/dashboard/all',
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
         title: 'Dashboard',
@@ -103,7 +103,7 @@ const router = new Router({
       }
     },
     {
-      path: '/admin/recipes',
+      path: '/admin/editor/recipes',
       component: () => import(/* webpackChunkName: 'RecipesEditor' */ '@/routes/pages/admin/RecipesEditor.vue'),
       meta: {
         title: 'Recipes editor',

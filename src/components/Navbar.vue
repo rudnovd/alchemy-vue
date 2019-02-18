@@ -1,16 +1,33 @@
 <template lang='pug'>
   b-navbar.mb-3(toggleable='sm' type='dark' variant='dark')
 
-    b-navbar-brand(to="/") Home
+    b-navbar-brand(to='/') Home
 
     b-collapse#nav_collapse(is-nav)
 
     b-navbar-nav(class='ml-auto')
 
       b-nav-item-dropdown(text='Username' right)
-        b-dropdown-item(to="/game") Game
-        b-dropdown-item(to="/admin/dashboard") Dashboard
-        b-dropdown-item(to="/admin/editor/elements") Editor
+        b-dropdown-item(to='/game') Game
+
+        b-dropdown-divider
+        b-dropdown-header Dashboards
+        b-dropdown-item(to='/admin/dashboard/all') Dashboard
+        b-dropdown-item(to='/admin/dashboard/elements') Elements
+        b-dropdown-item(to='/admin/dashboard/categories') Categories
+        b-dropdown-item(to='/admin/dashboard/recipes') Recipes
+        b-dropdown-item(to='/admin/dashboard/users') Users
+
+        b-dropdown-divider
+        b-dropdown-header Controls
+        b-dropdown-item(to='/admin/control/users') Users
+        b-dropdown-item(to='/admin/control/feedback') Feedback
+
+        b-dropdown-divider
+        b-dropdown-header Editors
+        b-dropdown-item(to='/admin/editor/elements') Elements
+        b-dropdown-item(to='/admin/editor/categories') Categories
+        b-dropdown-item(to='/admin/editor/recipes') Recipes
 </template>
 
 <script>
@@ -19,7 +36,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang='scss'>
 @import '@/css/colors.scss';
 
 .navbar {
