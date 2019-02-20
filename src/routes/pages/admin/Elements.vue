@@ -20,11 +20,16 @@
     b-row(): b-col(cols='12')
 
       //- Loading section
-      loading-spinner(size='large' v-if='data.tableloading')
+      loading-spinner(size='large' v-if='data.table.loading')
+
+      //- Error section
+      b-row.justify-content-md-center(v-if='data.table.error'): b-col.error(cols='12' md='auto')
+        b-alert(show variant='danger')
+          | {{ data.table.error }}
 
       //- Table with data
       b-table(
-        v-if='!data.table.loading'
+        v-if='!data.table.loading && !data.table.error'
         show-empty
         responsive
         hover
@@ -73,10 +78,11 @@
 
       //- Error section
       b-row.justify-content-md-center(v-if='data.create.error'): b-col.error(cols='12' md='auto')
-        | {{ error }}
+        b-alert(show variant='danger')
+          | {{ data.create.error }}
 
       //- Modal content
-      b-row(v-if='!data.create.loading')
+      b-row(v-if='!data.create.loading && !data.create.error')
 
         b-col(md='4')
 
@@ -164,10 +170,12 @@
       loading-spinner(size='large' v-if='data.edit.loading')
 
       //- Error section
-      b-row.justify-content-md-center(v-if='editElement.error'): b-col.error(cols='12' md='auto') {{ data.edit.error }}
+      b-row.justify-content-md-center(v-if='data.edit.error'): b-col.error(cols='12' md='auto')
+        b-alert(show variant='danger')
+          | {{ data.edit.error }}
 
       //- Modal content
-      b-row(v-if='!editElement.loading')
+      b-row(v-if='!data.edit.loading && !data.edit.error')
 
         b-col(md='4')
           //- Input name
@@ -320,8 +328,9 @@ export default {
         if (response.status === 200) {
           this.data.elements = response.data.response
           this.data.table.totalRows = this.data.elements.length // Total rows for pagination
+          this.data.table.error = null
         } else {
-          this.data.table.error = true
+          this.data.table.error = response.data
         }
       })
     },
@@ -330,9 +339,10 @@ export default {
         this.data.create.loading = false
         if (response.status === 200) {
           this.data.categories = response.data.response
+          this.data.edit.error = null
         } else {
-          this.data.create.error = true
-          this.data.edit.error = true
+          this.data.create.error = response.data
+          this.data.edit.error = response.data
         }
       })
     },
@@ -371,8 +381,9 @@ export default {
           if (response.status === 201) {
             this.getElements()
             this.createElementModalHide()
+            this.data.create.error = null
           } else {
-            this.data.create.error = true
+            this.data.create.error = response.data
           }
         })
       } else if (this.data.newCategory.name) {
@@ -381,6 +392,8 @@ export default {
             this.data.create.categoryId = response.data.response._id
             this.createElement()
             this.data.newCategory.name = null
+          } else {
+            this.data.create.error = response.data
           }
         })
       } else {
@@ -395,8 +408,9 @@ export default {
           if (response.status === 200) {
             this.getElements()
             this.editElementModalHide()
+            this.data.edit.error = null
           } else {
-            this.data.edit.error = true
+            this.data.edit.error = response.data
           }
         })
       } else {
@@ -409,8 +423,9 @@ export default {
         this.data.delete.loading = false
         if (response.status === 200) {
           this.getElements()
+          this.data.delete.error = null
         } else {
-          this.data.delete.error = true
+          this.data.delete.error = response.data
           event.preventDefault()
         }
       })
