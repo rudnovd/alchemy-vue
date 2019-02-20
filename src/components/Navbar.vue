@@ -1,37 +1,40 @@
 <template lang='pug'>
-  b-navbar.mb-3(toggleable='sm' type='dark' variant='dark')
-
+  b-container
     b-navbar-brand(to='/') Home
 
+    b-navbar-toggle.ml-auto(target='nav_collapse')
+
     b-collapse#nav_collapse(is-nav)
+      b-navbar-nav.ml-auto
+        b-nav-item-dropdown(text='Username' right)
+          b-dropdown-item(to='/game') Game
 
-    b-navbar-nav(class='ml-auto')
+          b-dropdown-divider
+          b-dropdown-item(to='/admin/dashboard') Dashboard
+          b-dropdown-item(to='/admin/elements') Elements
+          b-dropdown-item(to='/admin/recipes') Recipes
+          b-dropdown-item(to='/admin/users') Users
 
-      b-nav-item-dropdown(text='Username' right)
-        b-dropdown-item(to='/game') Game
-
-        b-dropdown-divider
-        b-dropdown-item(to='/admin/dashboard') Dashboard
-        b-dropdown-item(to='/admin/elements') Elements
-        b-dropdown-item(to='/admin/recipes') Recipes
-        b-dropdown-item(to='/admin/users') Users
-        b-dropdown-divider
-        b-dropdown-item(@click='loginModalShow') Log in
-        b-dropdown-item Logout
+          b-dropdown-divider
+          b-dropdown-item(@click='loginModalShow') Log in
+          b-dropdown-item Logout
 
     //- Login modal
     b-modal#loginModal(
       ref='loginModal'
       size='md'
       no-close-on-backdrop=true
+      hide-header=true
       hide-footer=true
       centered=true)
 
       //- Modal content
       b-row.justify-content-md-center
+        b-col.mt-3.mb-2(cols='11')
+          font-awesome-icon.float-right(icon='times' @click='loginModalHide()')
 
         b-col(cols='10')
-          //- Input name
+          //- Input username
           b-form-group(label='Username' label-for='username')
             b-form-input#username(required type='text' v-model='data.username')
 

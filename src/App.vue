@@ -1,6 +1,8 @@
 <template lang="pug">
   #app
-    Navbar
+    b-navbar.mb-3(toggleable='sm' type='dark' variant='dark')
+      Navbar
+
     router-view(:key="$route.fullPath")
 </template>
 
