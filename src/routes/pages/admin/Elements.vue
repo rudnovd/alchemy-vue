@@ -339,6 +339,7 @@ export default {
         this.data.create.loading = false
         if (response.status === 200) {
           this.data.categories = response.data.response
+          this.data.create.error = null
           this.data.edit.error = null
         } else {
           this.data.create.error = response.data

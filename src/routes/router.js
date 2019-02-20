@@ -12,7 +12,7 @@ const router = new Router({
       path: '/',
       component: () => import(/* webpackChunkName: 'Home' */ '@/routes/pages/Home'),
       meta: {
-        title: 'Alchemy game',
+        title: 'Alchemy game | Alchemy',
         public: true
       }
     },
@@ -20,7 +20,7 @@ const router = new Router({
       path: '/game',
       component: () => import(/* webpackChunkName: 'Game' */ '@/routes/pages/Game'),
       meta: {
-        title: 'Alchemy game',
+        title: 'Alchemy game | Alchemy',
         public: true
       }
     },
@@ -30,7 +30,7 @@ const router = new Router({
       path: '/admin/dashboard/',
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
-        title: 'Dashboard',
+        title: 'Dashboard | Alchemy',
         public: false
       }
     },
@@ -38,7 +38,7 @@ const router = new Router({
       path: '/admin/elements',
       component: () => import(/* webpackChunkName: 'Elements' */ '@/routes/pages/admin/Elements'),
       meta: {
-        title: 'Elements',
+        title: 'Elements | Alchemy',
         public: false
       }
     },
@@ -46,7 +46,7 @@ const router = new Router({
       path: '/admin/recipes',
       component: () => import(/* webpackChunkName: 'Recipes' */ '@/routes/pages/admin/Recipes'),
       meta: {
-        title: 'Recipes',
+        title: 'Recipes | Alchemy',
         public: false
       }
     },
@@ -54,7 +54,7 @@ const router = new Router({
       path: '/admin/users',
       component: () => import(/* webpackChunkName: 'Users' */ '@/routes/pages/admin/Users'),
       meta: {
-        title: 'Users',
+        title: 'Users | Alchemy',
         public: false
       }
     },
@@ -64,7 +64,7 @@ const router = new Router({
       path: '*',
       component: () => import(/* webpackChunkName: 'Errors' */ '@/routes/pages/Errors.vue'),
       meta: {
-        title: 'Error page',
+        title: 'Error page | Alchemy',
         public: true
       }
     }

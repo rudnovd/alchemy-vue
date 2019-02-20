@@ -4,7 +4,8 @@
       .jumbotron
           h1 Page not found (404)
           p You may have entered the wrong address or the page was deleted.
-          p Back to the main page
+          p(): b-link(to='/')
+            | Back to the main page
 </template>
 
 <script>
