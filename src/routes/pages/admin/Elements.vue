@@ -92,7 +92,6 @@
           //- Input name
           b-row(): b-col(md='12')
             b-form-group(
-              horizontal
               :label-cols='3'
               label='Name:'
               label-for='createElementName'
@@ -109,7 +108,6 @@
           //- Select category
           b-row(): b-col(md='12')
             b-form-group(
-              horizontal
               :label-cols='3'
               label='Category:'
               label-for='createElementCategory'
@@ -196,7 +194,7 @@
 
         b-col(md='4')
           //- Input name
-          b-form-group(:label-cols='3' horizontal label='Name:' label-for='editElementName')
+          b-form-group(:label-cols='3' label='Name:' label-for='editElementName')
             b-form-input#editElementName(
               required
               type='text'
@@ -206,7 +204,7 @@
             )
 
           //- Select category
-          b-form-group(:label-cols='3' horizontal  label='Category:' label-for='editCategory')
+          b-form-group(:label-cols='3' label='Category:' label-for='editCategory')
             b-form-select#editCategory(
               required
               type='text'
