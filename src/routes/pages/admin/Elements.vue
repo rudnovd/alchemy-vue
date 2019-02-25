@@ -71,7 +71,6 @@
       ok-title='Create'
       ok-variant='success'
       cancel-variant='danger'
-      @show='getCategories'
       @ok='createElement'
       @cancel='createElementModalHide'
     )
@@ -124,7 +123,7 @@
                 :state='validateNull(data.create.categoryId)'
               )
                 option(v-for='category in data.categories' :value='category._id')
-                | {{ category.name }}
+                  | {{ category.name }}
 
               b-form-input#createElementCategory(
                 v-if='data.newCategory.active'
@@ -267,7 +266,7 @@
 import { getElements, getCategories, postElement, postCategory, putElement, deleteElement } from '@/js/api.js'
 
 export default {
-  name: 'AdminEditor',
+  name: 'ElementsEditor',
   created () {
     this.getElements()
     this.getCategories()
@@ -472,6 +471,8 @@ export default {
     // Show modals
     createElementModalShow () {
       this.$refs.createElementModal.show()
+
+      this.getCategories()
     },
     editElementModalShow (row) {
       this.$refs.editElementModal.show()
