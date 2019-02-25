@@ -12,7 +12,7 @@ const router = new Router({
       path: '/',
       component: () => import(/* webpackChunkName: 'Home' */ '@/routes/pages/Home'),
       meta: {
-        title: 'Alchemy game | Alchemy',
+        title: 'Alchemy',
         public: true
       }
     },
@@ -20,7 +20,7 @@ const router = new Router({
       path: '/game',
       component: () => import(/* webpackChunkName: 'Game' */ '@/routes/pages/Game'),
       meta: {
-        title: 'Alchemy game | Alchemy',
+        title: 'Game | Alchemy',
         public: true
       }
     },
@@ -64,7 +64,7 @@ const router = new Router({
       path: '*',
       component: () => import(/* webpackChunkName: 'Errors' */ '@/routes/pages/Errors.vue'),
       meta: {
-        title: 'Error page | Alchemy',
+        title: 'Error | Alchemy',
         public: true
       }
     }
