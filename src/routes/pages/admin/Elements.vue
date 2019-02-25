@@ -40,7 +40,6 @@
         :current-page='data.table.pagination.currentPage'
         :per-page='data.table.pagination.perPage'
         :filter='data.table.search'
-        :tbody-transition-props='data.table.props'
       )
         template(slot='action' slot-scope='actionRow')
           b-button-group(size='sm')
@@ -63,7 +62,6 @@
 
     //- Create element modal
     b-modal(
-      id='ElementsTable'
       title='Create new element'
       ref='createElementModal'
       size='xl'
