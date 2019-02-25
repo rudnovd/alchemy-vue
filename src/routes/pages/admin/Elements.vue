@@ -7,8 +7,7 @@
       //- Search input
       b-col(cols='4'): b-input-group
         b-form-input(v-model='data.table.search' placeholder='Search')
-        b-input-group-append
-          b-btn(:disabled='!data.table.search' @click='data.table.search = null') Clear
+        b-input-group-append(): b-btn(:disabled='!data.table.search' @click='data.table.search = null') Clear
 
       //- Create modal button
       b-col(cols='4' sm='3' md='2' lg='2' xl='2'): b-btn.mb-3(variant='success' @click='createElementModalShow()') Create element
@@ -23,9 +22,10 @@
       loading-spinner(size='large' v-if='data.table.loading')
 
       //- Error section
-      b-row.justify-content-md-center(v-if='data.table.error'): b-col.error(cols='12' md='auto')
-        b-alert(show variant='danger')
-          | {{ data.table.error }}
+      b-row.justify-content-md-center(v-if='data.table.error')
+        b-col.error(cols='12' md='auto')
+          b-alert(show variant='danger')
+            | {{ data.table.error }}
 
       //- Table with data
       b-table(
@@ -39,7 +39,9 @@
         :fields='data.table.fields'
         :current-page='data.table.pagination.currentPage'
         :per-page='data.table.pagination.perPage'
-        :filter='data.table.search')
+        :filter='data.table.search'
+        :tbody-transition-props='data.table.props'
+      )
         template(slot='action' slot-scope='actionRow')
           b-button-group(size='sm')
 
@@ -56,10 +58,12 @@
         align='center'
         :total-rows='data.table.totalRows'
         v-model='data.table.pagination.currentPage'
-        :per-page='data.table.pagination.perPage')
+        :per-page='data.table.pagination.perPage'
+      )
 
     //- Create element modal
     b-modal(
+      id='ElementsTable'
       title='Create new element'
       ref='createElementModal'
       size='xl'
@@ -71,15 +75,17 @@
       cancel-variant='danger'
       @show='getCategories'
       @ok='createElement'
-      @cancel='createElementModalHide')
+      @cancel='createElementModalHide'
+    )
 
       //- Loading section
       loading-spinner(size='large' v-if='data.create.loading')
 
       //- Error section
-      b-row.justify-content-md-center(v-if='data.create.error'): b-col.error(cols='12' md='auto')
-        b-alert(show variant='danger')
-          | {{ data.create.error }}
+      b-row.justify-content-md-center(v-if='data.create.error')
+        b-col.error(cols='12' md='auto')
+          b-alert(show variant='danger')
+            | {{ data.create.error }}
 
       //- Modal content
       b-row(v-if='!data.create.loading && !data.create.error')
@@ -92,14 +98,16 @@
               horizontal
               :label-cols='3'
               label='Name:'
-              label-for='createElementName')
+              label-for='createElementName'
+            )
 
               b-form-input#createElementName(
                 required
                 type='text'
                 v-model='data.create.name'
                 :state='validateName(data.create.name, data.elements)'
-                placeholder='Fire')
+                placeholder='Fire'
+              )
 
           //- Select category
           b-row(): b-col(md='12')
@@ -107,16 +115,18 @@
               horizontal
               :label-cols='3'
               label='Category:'
-              label-for='createElementCategory')
+              label-for='createElementCategory'
+            )
 
               b-form-select#createElementCategory(
                 v-if='!data.newCategory.active'
                 required
                 type='text'
                 v-model='data.create.categoryId'
-                :state='validateNull(data.create.categoryId)')
+                :state='validateNull(data.create.categoryId)'
+              )
                 option(v-for='category in data.categories' :value='category._id')
-                  |{{ category.name }}
+                | {{ category.name }}
 
               b-form-input#createElementCategory(
                 v-if='data.newCategory.active'
@@ -124,7 +134,8 @@
                 type='text'
                 v-model='data.newCategory.name'
                 :state='validateName(data.newCategory.name, data.categories)'
-                placeholder='Elements')
+                placeholder='Elements'
+              )
 
           //- New category button
           b-row(v-if='data.newCategory.active === false'): b-col(md='12')
@@ -140,7 +151,13 @@
         //- All elements list
         b-col(md='8')
           b-card(no-body)
-            b-tabs(card pills vertical small nav-wrapper-class='w-25')
+            b-tabs(
+              card
+              pills
+              vertical
+              small
+              nav-wrapper-class='w-25'
+            )
               b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
                 b-btn.mr-2.mb-2(
                   size='sm'
@@ -148,8 +165,9 @@
                   v-for='element in data.elements'
                   :key='element._id'
                   v-if='element.category === category.name'
-                  @click='data.create.name = element.name')
-                  |{{ element.name }}
+                  @click='data.create.name = element.name'
+                )
+                  | {{ element.name }}
 
     //- Edit element modal
     b-modal(
@@ -164,15 +182,17 @@
       cancel-variant='danger'
       @show='getCategories'
       @ok='editElement'
-      @cancel='editElementModalHide')
+      @cancel='editElementModalHide'
+    )
 
       //- Loading section
       loading-spinner(size='large' v-if='data.edit.loading')
 
       //- Error section
-      b-row.justify-content-md-center(v-if='data.edit.error'): b-col.error(cols='12' md='auto')
-        b-alert(show variant='danger')
-          | {{ data.edit.error }}
+      b-row.justify-content-md-center(v-if='data.edit.error')
+        b-col.error(cols='12' md='auto')
+          b-alert(show variant='danger')
+            | {{ data.edit.error }}
 
       //- Modal content
       b-row(v-if='!data.edit.loading && !data.edit.error')
@@ -180,18 +200,35 @@
         b-col(md='4')
           //- Input name
           b-form-group(:label-cols='3' horizontal label='Name:' label-for='editElementName')
-            b-form-input#editElementName(required type='text' v-model='data.edit.name' :state='validateName(data.edit.name, data.elements)' placeholder='Fire')
+            b-form-input#editElementName(
+              required
+              type='text'
+              v-model='data.edit.name'
+              :state='validateName(data.edit.name, data.elements)'
+              placeholder='Fire'
+            )
 
           //- Select category
           b-form-group(:label-cols='3' horizontal  label='Category:' label-for='editCategory')
-            b-form-select#editCategory(required type='text' v-model='data.edit.categoryId' :state='validateNull(data.edit.categoryId)')
+            b-form-select#editCategory(
+              required
+              type='text'
+              v-model='data.edit.categoryId'
+              :state='validateNull(data.edit.categoryId)'
+            )
               option(v-for='category in data.categories' :value='category._id')
-                |{{ category.name }}
+                | {{ category.name }}
 
         //- All elements list
         b-col(md='8')
           b-card(no-body)
-            b-tabs(card pills vertical small nav-wrapper-class='w-25')
+            b-tabs(
+              card
+              pills
+              vertical
+              small
+              nav-wrapper-class='w-25'
+            )
               b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
                 b-btn.mr-2.mb-2(
                   size='sm'
@@ -199,7 +236,8 @@
                   v-for='element in data.elements'
                   :key='element._id'
                   v-if='element.category === category.name'
-                  @click='data.edit.name = element.name')
+                  @click='data.edit.name = element.name'
+                )
                   | {{ element.name }}
 
     //- Delete element modal
@@ -214,7 +252,8 @@
       cancel-variant='danger'
       hide-header=true
       @ok='deleteElement'
-      @cancel='deleteElementModalHide')
+      @cancel='deleteElementModalHide'
+    )
 
       //- Modal content
       b-row.justify-content-md-center
