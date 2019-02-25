@@ -11,14 +11,13 @@ export async function getElements () {
 
 export async function postElement (name, category) {
   try {
-    let form = new FormData()
-    form.set('name', name)
-    form.set('category', category)
-
     const response = await axios({
       method: 'post',
       url: '/api/element/add',
-      data: form
+      data: {
+        name,
+        category
+      }
     })
     return response
   } catch (error) {
@@ -28,15 +27,14 @@ export async function postElement (name, category) {
 
 export async function putElement (elementId, newName, newCategory) {
   try {
-    let form = new FormData()
-    form.set('elementId', elementId)
-    form.set('name', newName)
-    form.set('category', newCategory)
-
     const response = await axios({
       method: 'put',
       url: '/api/element/update',
-      data: form
+      data: {
+        elementId,
+        newName,
+        newCategory
+      }
     })
     return response
   } catch (error) {
@@ -46,13 +44,12 @@ export async function putElement (elementId, newName, newCategory) {
 
 export async function deleteElement (elementId) {
   try {
-    let form = new FormData()
-    form.set('elementId', elementId)
-
     const response = await axios({
       method: 'delete',
       url: '/api/element/delete',
-      data: form
+      data: {
+        elementId
+      }
     })
     return response
   } catch (error) {
@@ -71,13 +68,12 @@ export async function getCategories () {
 
 export async function postCategory (name) {
   try {
-    let form = new FormData()
-    form.set('name', name)
-
     const response = await axios({
       method: 'post',
       url: '/api/category/add',
-      data: form
+      data: {
+        name
+      }
     })
     return response
   } catch (error) {
@@ -87,14 +83,13 @@ export async function postCategory (name) {
 
 export async function putCategory (name, categoryId) {
   try {
-    let form = new FormData()
-    form.set('name', name)
-    form.set('categoryId', categoryId)
-
     const response = await axios({
       method: 'put',
       url: '/api/category/update',
-      data: form
+      data: {
+        name,
+        categoryId
+      }
     })
     return response
   } catch (error) {
@@ -104,13 +99,12 @@ export async function putCategory (name, categoryId) {
 
 export async function deleteCategory (categoryId) {
   try {
-    let form = new FormData()
-    form.set('categoryId', categoryId)
-
     const response = await axios({
       method: 'detele',
       url: '/api/category/delete',
-      data: form
+      data: {
+        categoryId
+      }
     })
     return response
   } catch (error) {
@@ -130,16 +124,15 @@ export async function getRecipes () {
   }
 }
 
-export async function postRecipes (recipe, result) {
+export async function postRecipe (recipe, result) {
   try {
-    let form = new FormData()
-    form.set('recipe', recipe)
-    form.set('result', result)
-
     const response = await axios({
       method: 'post',
-      url: '/api/recipes/add',
-      data: form
+      url: '/api/recipe/add',
+      data: {
+        recipe,
+        result
+      }
     })
     return response
   } catch (error) {
@@ -147,17 +140,16 @@ export async function postRecipes (recipe, result) {
   }
 }
 
-export async function putRecipes (newRecipe, newResult, recipeId) {
+export async function putRecipe (newRecipe, newResult, recipeId) {
   try {
-    let form = new FormData()
-    form.set('newRecipe', newRecipe)
-    form.set('newResult', newResult)
-    form.set('recipeId', recipeId)
-
     const response = await axios({
       method: 'put',
-      url: '/api/recipes/update',
-      data: form
+      url: '/api/recipe/update',
+      data: {
+        newRecipe,
+        newResult,
+        recipeId
+      }
     })
     return response
   } catch (error) {
@@ -167,13 +159,12 @@ export async function putRecipes (newRecipe, newResult, recipeId) {
 
 export async function deleteRecipe (recipeId) {
   try {
-    let form = new FormData()
-    form.set('recipeId', recipeId)
-
     const response = await axios({
       method: 'delete',
-      url: '/api/recipes/delete',
-      data: form
+      url: '/api/recipe/delete',
+      data: {
+        recipeId
+      }
     })
     return response
   } catch (error) {
