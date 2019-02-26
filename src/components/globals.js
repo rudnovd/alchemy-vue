@@ -10,7 +10,9 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 import vSelect from 'vue-select'
 
-import VueDragResize from 'vue-drag-resize'
+import VueDraggableResizable from 'vue-draggable-resizable'
+
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 // register components:
 
@@ -22,4 +24,4 @@ Vue.component('loading-spinner', LoadingSpinner)
 
 Vue.component('v-select', vSelect)
 
-Vue.component('vue-drag-resize', VueDragResize)
+Vue.component('vue-draggable-resizable', VueDraggableResizable)
