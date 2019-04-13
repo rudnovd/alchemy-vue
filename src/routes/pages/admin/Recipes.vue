@@ -238,7 +238,11 @@
 
 <script>
 
-import { getElements, getCategories, getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api.js'
+import { getElements } from '@/js/api/elements'
+
+import { getCategories } from '@/js/api/categories'
+
+import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
 
 export default {
   name: 'Recipes',

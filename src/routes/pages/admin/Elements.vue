@@ -261,7 +261,9 @@
 
 <script>
 
-import { getElements, getCategories, postElement, postCategory, putElement, deleteElement } from '@/js/api.js'
+import { getElements, postElement, putElement, deleteElement } from '@/js/api/elements'
+
+import { getCategories, postCategory } from '@/js/api/categories'
 
 export default {
   name: 'ElementsEditor',
