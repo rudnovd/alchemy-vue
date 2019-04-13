@@ -2,6 +2,10 @@ import Vue from 'vue'
 
 import Router from 'vue-router'
 
+import store from '@/store'
+
+import { getLogin } from '@/js/api/authentication'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -13,7 +17,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Home' */ '@/routes/pages/Home'),
       meta: {
         title: 'Alchemy',
-        public: true
+        authRequired: false,
+        adminRoleRequired: false
       }
     },
     {
@@ -21,7 +26,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Game' */ '@/routes/pages/Game'),
       meta: {
         title: 'Game | Alchemy',
-        public: true
+        authRequired: false,
+        adminRoleRequired: false
       }
     },
 
@@ -31,7 +37,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
         title: 'Dashboard | Alchemy',
-        public: false
+        authRequired: true,
+        adminRoleRequired: true
       }
     },
     {
@@ -39,7 +46,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Elements' */ '@/routes/pages/admin/Elements'),
       meta: {
         title: 'Elements | Alchemy',
-        public: false
+        authRequired: true,
+        adminRoleRequired: true
       }
     },
     {
@@ -47,7 +55,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Recipes' */ '@/routes/pages/admin/Recipes'),
       meta: {
         title: 'Recipes | Alchemy',
-        public: false
+        authRequired: true,
+        adminRoleRequired: true
       }
     },
     {
@@ -55,7 +64,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Users' */ '@/routes/pages/admin/Users'),
       meta: {
         title: 'Users | Alchemy',
-        public: false
+        authRequired: true,
+        adminRoleRequired: true
       }
     },
 
@@ -65,7 +75,8 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Errors' */ '@/routes/pages/Errors.vue'),
       meta: {
         title: 'Error | Alchemy',
-        public: true
+        authRequired: false,
+        adminRoleRequired: false
       }
     }
   ]
@@ -76,7 +87,58 @@ router.beforeEach((to, from, next) => {
   // Set page title
   document.title = to.meta.title
 
-  next()
+  // If not logged in, check login
+  if (!store.getters['user/isLoggedIn']) {
+    getLogin().then(response => {
+      // If find session, move user data in store
+      if (response.data.user) {
+        store.dispatch('user/setUser', response.data.user)
+      }
+      next()
+    })
+  } else {
+    next()
+  }
 })
+
+router.beforeResolve((to, from, next) => {
+  if (requireAuthPassed(to) === true) {
+    next()
+  } else {
+    next({ path: '/' })
+  }
+
+  if (requireAdminRolePassed(to) === true) {
+    next()
+  } else {
+    next({ path: '/' })
+  }
+})
+
+function requireAuthPassed (to) {
+  // If route need auth, check logged in
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (store.getters['user/isLoggedIn']) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return true
+  }
+}
+
+function requireAdminRolePassed (to) {
+  // If route need admin role, check role
+  if (to.matched.some(record => record.meta.adminRoleRequired)) {
+    if (store.getters['user/isAdmin']) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return true
+  }
+}
 
 export default router
