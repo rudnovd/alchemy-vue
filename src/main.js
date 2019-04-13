@@ -4,17 +4,19 @@ import App from '@/App.vue'
 
 import router from '@/routes/router.js'
 
-import store from '@/states/store.js'
+import store from '@/store'
+
+import VueCookies from 'vue-cookies'
 
 import BootstrapVue from 'bootstrap-vue'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-
-import 'bootstrap-vue/dist/bootstrap-vue.min.css'
+import '@/css/main.scss'
 
 import '@/components/globals.js'
 
 Vue.use(BootstrapVue)
+
+Vue.use(VueCookies)
 
 Vue.config.productionTip = false
 
