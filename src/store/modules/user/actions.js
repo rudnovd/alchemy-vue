@@ -22,5 +22,8 @@ export default {
   // },
   setUser ({ commit }, user) {
     commit('SET_USER', user)
+  },
+  clearUser ({ commit }) {
+    commit('CLEAR_USER')
   }
 }

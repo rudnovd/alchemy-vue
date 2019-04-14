@@ -6,5 +6,6 @@ export default {
 
   CLEAR_USER (state, user) {
     state.isLoggedIn = false
+    state.data = {}
   }
 }
