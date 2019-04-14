@@ -6,64 +6,76 @@
 
     b-collapse#nav_collapse(is-nav)
       b-navbar-nav.ml-auto
-        b-nav-item-dropdown(text='Username' right)
+        b-btn(class='text-white' v-if='!isLoggedIn' variant='link' @click='loginModalShow') Sign in
+        b-btn(class='text-white' v-if='!isLoggedIn' variant='link' @click='registrationModalShow') Sign up
+
+        b-nav-item-dropdown(v-if='isLoggedIn' :text='username' right)
           b-dropdown-item(to='/game') Game
 
-          b-dropdown-divider
-          b-dropdown-item(to='/admin/dashboard') Dashboard
-          b-dropdown-item(to='/admin/elements') Elements
-          b-dropdown-item(to='/admin/recipes') Recipes
-          b-dropdown-item(to='/admin/users') Users
+          template(v-if='isLoggedIn && isAdmin')
+            b-dropdown-divider
+            b-dropdown-item(to='/admin/dashboard') Dashboard
+            b-dropdown-item(to='/admin/elements') Elements
+            b-dropdown-item(to='/admin/recipes') Recipes
+            b-dropdown-item(to='/admin/users') Users
 
           b-dropdown-divider
-          b-dropdown-item(@click='loginModalShow') Log in
-          b-dropdown-item Logout
+          b-dropdown-item(v-if='!isLoggedIn' @click='loginModalShow()') Log in
+          b-dropdown-item(v-if='isLoggedIn' @click='logout()') Logout
 
-    //- Login modal
-    b-modal#loginModal(
-      ref='loginModal'
-      size='md'
-      no-close-on-backdrop=true
-      hide-header=true
-      hide-footer=true
-      centered=true)
+    login-modal
+    registration-modal
+    reset-password-modal
 
-      //- Modal content
-      b-row.justify-content-md-center
-        b-col.mt-3.mb-2(cols='11')
-          font-awesome-icon.float-right(icon='times' @click='loginModalHide()')
-
-        b-col(cols='10')
-          //- Input username
-          b-form-group(label='Username' label-for='username')
-            b-form-input#username(required type='text' v-model='data.username')
-
-          //- Input password
-          b-form-group(label='Password' label-for='password')
-            b-form-input#password(required type='password' v-model='data.password')
-
-          p.text-center Don't remember your password?
-
-          b-btn.mt-4.mb-3(block variant='success') Log in
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
+import loginModal from '@/components/navbar/loginModal.vue'
+
+import registrationModal from '@/components/navbar/registrationModal.vue'
+
+import resetPasswordModal from '@/components/navbar/resetPasswordModal.vue'
+
+import { getLogout } from '@/js/api/authentication'
+
 export default {
   name: 'Navbar',
+  components: {
+    'login-modal': loginModal,
+    'registration-modal': registrationModal,
+    'reset-password-modal': resetPasswordModal
+  },
   data () {
     return {
-      data: {
-        username: null,
-        password: null
-      }
+
     }
   },
+  computed: {
+    ...mapGetters({
+      isLoggedIn: 'user/isLoggedIn',
+      isAdmin: 'user/isAdmin',
+      username: 'user/username'
+    })
+  },
   methods: {
-    loginModalShow () {
-      this.$refs.loginModal.show()
+    ...mapActions({
+      clearUser: 'user/clearUser'
+    }),
+    logout () {
+      getLogout().then(response => {
+        if (response.status === 200 || response.status === 304) {
+          this.$router.push({ path: '/' })
+          this.clearUser()
+        }
+      })
     },
-    loginModalHide () {
-      this.$refs.loginModal.hide()
+    loginModalShow () {
+      this.$root.$emit('loginModalShow')
+    },
+    registrationModalShow () {
+      this.$root.$emit('registrationModalShow')
     }
   }
 }
