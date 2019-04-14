@@ -27,3 +27,15 @@ export async function postLogin (usernameOrEmail, password) {
     return error
   }
 }
+
+export async function getLogout () {
+  try {
+    const response = await axios({
+      method: 'get',
+      url: '/api/logout'
+    })
+    return response
+  } catch (error) {
+    return error
+  }
+}
