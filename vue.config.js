@@ -1,4 +1,11 @@
 module.exports = {
+  css: {
+    loaderOptions: {
+      sass: {
+        data: `@import "~@/css/main.scss";`
+      }
+    }
+  },
   devServer: {
     proxy: {
       '^/api': {
