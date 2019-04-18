@@ -6,17 +6,15 @@ import router from '@/routes/router.js'
 
 import store from '@/store'
 
-import VueCookies from 'vue-cookies'
-
 import BootstrapVue from 'bootstrap-vue'
 
-import '@/css/main.scss'
+import Vuelidate from 'vuelidate'
 
 import '@/components/globals.js'
 
 Vue.use(BootstrapVue)
 
-Vue.use(VueCookies)
+Vue.use(Vuelidate)
 
 Vue.config.productionTip = false
 
