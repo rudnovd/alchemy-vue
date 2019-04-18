@@ -81,9 +81,7 @@ export default {
 }
 </script>
 
-<style scoped lang='scss'>
-@import '@/css/colors.scss';
-
+<style lang='scss'>
 .navbar {
   min-height: 5vh;
   background: #222;
@@ -91,10 +89,10 @@ export default {
 
   .navbar-nav.ml-auto {
     a.dropdown-item {
-      color: black;
+      color: color('dark');
     }
-    a.dropdown-item.active {
-      color: $alchemy-green;
+    a.router-link-active {
+      color: color('alchemy-green');
       background: rgb(230, 230, 230);
       font-weight: bold;
     }
