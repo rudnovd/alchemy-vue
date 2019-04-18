@@ -4,7 +4,7 @@
       vue-draggable-resizable(
         class-name-active='active-element'
         class-name='element'
-        v-for='(value, index) in openedElements'
+        v-for='(value, index) in activeElements'
         :key='value._id'
         :resizable='false'
         :w='100'
@@ -12,12 +12,10 @@
         :x='activeElements[index].x'
         :y='activeElements[index].y'
         :parent='true'
-        @dragging='onDrag'
         @activated="onActivated(value)"
-        @dragstop="onDragstop(value)"
+        @dragstop="onDragstop"
       ) {{ value.name }}
-      b-btn.clear-field-button(variant='link' @dblclick='clearGameField')
-        font-awesome-icon.fa-3x(icon='trash')
+      font-awesome-icon.fa-3x.clear-field-button(icon='trash' @dblclick='clearGameField')
 </template>
 
 <script>
@@ -90,37 +88,62 @@ export default {
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
+
       setOpenedElements: 'game/setOpenedElements',
+
       setActiveElements: 'game/setActiveElements',
-      setSelectedElement: 'game/setSelectedElement'
+      addActiveElement: 'game/addActiveElement',
+      removeActiveElement: 'game/removeActiveElement',
+
+      setSelectedElement: 'game/setSelectedElement',
+      setSelectedElementCoordinates: 'game/setSelectedElementCoordinates'
     }),
-    onDrag (x, y) {
-      console.log(`X: ${x}, Y: ${y}`)
-    },
+
+    // Called whenever the component gets clicked, in order to show handles
     onActivated (element) {
       this.setSelectedElement(element)
     },
-    onDragstop (element) {
-      this.setSelectedElement(element)
+
+    // Called whenever the component gets dragged
+    // onDragging (x, y) {
+    //   console.log(`X: ${x}, Y: ${y}`)
+    // },
+
+    // Called whenever the component stops getting dragged
+    onDragstop (x, y) {
+      this.setSelectedElementCoordinates({ x, y })
+
+      // If element dropped at other element
+      for (let i = 0; i < this.activeElements.length; i++) {
+        if (this.activeElements[i]._id !== this.selectedElement._id) {
+          if ((this.activeElements[i].x <= this.selectedElement.x + 50 && this.activeElements[i].x >= this.selectedElement.x - 50) && (this.activeElements[i].y <= this.selectedElement.y + 25 && this.activeElements[i].y >= this.selectedElement.y - 25)) {
+            console.log(`Element ${this.selectedElement.name} dropped at element ${this.activeElements[i].name}`)
+            this.removeActiveElement([this.selectedElement, this.activeElements[i]])
+            this.addActiveElement({
+              _id: '5c5d9f2b3e55d015ec96744e',
+              name: 'new element',
+              category: 'Elements'
+            })
+          }
+        }
+      }
     },
     clearGameField () {
-      console.log('clearGameField method called')
+      //
     }
   }
 }
 </script>
 
 <style lang='scss'>
-@import '@/css/colors.scss';
-
 .game-field {
   position: absolute;
   top: 10vh;
   bottom: 5vh;
   left: 10vw;
   right: 10vw;
-  box-shadow: 0 0 5px $alchemy-light-green;
-  background-color: white;
+  box-shadow: 0 0 5px color('alchemy-light-green');
+  background-color: color('white');
   min-width: 80vw;
 }
 
@@ -136,10 +159,10 @@ export default {
 }
 
 .active-element {
-  background-color: $alchemy-green;
+  background-color: color('alchemy-green');
 }
 
 .clear-field-button {
-  color: black;
+  color: color('dark');
 }
 </style>
