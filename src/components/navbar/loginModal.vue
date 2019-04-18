@@ -1,5 +1,6 @@
 <template lang='pug'>
-b-modal#loginModal(
+b-modal(
+  id='loginModal'
   v-model='loginModalShown'
   size='md'
   no-close-on-backdrop=true
@@ -10,9 +11,8 @@ b-modal#loginModal(
 
   //- Modal content
   b-row(class='justify-content-md-center' v-if='loginModalShown')
-    b-col(class='mt-3 text-right' cols='11')
-      b-btn(variant='link' @click='loginModalShown = false')
-        font-awesome-icon(class='fa-2x' icon='times' color='black')
+    b-col(class='text-right' cols='11')
+      font-awesome-icon(icon='times' color='gray' @click='loginModalShown = false')
 
     b-col(cols='10')
       h4
@@ -20,17 +20,36 @@ b-modal#loginModal(
 
       //- Input username or email
       b-form-group(class='mt-4' label='Login' label-for='usernameOrEmail')
-        b-form-input#usernameOrEmail(required type='text' v-model='usernameOrEmail')
+        b-form-input(
+          id='usernameOrEmail'
+          required
+          type='text'
+          v-model='usernameOrEmail'
+          :autocomplete='autocomplete'
+        )
 
       //- Input password
       b-form-group(class='mt-4' label='Password' label-for='password')
-        b-form-input#password(required type='password' v-model='password')
+        b-form-input(
+          id='password'
+          required
+          type='password'
+          v-model='password'
+          :autocomplete='autocomplete'
+        )
 
-      p(class='text-center')
+      //- Remember login checkbox
+      b-form-checkbox(
+        v-model='rememberLogin'
+        name='remember-login-checkbox'
+        unchecked-value=false
+      ) Remember me
+
+      p(class='text-center mt-4')
         u(class='c-pointer' @click='resetPasswordModalShow()')
           | Don't remember your password?
 
-      b-btn.mt-4.mb-3(block variant='success' @click='login(usernameOrEmail, password)')
+      b-btn(class='mt-4 mb-3' block variant='success' @click='login(usernameOrEmail, password)')
         | Sign in
 
       b-alert(v-if='loginError' show variant='danger')
@@ -40,7 +59,7 @@ b-modal#loginModal(
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import axios from 'axios'
+import { postLogin } from '@/js/api/authentication'
 
 export default {
   name: 'loginModal',
@@ -56,24 +75,34 @@ export default {
       loginError: null,
 
       usernameOrEmail: null,
-      password: null
+      password: null,
+      rememberLogin: false
     }
   },
   computed: {
     ...mapGetters({
       isLoggedIn: 'user/isLoggedIn'
-    })
+    }),
+    autocomplete () {
+      if (this.rememberLogin) {
+        return 'on'
+      } else {
+        return 'off'
+      }
+    }
   },
   methods: {
     ...mapActions({
       setUser: 'user/setUser'
     }),
-    login (usernameOrEmail, password) {
-      try {
-        axios.post('/api/login', {
-          email: usernameOrEmail,
-          password
-        })
+    validation () {
+      if (this.usernameOrEmail && this.password) {
+        return true
+      }
+    },
+    login () {
+      if (this.validation() === true) {
+        postLogin(this.usernameOrEmail, this.password, this.rememberLogin)
           .then(response => {
             if (response.status === 200) {
               this.loginModalShown = false
@@ -84,8 +113,6 @@ export default {
           .catch(error => {
             this.loginError = error
           })
-      } catch (error) {
-        console.log(error)
       }
     },
     resetPasswordModalShow () {
