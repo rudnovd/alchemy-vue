@@ -12,14 +12,15 @@ export async function getLogin () {
   }
 }
 
-export async function postLogin (usernameOrEmail, password) {
+export async function postLogin (email, password, remember) {
   try {
     const response = await axios({
       method: 'post',
       url: '/api/login',
       data: {
-        email: usernameOrEmail,
-        password
+        email,
+        password,
+        remember
       }
     })
     return response
