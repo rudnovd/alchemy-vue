@@ -1,17 +1,13 @@
+$body-bg: #eee;
+$body-color: #333;
+
+@import '@/css/colors.scss';
+
+@import '@/css/fonts.scss';
+
 @import '~bootstrap/scss/bootstrap';
 
 @import '~bootstrap-vue/src/index.scss';
-
-body {
-  background: #eee;
-  color: #333;
-}
-
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 .modal {
   color: black;
@@ -19,4 +15,9 @@ body {
 
 .c-pointer {
   cursor: pointer;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
 }
