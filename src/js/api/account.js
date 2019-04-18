@@ -35,14 +35,26 @@ export async function updateAccount (_id, password, username, role) {
   }
 }
 
-export async function postResetPassword (email) {
+export async function putResetPassword (email) {
   try {
     const response = await axios({
-      method: 'post',
+      method: 'put',
       url: '/api/account/password/reset',
       data: {
         email
       }
+    })
+    return response
+  } catch (error) {
+    return error
+  }
+}
+
+export async function getAccountElements () {
+  try {
+    const response = await axios({
+      method: 'get',
+      url: '/api/account/elements'
     })
     return response
   } catch (error) {
