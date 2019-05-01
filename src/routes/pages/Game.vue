@@ -1,53 +1,79 @@
 <template lang='pug'>
   b-container
-    .game-field
-      vue-draggable-resizable(
-        class-name-active='active-element'
-        class-name='element'
-        v-for='(value, index) in activeElements'
-        :key='value._id'
-        :resizable='false'
-        :w='100'
-        :h='50'
-        :x='activeElements[index].x'
-        :y='activeElements[index].y'
-        :parent='true'
-        @activated="onActivated(value)"
-        @dragstop="onDragstop"
-      ) {{ value.name }}
-      font-awesome-icon.fa-3x.clear-field-button(icon='trash' @dblclick='clearGameField')
+    b-row
+      b-col(class='game-field' ref='gameField' cols='12')
+        b-row
+          div(class='elements-field')
+            game-element(
+              v-for='element in activeElements'
+              :key='element.gameId'
+              :elementData='element'
+            )
+            font-awesome-icon(class='fa-3x clear-field-button' icon='trash' @dblclick='clearGameField')
+            b-button(variant='warning' size='sm' :activated='dev' @click='dev = !dev')
+              | Dev
+            b-button(variant='success' size='sm' @click='addRandomElement()')
+              | Add random element
+          div(class='elements-list-field')
+            elements-list(
+              v-for='element in openedElements'
+              :key='element._id'
+              :elementData='element'
+            )
+
+        p Dev: {{ dev }}
+        template(v-if='dev === true')
+          p(): small Selected Element: name: {{ selectedElement.name }}, gameId: {{ selectedElement.gameId }}, x: {{ selectedElement.x }}, y: {{ selectedElement.y }}
+          p(): small Active elements:
+          p(v-for='(value, index) in activeElements')
+            small name: {{ value.name }}, gameId: {{ value.gameId }}, x: {{ value.x }}, y: {{ value.y }}
+          p(): small Opened elements:
+          p(v-for='(value, index) in openedElements')
+            small name: {{ value.name }}, gameId: {{ value.gameId }}, x: {{ value.x }}, y: {{ value.y }}
+          p {{ error }}
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import gameElement from '@/components/game/gameElement.vue'
+
+import elementsList from '@/components/game/elementsList.vue'
+
+import { getAccountElements } from '@/js/api/account'
+
+import * as shortid from 'shortid'
+
 export default {
   name: 'Game',
+  components: {
+    'game-element': gameElement,
+    'elements-list': elementsList
+  },
+  beforeRouteEnter (to, from, next) {
+    getAccountElements().then(response => {
+      if (response.status === 200) {
+        for (let i = 0; i < response.data.elements.length; i++) {
+          response.data.elements[i].x = null
+          response.data.elements[i].y = null
+        }
+        next(vm => {
+          vm.setOpenedElements(response.data.elements)
+          vm.setOpenedCategories(response.data.elements)
+        })
+      } else {
+        next()
+      }
+    })
+  },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
     this.setGameFieldSize({ x: gameField[0].clientWidth, y: gameField[0].clientHeight })
 
     window.addEventListener('resize', () => {
       this.setGameFieldSize({ x: gameField[0].clientWidth, y: gameField[0].clientHeight })
+      this.updateOpenedElementsPositions()
     })
-
-    this.setOpenedElements([
-      {
-        _id: '5c543755405e9d103878d4be',
-        name: 'Earth',
-        category: 'Elements'
-      },
-      {
-        _id: '5c543755405e9d103878d4bf',
-        name: 'Fire',
-        category: 'Elements'
-      },
-      {
-        _id: '5c543755405e9d103878d4c0',
-        name: 'Water',
-        category: 'Elements'
-      }
-    ])
 
     this.setActiveElements([
       {
@@ -75,14 +101,20 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getGameFieldSize: 'game/getGameFieldSize',
+      gameFieldSize: 'game/gameFieldSize',
+
       openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement'
+      selectedElement: 'game/selectedElement',
+
+      openedCategories: 'game/openedCategories',
+
+      error: 'game/error'
     })
   },
   data () {
     return {
+      dev: false
     }
   },
   methods: {
@@ -90,46 +122,38 @@ export default {
       setGameFieldSize: 'game/setGameFieldSize',
 
       setOpenedElements: 'game/setOpenedElements',
+      addOpenedElement: 'game/addOpenedElement',
+      removeOpenedElement: 'game/removeOpenedElement',
 
       setActiveElements: 'game/setActiveElements',
       addActiveElement: 'game/addActiveElement',
       removeActiveElement: 'game/removeActiveElement',
+      removeAllActiveElements: 'game/removeAllActiveElements',
 
       setSelectedElement: 'game/setSelectedElement',
-      setSelectedElementCoordinates: 'game/setSelectedElementCoordinates'
+      setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
+      removeSelectedElement: 'game/removeSelectedElement',
+
+      setOpenedCategories: 'game/setOpenedCategories',
+      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
     }),
 
-    // Called whenever the component gets clicked, in order to show handles
-    onActivated (element) {
-      this.setSelectedElement(element)
-    },
-
-    // Called whenever the component gets dragged
-    // onDragging (x, y) {
-    //   console.log(`X: ${x}, Y: ${y}`)
-    // },
-
-    // Called whenever the component stops getting dragged
-    onDragstop (x, y) {
-      this.setSelectedElementCoordinates({ x, y })
-
-      // If element dropped at other element
-      for (let i = 0; i < this.activeElements.length; i++) {
-        if (this.activeElements[i]._id !== this.selectedElement._id) {
-          if ((this.activeElements[i].x <= this.selectedElement.x + 50 && this.activeElements[i].x >= this.selectedElement.x - 50) && (this.activeElements[i].y <= this.selectedElement.y + 25 && this.activeElements[i].y >= this.selectedElement.y - 25)) {
-            console.log(`Element ${this.selectedElement.name} dropped at element ${this.activeElements[i].name}`)
-            this.removeActiveElement([this.selectedElement, this.activeElements[i]])
-            this.addActiveElement({
-              _id: '5c5d9f2b3e55d015ec96744e',
-              name: 'new element',
-              category: 'Elements'
-            })
-          }
-        }
-      }
-    },
     clearGameField () {
-      //
+      this.removeAllActiveElements()
+    },
+    addRandomElement () {
+      let x = Math.floor(Math.random() * (this.gameFieldSize.x - 0 + 1)) + 0
+      let y = Math.floor(Math.random() * (this.gameFieldSize.y - 0 + 1)) + 0
+
+      let element = {
+        id: shortid.generate(),
+        name: shortid.generate(),
+        x: x,
+        y: y
+      }
+      this.setSelectedElement(element)
+      this.addActiveElement(element)
+      this.setSelectedElement(null)
     }
   }
 }
@@ -137,32 +161,32 @@ export default {
 
 <style lang='scss'>
 .game-field {
-  position: absolute;
-  top: 10vh;
-  bottom: 5vh;
-  left: 10vw;
-  right: 10vw;
+  position: relative;
   box-shadow: 0 0 5px color('alchemy-light-green');
   background-color: color('white');
-  min-width: 80vw;
+  min-height: 60vh;
+  min-width: 100%;
+  max-width: inherit;
 }
 
-.element {
-  text-align: center;
-  line-height: 50px;
-  background-color: #AAA;
-  width: 100%;
-  height: 100%;
-  display: inline-block;
-  position: absolute;
-  border-radius: 25px;
+.elements-field {
+  min-height: 100%;
+  min-width: 80%;
 }
 
-.active-element {
-  background-color: color('alchemy-green');
+.elements-list-field {
+  min-height: 60vh;
+  min-width: 20%;
 }
 
 .clear-field-button {
   color: color('dark');
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

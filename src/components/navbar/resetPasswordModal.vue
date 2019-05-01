@@ -65,17 +65,13 @@ export default {
     },
     resetPassword () {
       if (this.validation() === true) {
-        putResetPassword(this.email)
-          .then(response => {
-            if (response.status === 200) {
-              this.resetPasswordSuccess = true
-            } else {
-              this.resetPasswordSuccess = true
-            }
-          })
-          .catch(response => {
-            console.log(response)
-          })
+        putResetPassword(this.email).then(response => {
+          if (response.status === 200) {
+            this.resetPasswordSuccess = true
+          } else if (response.status === 404) {
+            this.resetPasswordError = 'There is no user registered with that email address'
+          }
+        })
       }
     }
   },
