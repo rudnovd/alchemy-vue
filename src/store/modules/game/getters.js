@@ -9,7 +9,21 @@ export default {
     return state.selectedElement
   },
 
-  getGameFieldSize: state => {
+  openedCategories: state => {
+    return state.openedCategories
+  },
+  selectedCategory: state => {
+    return state.selectedCategory
+  },
+
+  gameFieldSize: state => {
     return state.settings.gameFieldSize
+  },
+  elementsListFieldSize: state => {
+    return state.settings.elementListFieldSize
+  },
+
+  error: state => {
+    return state.error
   }
 }
