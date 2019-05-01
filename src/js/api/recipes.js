@@ -8,7 +8,7 @@ export async function getRecipes () {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -24,7 +24,7 @@ export async function postRecipe (recipe, result) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -41,7 +41,7 @@ export async function putRecipe (newRecipe, newResult, recipeId) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -56,6 +56,6 @@ export async function deleteRecipe (recipeId) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }

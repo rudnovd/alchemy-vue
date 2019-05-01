@@ -13,7 +13,7 @@ export async function postAccount (email, username, password) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -31,7 +31,7 @@ export async function updateAccount (_id, password, username, role) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -46,7 +46,7 @@ export async function putResetPassword (email) {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
 
@@ -58,6 +58,6 @@ export async function getAccountElements () {
     })
     return response
   } catch (error) {
-    return error
+    return error.response
   }
 }
