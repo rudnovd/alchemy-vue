@@ -1,5 +1,5 @@
-$body-bg: #eee;
-$body-color: #333;
+$body-bg: #EEEEEE;
+$body-color: #333333;
 
 @import '@/css/colors.scss';
 
@@ -8,6 +8,8 @@ $body-color: #333;
 @import '~bootstrap/scss/bootstrap';
 
 @import '~bootstrap-vue/src/index.scss';
+
+@import '@/css/buttons.scss';
 
 .modal {
   color: black;

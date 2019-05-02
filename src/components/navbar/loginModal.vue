@@ -11,10 +11,12 @@ b-modal(
 
   //- Modal content
   b-row(class='justify-content-md-center' v-if='loginModalShown')
-    b-col(class='text-right' cols='11')
-      font-awesome-icon(icon='times' color='gray' @click='loginModalShown = false')
 
     b-col(cols='10')
+      p(class='text-right')
+        b-button(class='close-button' size='sm' variant='link' @click='loginModalShown = false')
+          font-awesome-icon(icon='times')
+
       h4
         | Sign in
 

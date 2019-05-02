@@ -11,10 +11,12 @@ b-modal(
 
   //- Modal content
   b-row(class='justify-content-md-center' v-if='resetPasswordModalShown')
-    b-col(class='mt-3 text-right' cols='11')
-      font-awesome-icon(icon='times' color='gray' @click='resetPasswordModalShown = false')
 
     b-col(cols='10' v-if='!resetPasswordSuccess')
+      p(class='text-right')
+        b-button(class='close-button' size='sm' variant='link' @click='resetPasswordModalShown = false')
+          font-awesome-icon(class='c-pointer' icon='times')
+
       h4
         | Reset password
 
