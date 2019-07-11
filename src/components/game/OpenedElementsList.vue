@@ -1,17 +1,21 @@
 <template lang='pug'>
 vue-draggable-resizable(
-  class-name-active='active-element'
+  class-name-active='selected-element'
   class-name='element'
   :resizable='false'
+  :draggable='true'
+  :disable-user-select='true'
+  :minWidth='50'
+  :maxWidth='100'
+  :minHeight='20'
+  :maxHeight='50'
   :w='100'
   :h='50'
   :x='elementData.x'
   :y='elementData.y'
-  :parent='".elements-field"'
-  :disable-user-select="true"
-  @activated="onActivated"
-  @dragstop="onDragstop"
-  @deactivated='onDeactivated'
+  :parent="'.game-field'"
+  @activated='onActivated'
+  @dragstop='onDragstop'
 )
   | {{ elementData.name }}
 </template>
@@ -19,17 +23,17 @@ vue-draggable-resizable(
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import { ifGameIdUniq } from '@/js/game/check'
+
 export default {
-  name: 'gameElement',
+  name: 'elementsList',
   props: {
     elementData: Object
-  },
-  mounted () {
-    this.elementCopy = this.elementData
   },
   computed: {
     ...mapGetters({
       gameFieldSize: 'game/gameFieldSize',
+      elementsListFieldSize: 'game/elementsListFieldSize',
 
       openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
@@ -39,11 +43,6 @@ export default {
 
       error: 'game/error'
     })
-  },
-  data () {
-    return {
-      elementCopy: null
-    }
   },
   methods: {
     ...mapActions({
@@ -66,39 +65,23 @@ export default {
       updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
     }),
 
+    // Called whenever the component gets clicked, in order to show handles
     onActivated () {
       this.setSelectedElement(this.elementData)
     },
-    onDeactivated () {
-      this.setSelectedElement(null)
-    },
+
+    // Called whenever the component stops getting dragged
     onDragstop (x, y) {
       this.setSelectedElementCoordinates({ x, y })
 
-      let removeElementsArray = []
+      if ((x > 0 && y > 0) && (x < this.gameFieldSize.x - this.elementsListFieldSize.x) && ifGameIdUniq(this.selectedElement, this.activeElements)) {
+        this.removeOpenedElement(this.elementData)
+        this.addActiveElement(this.elementData)
+        // this.addOpenedElement(this.elementData)
+      } else {
 
-      const d = this.activeElements.length
-
-      for (let i = 0; i < d; i++) {
-        if (this.selectedElement && this.activeElements[i].gameId !== this.selectedElement.gameId) {
-          if ((this.activeElements[i].x <= this.selectedElement.x + 50 && this.activeElements[i].x >= this.selectedElement.x - 50) && (this.activeElements[i].y <= this.selectedElement.y + 25 && this.activeElements[i].y >= this.selectedElement.y - 25)) {
-            console.log(`Element ${this.selectedElement.name} dropped at element ${this.activeElements[i].name}`)
-
-            const newElement = {
-              name: parseInt(Math.random() * 100),
-              category: 'Elements'
-            }
-            // removeElementsArray.push(this.selectedElement, this.activeElements[i])
-
-            this.removeActiveElement(this.selectedElement)
-            this.removeActiveElement(this.activeElements[i])
-
-            this.addActiveElement(newElement)
-
-            this.removeSelectedElement()
-          }
-        }
       }
+      this.updateOpenedElementsPositions()
     }
   }
 }
@@ -116,7 +99,7 @@ export default {
   border-radius: 25px;
 }
 
-.active-element {
+.selected-element {
   background-color: color('alchemy-green');
 }
 </style>
