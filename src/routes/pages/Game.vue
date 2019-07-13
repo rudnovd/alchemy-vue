@@ -12,7 +12,7 @@ b-container
           ClearGameField
 
         div(class='opened-elements')
-          OpenedElementsList(
+          OpenedElement(
             v-for='element in openedElements'
             :key='element._id'
             :elementData='element'
@@ -20,9 +20,11 @@ b-container
 </template>
 
 <script>
+import * as shortid from 'shortid'
+
 import Element from '@/components/game/Element.vue'
 
-import OpenedElementsList from '@/components/game/OpenedElementsList.vue'
+import OpenedElement from '@/components/game/OpenedElement.vue'
 
 import GameField from '@/components/game/GameField.vue'
 
@@ -30,30 +32,14 @@ import ClearGameField from '@/components/game/ClearGameField.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
-import { getAccountElements } from '@/js/api/account'
+import { getElements } from '@/js/api/elements'
 
 export default {
   components: {
     Element,
-    OpenedElementsList,
+    OpenedElement,
     GameField,
     ClearGameField
-  },
-  beforeRouteEnter (to, from, next) {
-    getAccountElements().then(response => {
-      if (response.status === 200) {
-        for (let i = 0; i < response.data.elements.length; i++) {
-          response.data.elements[i].x = null
-          response.data.elements[i].y = null
-        }
-        next(vm => {
-          vm.setOpenedElements(response.data.elements)
-          vm.setOpenedCategories(response.data.elements)
-        })
-      } else {
-        next()
-      }
-    })
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
@@ -70,23 +56,36 @@ export default {
         name: 'Earth',
         category: 'Elements',
         x: 200,
-        y: 250
+        y: 250,
+        gameId: this.generateGameId()
       },
       {
         _id: '5c543755405e9d103878d4bf',
         name: 'Fire',
         category: 'Elements',
         x: 400,
-        y: 250
+        y: 250,
+        gameId: this.generateGameId()
       },
       {
         _id: '5c543755405e9d103878d4c0',
         name: 'Water',
         category: 'Elements',
         x: 600,
-        y: 250
+        y: 250,
+        gameId: this.generateGameId()
       }
     ])
+
+    getElements().then(response => {
+      if (response.status === 200) {
+        for (let i = 0; i < response.data.response.length; i++) {
+          response.data.response[i].x = null
+          response.data.response[i].y = null
+        }
+        this.setOpenedElements(response.data.response)
+      }
+    })
   },
   computed: {
     ...mapGetters({
@@ -117,15 +116,28 @@ export default {
 
       setOpenedCategories: 'game/setOpenedCategories',
       updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
-    })
+    }),
+    generateGameId () {
+      let gameId = shortid.generate()
+
+      for (let i = 0; i < this.activeElements; i++) {
+        if (gameId === this.activeElements[i].gameId) {
+          this.generateGameId()
+          return
+        }
+      }
+
+      return gameId
+    }
   }
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .active-elements {
   min-height: 100%;
   min-width: 80%;
+  border-right: 2px solid black;
 }
 
 .opened-elements {
