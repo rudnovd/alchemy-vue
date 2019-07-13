@@ -1,14 +1,3 @@
-import * as shortid from 'shortid'
-
-function ifGameIdUniq (gameId, array) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].gameId === gameId) {
-      return false
-    }
-  }
-  return true
-}
-
 export default {
   setOpenedElements ({ commit }, elements) {
     commit('SET_OPENED_ELEMENTS', elements)
@@ -25,20 +14,12 @@ export default {
   },
 
   setActiveElements ({ commit }, elements) {
-    for (let i = 0; i < elements.length; i++) {
-      elements[i].gameId = shortid.generate()
-    }
-
     commit('SET_ACTIVE_ELEMENTS', elements)
   },
   addActiveElement ({ commit, state }, element) {
-    element.gameId = shortid.generate()
     element.x = state.selectedElement.x
     element.y = state.selectedElement.y
-
-    while (ifGameIdUniq(element.gameId, state.activeElements) === false) {
-      element.gameId = shortid.generate()
-    }
+    element.z = 100
 
     commit('ADD_ACTIVE_ELEMENT', element)
   },
@@ -52,8 +33,9 @@ export default {
   setSelectedElement ({ commit }, element) {
     commit('SET_SELECTED_ELEMENT', element)
   },
-  setSelectedElementCoordinates ({ commit }, { x, y }) {
-    commit('SET_SELECTED_ELEMENT_COORDINATES', { x, y })
+  setSelectedElementCoordinates ({ commit }, { x, y, z }) {
+    z = 101
+    commit('SET_SELECTED_ELEMENT_COORDINATES', { x, y, z })
   },
   removeSelectedElement ({ commit }) {
     commit('REMOVE_SELECTED_ELEMENT')

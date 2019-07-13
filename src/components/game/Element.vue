@@ -10,6 +10,7 @@ vue-draggable-resizable(
   :z='elementData.z'
   :parent='".active-elements"'
   :disable-user-select='true'
+  :onDragStart='onDragStart'
   @activated='onActivated'
   @dragstop='onDragstop'
   @deactivated='onDeactivated'
@@ -20,82 +21,67 @@ vue-draggable-resizable(
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import * as game from '@/js/game/game'
+
 export default {
   props: {
     elementData: Object
-  },
-  mounted () {
-    this.elementCopy = this.elementData
   },
   computed: {
     ...mapGetters({
       gameFieldSize: 'game/gameFieldSize',
 
-      openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
       selectedElement: 'game/selectedElement',
 
-      openedCategories: 'game/openedCategories',
-
-      error: 'game/error'
+      openedCategories: 'game/openedCategories'
     })
-  },
-  data () {
-    return {
-      elementCopy: null
-    }
   },
   methods: {
     ...mapActions({
-      setGameFieldSize: 'game/setGameFieldSize',
-
-      setOpenedElements: 'game/setOpenedElements',
-      addOpenedElement: 'game/addOpenedElement',
-      removeOpenedElement: 'game/removeOpenedElement',
-
-      setActiveElements: 'game/setActiveElements',
       addActiveElement: 'game/addActiveElement',
       removeActiveElement: 'game/removeActiveElement',
-      removeAllActiveElements: 'game/removeAllActiveElements',
 
       setSelectedElement: 'game/setSelectedElement',
       setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
-      removeSelectedElement: 'game/removeSelectedElement',
-
-      setOpenedCategories: 'game/setOpenedCategories',
-      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
+      removeSelectedElement: 'game/removeSelectedElement'
     }),
 
     onActivated () {
       this.setSelectedElement(this.elementData)
     },
     onDeactivated () {
-      this.setSelectedElement(null)
+      this.removeSelectedElement()
+    },
+
+    onDragStart () {
+      this.setSelectedElement(this.elementData)
     },
     onDragstop (x, y) {
+      if (!this.selectedElement) {
+        return
+      }
+
       this.setSelectedElementCoordinates({ x, y })
 
-      const d = this.activeElements.length
+      let newElement = null
 
-      for (let i = 0; i < d; i++) {
-        if (this.selectedElement && this.activeElements[i].gameId !== this.selectedElement.gameId) {
-          if ((this.activeElements[i].x <= this.selectedElement.x + 50 && this.activeElements[i].x >= this.selectedElement.x - 50) && (this.activeElements[i].y <= this.selectedElement.y + 25 && this.activeElements[i].y >= this.selectedElement.y - 25)) {
-            console.log(`Element ${this.selectedElement.name} dropped at element ${this.activeElements[i].name}`)
+      const activeElements = this.activeElements.length
 
-            const newElement = {
-              name: parseInt(Math.random() * 100),
-              category: 'Elements'
-            }
+      for (let i = 0; i < activeElements; i++) {
+        newElement = game.onDropCombine(this.selectedElement, this.activeElements[i])
 
-            this.removeActiveElement(this.selectedElement)
-            this.removeActiveElement(this.activeElements[i])
+        if (newElement) {
+          this.removeActiveElement(this.selectedElement.gameId)
+          this.removeActiveElement(this.activeElements[i].gameId)
 
-            this.addActiveElement(newElement)
+          this.addActiveElement(newElement)
 
-            this.removeSelectedElement()
-          }
+          break
         }
       }
+
+      this.removeSelectedElement()
     }
   }
 }

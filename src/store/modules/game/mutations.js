@@ -21,7 +21,7 @@ export default {
   },
   REMOVE_ACTIVE_ELEMENT (state, element) {
     for (let i = 0; i < state.activeElements.length; i++) {
-      if (state.activeElements[i].gameId === element.gameId) {
+      if (state.activeElements[i].gameId === element) {
         state.activeElements.splice(i, 1)
       }
     }
@@ -33,9 +33,10 @@ export default {
   SET_SELECTED_ELEMENT (state, element) {
     state.selectedElement = element
   },
-  SET_SELECTED_ELEMENT_COORDINATES (state, { x, y }) {
+  SET_SELECTED_ELEMENT_COORDINATES (state, { x, y, z }) {
     state.selectedElement.x = x
     state.selectedElement.y = y
+    state.selectedElement.z = z
   },
   REMOVE_SELECTED_ELEMENT (state) {
     state.selectedElement = null
