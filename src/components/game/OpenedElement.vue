@@ -1,32 +1,30 @@
 <template lang='pug'>
 vue-draggable-resizable(
-  class-name-active='selected-element'
   class-name='element'
-  :resizable='false'
+  class-name-active='selected-element'
   :draggable='true'
   :disable-user-select='true'
+  :resizable='false'
   :minWidth='50'
   :maxWidth='100'
   :minHeight='20'
   :maxHeight='50'
-  :w='100'
+  :w='200'
   :h='50'
   :x='elementData.x'
   :y='elementData.y'
   :parent="'.game-field'"
   @activated='onActivated'
   @dragstop='onDragstop'
-)
-  | {{ elementData.name }}
+) {{ elementData.name }}
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import { ifGameIdUniq } from '@/js/game/check'
+import * as shortid from 'shortid'
 
 export default {
-  name: 'elementsList',
   props: {
     elementData: Object
   },
@@ -37,31 +35,20 @@ export default {
 
       openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement',
-
-      openedCategories: 'game/openedCategories',
-
-      error: 'game/error'
+      selectedElement: 'game/selectedElement'
     })
   },
   methods: {
     ...mapActions({
-      setGameFieldSize: 'game/setGameFieldSize',
-
-      setOpenedElements: 'game/setOpenedElements',
       addOpenedElement: 'game/addOpenedElement',
       removeOpenedElement: 'game/removeOpenedElement',
 
-      setActiveElements: 'game/setActiveElements',
       addActiveElement: 'game/addActiveElement',
-      removeActiveElement: 'game/removeActiveElement',
-      removeAllActiveElements: 'game/removeAllActiveElements',
 
       setSelectedElement: 'game/setSelectedElement',
       setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
       removeSelectedElement: 'game/removeSelectedElement',
 
-      setOpenedCategories: 'game/setOpenedCategories',
       updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
     }),
 
@@ -74,32 +61,33 @@ export default {
     onDragstop (x, y) {
       this.setSelectedElementCoordinates({ x, y })
 
-      if ((x > 0 && y > 0) && (x < this.gameFieldSize.x - this.elementsListFieldSize.x) && ifGameIdUniq(this.selectedElement, this.activeElements)) {
-        this.removeOpenedElement(this.elementData)
-        this.addActiveElement(this.elementData)
-        // this.addOpenedElement(this.elementData)
-      } else {
-
+      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x) {
+        this.addActiveElement({
+          _id: this.elementData._id,
+          name: this.elementData.name,
+          category: this.elementData.name.category,
+          gameId: shortid.generate()
+        })
       }
-      this.updateOpenedElementsPositions()
+
+      this.$nextTick(() => {
+        this.updateOpenedElementsPositions()
+      })
+
+      this.removeSelectedElement()
     }
   }
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .element {
   text-align: center;
   line-height: 50px;
-  background-color: #AAA;
+  background-color: rgb(226, 226, 226);
   width: 100%;
   height: 100%;
   display: inline-block;
   position: absolute;
-  border-radius: 25px;
-}
-
-.selected-element {
-  background-color: color('alchemy-green');
 }
 </style>
