@@ -3,13 +3,13 @@ vue-draggable-resizable(
   class-name-active='selected-element'
   class-name='element'
   :resizable='false'
+  :disable-user-select='true'
   :w='100'
   :h='50'
   :x='elementData.x'
   :y='elementData.y'
   :z='elementData.z'
   :parent='".active-elements"'
-  :disable-user-select='true'
   :onDragStart='onDragStart'
   @activated='onActivated'
   @dragstop='onDragstop'
@@ -82,6 +82,10 @@ export default {
         }
       }
 
+      if ((this.selectedElement.x >= 0 && this.selectedElement.x <= 50) && (this.selectedElement.y >= 0 && this.selectedElement.y <= 50)) {
+        this.removeActiveElement(this.selectedElement.gameId)
+      }
+
       this.removeSelectedElement()
     }
   }
@@ -98,6 +102,7 @@ export default {
   display: inline-block;
   position: absolute;
   border-radius: 25px;
+  user-select: none;
 }
 
 .selected-element {
