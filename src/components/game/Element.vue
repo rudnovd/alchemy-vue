@@ -29,12 +29,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      gameFieldSize: 'game/gameFieldSize',
-
       activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement',
-
-      openedCategories: 'game/openedCategories'
+      selectedElement: 'game/selectedElement'
     })
   },
   methods: {
@@ -47,27 +43,32 @@ export default {
       removeSelectedElement: 'game/removeSelectedElement'
     }),
 
+    // Called whenever the component gets clicked, in order to show handles
     onActivated () {
       this.setSelectedElement(this.elementData)
     },
+
+    // Called whenever the user clicks anywhere outside the component, in order to deactivate it
     onDeactivated () {
       this.removeSelectedElement()
     },
 
+    // Called when dragging starts (element is clicked or touched)
     onDragStart () {
       this.setSelectedElement(this.elementData)
+      this.setSelectedElementCoordinates({ x: this.elementData.x, y: this.elementData.y, z: 101 })
     },
+
+    // Called whenever the component stops getting dragged
     onDragstop (x, y) {
       if (!this.selectedElement) {
         return
       }
 
-      this.setSelectedElementCoordinates({ x, y })
-
-      let newElement = null
+      this.setSelectedElementCoordinates({ x, y, z: 100 })
 
       const activeElements = this.activeElements.length
-
+      let newElement = null
       for (let i = 0; i < activeElements; i++) {
         newElement = game.onDropCombine(this.selectedElement, this.activeElements[i])
 

@@ -34,7 +34,6 @@ export default {
     commit('SET_SELECTED_ELEMENT', element)
   },
   setSelectedElementCoordinates ({ commit }, { x, y, z }) {
-    z = 101
     commit('SET_SELECTED_ELEMENT_COORDINATES', { x, y, z })
   },
   removeSelectedElement ({ commit }) {
