@@ -14,6 +14,7 @@ vue-draggable-resizable(
   :x='elementData.x'
   :y='elementData.y'
   :parent="'.game-field'"
+  :onDragStart='onDragStart'
   @activated='onActivated'
   @dragstop='onDragstop'
 ) {{ elementData.name }}
@@ -23,6 +24,8 @@ vue-draggable-resizable(
 import { mapGetters, mapActions } from 'vuex'
 
 import * as shortid from 'shortid'
+
+import * as game from '@/js/game/game'
 
 export default {
   props: {
@@ -40,10 +43,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      addOpenedElement: 'game/addOpenedElement',
-      removeOpenedElement: 'game/removeOpenedElement',
-
       addActiveElement: 'game/addActiveElement',
+      removeActiveElement: 'game/removeActiveElement',
 
       setSelectedElement: 'game/setSelectedElement',
       setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
@@ -57,24 +58,54 @@ export default {
       this.setSelectedElement(this.elementData)
     },
 
+    // Called whenever the user clicks anywhere outside the component, in order to deactivate it
+    onDeactivated () {
+      this.removeSelectedElement()
+    },
+
+    // Called when dragging starts (element is clicked or touched)
+    onDragStart () {
+      this.setSelectedElement(this.elementData)
+      this.setSelectedElementCoordinates({ x: this.elementData.x, y: this.elementData.y, z: 101 })
+    },
+
     // Called whenever the component stops getting dragged
     onDragstop (x, y) {
       this.setSelectedElementCoordinates({ x, y })
 
       if (x < this.gameFieldSize.x - this.elementsListFieldSize.x) {
-        this.addActiveElement({
-          _id: this.elementData._id,
-          name: this.elementData.name,
-          category: this.elementData.name.category,
-          gameId: shortid.generate()
-        })
+        const activeElements = this.activeElements.length
+        let newElement = null
+        for (let i = 0; i < activeElements; i++) {
+          newElement = game.onDropCombine(this.selectedElement, this.activeElements[i])
+
+          if (newElement) {
+            this.removeActiveElement(this.selectedElement.gameId)
+            this.removeActiveElement(this.activeElements[i].gameId)
+
+            this.addActiveElement(newElement)
+
+            break
+          }
+        }
+
+        if (!newElement) {
+          this.addActiveElement({
+            _id: this.elementData._id,
+            name: this.elementData.name,
+            category: this.elementData.name.category,
+            x: x,
+            y: y,
+            gameId: shortid.generate()
+          })
+        }
       }
+
+      this.removeSelectedElement()
 
       this.$nextTick(() => {
         this.updateOpenedElementsPositions()
       })
-
-      this.removeSelectedElement()
     }
   }
 }
@@ -89,5 +120,6 @@ export default {
   height: 100%;
   display: inline-block;
   position: absolute;
+  user-select: none;
 }
 </style>
