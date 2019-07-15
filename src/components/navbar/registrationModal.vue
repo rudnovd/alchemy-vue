@@ -1,56 +1,72 @@
 <template lang='pug'>
 b-modal(
-  id='registrationModal'
-  v-model='registrationModalShown'
+  v-model='showModal'
   size='md'
   no-close-on-backdrop=true
   hide-header=true
   hide-footer=true
   centered=true
 )
+  b-row(class='ml-3 mr-3')
+    //- Sign up text
+    b-col(class='mt-4' cols='8')
+      h4 Sign up
 
-  //- Modal content
-  b-row(class='justify-content-md-center' v-if='registrationModalShown')
+    //- Close button
+    b-col(class='ml-auto text-right' cols='2')
+      b-button(
+        class='close-button'
+        size='sm'
+        variant='link'
+        @click='showModal = false'
+      )
+        font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
-    b-col(cols='10')
-      p(class='text-right')
-        b-button(class='close-button' size='sm' variant='link' @click='registrationModalShown = false')
-          font-awesome-icon(class='c-pointer' icon='times')
-
-      h4
-        | Sign up
-
-      //- Input username
-      b-form-group(class='mt-4' label='Username' label-for='username')
-        b-form-input(id='username' required type='text' v-model='username')
-
-      //- Input username
-      b-form-group(class='mt-4' label='Email' label-for='email')
+    //- Input username
+    b-col(cols='12')
+      b-form-group(class='mt-3' label='Username' label-for='username')
         b-form-input(
-          id='email'
           required
+          id='username'
+          type='text'
+          v-model='username'
+          v-model.trim.lazy='$v.username.$model'
+          :class="{ 'form-error': $v.username.$error, 'form-success': !$v.username.$error && this.username}"
+        )
+
+    //- Input email
+    b-col(cols='12')
+      b-form-group(class='mt-2' label='Email' label-for='email')
+        b-form-input(
+          required
+          id='email'
           type='text'
           v-model='email'
           v-model.trim.lazy='$v.email.$model'
-          :class="{ 'form-group--error': $v.email.$error, 'form-group--success': $v.email.email && this.email}"
+          :class="{ 'form-error': $v.email.$error, 'form-success': !$v.email.$error && this.email}"
         )
 
-      //- Input password
-      b-form-group(class='mt-4' label='Password' label-for='password')
+    //- Input password
+    b-col(cols='12')
+      b-form-group(class='mt-2' label='Password' label-for='password')
         b-form-input(
-          id='password'
           required
+          id='password'
           type='password'
           v-model='password'
           v-model.trim.lazy='$v.password.$model'
-          :class="{ 'form-group--error': $v.password.$error, 'form-group--success': !$v.password.$error && this.password}"
+          :class="{ 'form-error': $v.password.$error, 'form-success': !$v.password.$error && this.password}"
         )
+        p(class='error' v-show='$v.password.$error') password must contain at least 4 characters
 
-      b-btn(class='mt-4 mb-3' block variant='success' @click='registration()')
-        | Sign up
-
-      b-alert(v-if='registrationError' show variant='danger')
-        | {{ registrationError }}
+    //- Send registration
+    b-col(cols='12')
+      b-btn(
+        class='mt-2 mb-3'
+        block
+        variant='success'
+        @click='registration'
+      ) Sign up
 </template>
 
 <script>
@@ -61,17 +77,14 @@ import { postAccount } from '@/js/api/account'
 import { required, email, minLength } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'registrationModal',
   mounted () {
     this.$root.$on('registrationModalShow', () => {
-      this.registrationModalShown = true
+      this.showModal = true
     })
   },
   data () {
     return {
-      registrationModalShown: false,
-
-      registrationError: null,
+      showModal: false,
 
       email: null,
       username: null,
@@ -83,15 +96,20 @@ export default {
       setUser: 'user/setUser'
     }),
     validation () {
-      if (!this.$v.email.$error && this.email && !this.$v.password.$error && this.password) {
-        return true
+      if (!this.username || !this.email || !this.password) {
+        return false
       }
+
+      if (this.$v.username.$error || this.$v.email.$error || this.$v.password.$error) {
+        return false
+      }
+
+      return true
     },
     registration () {
       if (this.validation() === true) {
         postAccount(this.email, this.username, this.password).then(response => {
           if (response.status === 200) {
-            console.log('registration success')
             this.$router.push({ path: '/game' })
           }
         })
@@ -103,6 +121,9 @@ export default {
       required,
       email
     },
+    username: {
+      required
+    },
     password: {
       required,
       minLength: minLength(4)
@@ -111,18 +132,18 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .error {
   font-size: 0.75rem;
   margin-top: 0.5rem;
-  color: #ff3e20
+  color: rgb(255, 62, 32);
 }
 
-.form-group--error {
-  border-color: #ff3e20
+.form-error {
+  border-color: rgb(255, 62, 32);
 }
 
-.form-group--success {
+.form-success {
   border-color: color('alchemy-green');
 }
 </style>
