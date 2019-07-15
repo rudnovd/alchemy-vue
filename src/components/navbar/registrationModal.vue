@@ -23,8 +23,8 @@ b-modal(
         font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
     //- Input username
-    b-col(cols='12')
-      b-form-group(class='mt-3' label='Username' label-for='username')
+    b-col(class='mt-3' cols='12')
+      b-form-group(label='Username' label-for='username')
         b-form-input(
           required
           id='username'
@@ -35,8 +35,8 @@ b-modal(
         )
 
     //- Input email
-    b-col(cols='12')
-      b-form-group(class='mt-2' label='Email' label-for='email')
+    b-col(class='mt-2' cols='12')
+      b-form-group(label='Email' label-for='email')
         b-form-input(
           required
           id='email'
@@ -47,8 +47,8 @@ b-modal(
         )
 
     //- Input password
-    b-col(cols='12')
-      b-form-group(class='mt-2' label='Password' label-for='password')
+    b-col(class='mt-2' cols='12')
+      b-form-group(label='Password' label-for='password')
         b-form-input(
           required
           id='password'
@@ -60,13 +60,9 @@ b-modal(
         p(class='error' v-show='$v.password.$error') password must contain at least 4 characters
 
     //- Send registration
-    b-col(cols='12')
-      b-btn(
-        class='mt-2 mb-3'
-        block
-        variant='success'
-        @click='registration'
-      ) Sign up
+    b-col(class='mt-2 mb-3' cols='12')
+      b-btn(block variant='success' @click='registration')
+        | Sign up
 </template>
 
 <script>

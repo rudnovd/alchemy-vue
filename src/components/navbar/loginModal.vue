@@ -1,61 +1,71 @@
 <template lang='pug'>
 b-modal(
-  id='loginModal'
-  v-model='loginModalShown'
+  v-model='showModal'
   size='md'
   no-close-on-backdrop=true
   hide-header=true
   hide-footer=true
   centered=true
 )
+  b-row(class='ml-3 mr-3')
+    //- Sign in text
+    b-col(class='mt-4' cols='8')
+      h4 Sign in
 
-  //- Modal content
-  b-row(class='justify-content-md-center' v-if='loginModalShown')
+    //- Close button
+    b-col(class='ml-auto text-right' cols='2')
+      b-button(
+        class='close-button'
+        size='sm'
+        variant='link'
+        @click='showModal = false'
+      )
+        font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
-    b-col(cols='10')
-      p(class='text-right')
-        b-button(class='close-button' size='sm' variant='link' @click='loginModalShown = false')
-          font-awesome-icon(icon='times')
-
-      h4
-        | Sign in
-
-      //- Input username or email
-      b-form-group(class='mt-4' label='Login' label-for='usernameOrEmail')
+    //- Input username or email
+    b-col(class='mt-2' cols='12')
+      b-form-group(label='Email or username' label-for='usernameOrEmail')
         b-form-input(
-          id='usernameOrEmail'
           required
+          id='usernameOrEmail'
           type='text'
           v-model='usernameOrEmail'
           :autocomplete='autocomplete'
         )
 
-      //- Input password
-      b-form-group(class='mt-4' label='Password' label-for='password')
+    //- Input password
+    b-col(class='mt-2' cols='12')
+      b-form-group(label='Password' label-for='password')
         b-form-input(
-          id='password'
           required
+          id='password'
           type='password'
           v-model='password'
           :autocomplete='autocomplete'
         )
 
-      //- Remember login checkbox
+    //- Remember login checkbox
+    b-col(cols='12')
       b-form-checkbox(
         v-model='rememberLogin'
         name='remember-login-checkbox'
         unchecked-value=false
       ) Remember me
 
-      p(class='text-center mt-4')
+    //- Reset password
+    b-col(class='mt-3' cols='12')
+      p(class='text-center text-muted')
         u(class='c-pointer' @click='resetPasswordModalShow()')
           | Don't remember your password?
 
-      b-btn(class='mt-4 mb-3' block variant='success' @click='login(usernameOrEmail, password)')
+    //- Sign in button
+    b-col(cols='12' class='mt-2 mb-3')
+      b-btn(block variant='success' @click='login')
         | Sign in
 
-      b-alert(v-if='loginError' show variant='danger')
-        | {{ loginError }}
+    //- Error
+    b-col(cols='12' v-if='error')
+      b-alert(show variant="danger") {{ error }}
 </template>
 
 <script>
@@ -64,17 +74,10 @@ import { mapGetters, mapActions } from 'vuex'
 import { postLogin } from '@/js/api/authentication'
 
 export default {
-  name: 'loginModal',
-  mounted () {
-    this.$root.$on('loginModalShow', () => {
-      this.loginModalShown = true
-    })
-  },
   data () {
     return {
-      loginModalShown: false,
-
-      loginError: null,
+      showModal: false,
+      error: null,
 
       usernameOrEmail: null,
       password: null,
@@ -93,33 +96,38 @@ export default {
       }
     }
   },
+  mounted () {
+    this.$root.$on('loginModalShow', () => {
+      this.showModal = true
+    })
+  },
   methods: {
     ...mapActions({
       setUser: 'user/setUser'
     }),
     validation () {
-      if (this.usernameOrEmail && this.password) {
-        return true
+      if (!this.usernameOrEmail || !this.password) {
+        return false
       }
+
+      return true
     },
     login () {
       if (this.validation() === true) {
-        postLogin(this.usernameOrEmail, this.password, this.rememberLogin)
-          .then(response => {
-            if (response.status === 200) {
-              this.loginModalShown = false
-              this.setUser(response.data.user)
-              this.$router.push({ path: '/game' })
-            }
-          })
-          .catch(error => {
-            this.loginError = error
-          })
+        postLogin(this.usernameOrEmail, this.password, this.rememberLogin).then(response => {
+          if (response.status === 200) {
+            this.showModal = false
+            this.setUser(response.data.user)
+            this.$router.push({ path: '/game' })
+          } else {
+            this.error = response.data.error
+          }
+        })
       }
     },
     resetPasswordModalShow () {
       this.$root.$emit('resetPasswordModalShow')
-      this.loginModalShown = false
+      this.showModal = false
     }
   }
 }

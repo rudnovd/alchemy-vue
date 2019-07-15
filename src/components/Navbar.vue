@@ -2,12 +2,23 @@
   b-container
     b-navbar-brand(to='/') Home
 
-    b-navbar-toggle.ml-auto(target='nav_collapse')
+    b-navbar-toggle(class='ml-auto' target='nav_collapse')
 
-    b-collapse#nav_collapse(is-nav)
-      b-navbar-nav.ml-auto
-        b-btn(class='text-white' v-if='!isLoggedIn' variant='link' @click='loginModalShow') Sign in
-        b-btn(class='text-white' v-if='!isLoggedIn' variant='link' @click='registrationModalShow') Sign up
+    b-collapse(id='#nav_collapse' is-nav)
+      b-navbar-nav(class='ml-auto')
+        b-btn(
+          class='text-white'
+          v-if='!isLoggedIn'
+          variant='link'
+          @click='loginModalShow'
+        ) Sign in
+
+        b-btn(
+          class='text-white'
+          v-if='!isLoggedIn'
+          variant='link'
+          @click='registrationModalShow'
+        ) Sign up
 
         b-nav-item-dropdown(v-if='isLoggedIn' :text='username' right)
           b-dropdown-item(to='/game') Game
@@ -23,34 +34,27 @@
           b-dropdown-item(v-if='!isLoggedIn' @click='loginModalShow()') Log in
           b-dropdown-item(v-if='isLoggedIn' @click='logout()') Logout
 
-    login-modal
-    registration-modal
-    reset-password-modal
-
+    LoginModal
+    RegistrationModal
+    ResetPasswordModal
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import loginModal from '@/components/navbar/loginModal.vue'
+import LoginModal from '@/components/navbar/LoginModal.vue'
 
-import registrationModal from '@/components/navbar/registrationModal.vue'
+import RegistrationModal from '@/components/navbar/RegistrationModal.vue'
 
-import resetPasswordModal from '@/components/navbar/resetPasswordModal.vue'
+import ResetPasswordModal from '@/components/navbar/ResetPasswordModal.vue'
 
 import { getLogout } from '@/js/api/authentication'
 
 export default {
-  name: 'Navbar',
   components: {
-    'login-modal': loginModal,
-    'registration-modal': registrationModal,
-    'reset-password-modal': resetPasswordModal
-  },
-  data () {
-    return {
-
-    }
+    LoginModal,
+    RegistrationModal,
+    ResetPasswordModal
   },
   computed: {
     ...mapGetters({

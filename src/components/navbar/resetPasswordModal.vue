@@ -1,40 +1,63 @@
 <template lang='pug'>
 b-modal(
-  id='resetPasswordModal'
-  v-model='resetPasswordModalShown'
+  v-model='showModal'
   size='md'
   no-close-on-backdrop=true
   hide-header=true
   hide-footer=true
   centered=true
 )
+  b-row(class='ml-3 mr-3' v-if='!resetSuccess')
+    //- Reset password text
+    b-col(class='mt-4' cols='8')
+      h4 Reset password
 
-  //- Modal content
-  b-row(class='justify-content-md-center' v-if='resetPasswordModalShown')
+    //- Close button
+    b-col(class='ml-auto text-right' cols='2')
+      b-button(
+        class='close-button'
+        size='sm'
+        variant='link'
+        @click='showModal = false'
+      )
+        font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
-    b-col(cols='10' v-if='!resetPasswordSuccess')
-      p(class='text-right')
-        b-button(class='close-button' size='sm' variant='link' @click='resetPasswordModalShown = false')
-          font-awesome-icon(class='c-pointer' icon='times')
+    //- Input email
+    b-col(class='mt-2' cols='12')
+      b-form-group(label='Email' label-for='email')
+        b-form-input(
+          required
+          id='email'
+          type='text'
+          v-model='email'
+          v-model.trim.lazy='$v.email.$model'
+          :class="{ 'form-error': $v.email.$error, 'form-success': !$v.email.$error && this.email}"
+        )
 
-      h4
+    //- Send reset password
+    b-col(class='mt-2 mb-3' cols='12')
+      b-btn(block variant='success' @click='resetPassword')
         | Reset password
 
-      //- Input username or email
-      b-form-group(class='mt-4' label='Email' label-for='email')
-        b-form-input(id='email' required type='text' v-model='email' v-model.trim.lazy='$v.email.$model')
+    //- Error
+    b-col(class='mt-2' cols='12')
+      b-alert(v-if='error' show variant='danger')
+        | {{ error }}
 
-      b-btn(class='mt-4 mb-3' block variant='success' @click='resetPassword()')
-        | Reset
+  //- Success message
+  b-row(class='ml-3 mr-3' v-if='resetSuccess')
+    //- Close button
+    b-col(class='ml-auto text-right' cols='2')
+      b-button(
+        class='close-button'
+        size='sm'
+        variant='link'
+        @click='showModal = false; resetSuccess = false'
+      )
+        font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
-      b-alert(v-if='resetPasswordError' show variant='danger')
-        | {{ resetPasswordError }}
-
-    b-col(cols='10' v-if='resetPasswordSuccess')
+    b-col(class='mt-4' cols='12')
       p Check your email
-
-      b-alert(v-if='resetPasswordError' show variant='danger')
-        | {{ resetPasswordError }}
 </template>
 
 <script>
@@ -43,35 +66,39 @@ import { putResetPassword } from '@/js/api/account'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'resetPasswordModal',
   mounted () {
     this.$root.$on('resetPasswordModalShow', () => {
-      this.resetPasswordModalShown = true
+      this.showModal = true
     })
   },
   data () {
     return {
-      resetPasswordModalShown: false,
+      showModal: false,
+      error: null,
 
-      resetPasswordSuccess: null,
-      resetPasswordError: null,
-
-      email: null
+      email: null,
+      resetSuccess: null
     }
   },
   methods: {
     validation () {
-      if (this.email && !this.$v.email.$error) {
-        return true
+      if (!this.email) {
+        return false
       }
+
+      if (this.$v.email.$error) {
+        return false
+      }
+
+      return true
     },
     resetPassword () {
       if (this.validation() === true) {
         putResetPassword(this.email).then(response => {
           if (response.status === 200) {
-            this.resetPasswordSuccess = true
+            this.resetSuccess = true
           } else if (response.status === 404) {
-            this.resetPasswordError = 'There is no user registered with that email address'
+            this.error = 'There is no user registered with that email address'
           }
         })
       }
@@ -85,3 +112,19 @@ export default {
   }
 }
 </script>
+
+<style lang='scss' scoped>
+.error {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  color: rgb(255, 62, 32);
+}
+
+.form-error {
+  border-color: rgb(255, 62, 32);
+}
+
+.form-success {
+  border-color: color('alchemy-green');
+}
+</style>
