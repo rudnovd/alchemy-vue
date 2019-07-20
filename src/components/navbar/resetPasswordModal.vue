@@ -1,11 +1,11 @@
 <template lang='pug'>
 b-modal(
   v-model='showModal'
+  :title='textStatus'
   size='md'
-  no-close-on-backdrop=true
-  hide-header=true
   hide-footer=true
   centered=true
+  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3' v-if='!resetSuccess')
     //- Reset password text
@@ -75,6 +75,7 @@ export default {
     return {
       showModal: false,
       error: null,
+      textStatus: '',
 
       email: null,
       resetSuccess: null
@@ -97,11 +98,20 @@ export default {
         putResetPassword(this.email).then(response => {
           if (response.status === 200) {
             this.resetSuccess = true
+            this.textStatus = 'Email has been sent'
           } else if (response.status === 404) {
-            this.error = 'There is no user registered with that email address'
+            this.textStatus = 'Error'
+            this.error = 'There is no user registered with that email address.'
+          } else {
+            this.textStatus = 'Error'
+            this.error = 'Try later.'
           }
         })
       }
+    },
+    clearInputs () {
+      this.email = null
+      this.resetSuccess = null
     }
   },
   validations: {

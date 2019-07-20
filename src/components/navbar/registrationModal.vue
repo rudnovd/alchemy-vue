@@ -2,10 +2,10 @@
 b-modal(
   v-model='showModal'
   size='md'
-  no-close-on-backdrop=true
   hide-header=true
   hide-footer=true
   centered=true
+  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3')
     //- Sign up text
@@ -106,10 +106,16 @@ export default {
       if (this.validation() === true) {
         postAccount(this.email, this.username, this.password).then(response => {
           if (response.status === 200) {
+            this.showModal = false
             this.$router.push({ path: '/game' })
           }
         })
       }
+    },
+    clearInputs () {
+      this.email = null
+      this.username = null
+      this.password = null
     }
   },
   validations: {

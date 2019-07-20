@@ -2,10 +2,10 @@
 b-modal(
   v-model='showModal'
   size='md'
-  no-close-on-backdrop=true
   hide-header=true
   hide-footer=true
   centered=true
+  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3')
     //- Sign in text
@@ -65,7 +65,7 @@ b-modal(
 
     //- Error
     b-col(cols='12' v-if='error')
-      b-alert(show variant="danger") {{ error }}
+      b-alert(show variant='danger') {{ error }}
 </template>
 
 <script>
@@ -124,6 +124,11 @@ export default {
           }
         })
       }
+    },
+    clearInputs () {
+      this.usernameOrEmail = null
+      this.password = null
+      this.rememberLogin = false
     },
     resetPasswordModalShow () {
       this.$root.$emit('resetPasswordModalShow')
