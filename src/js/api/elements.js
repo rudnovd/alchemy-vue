@@ -25,15 +25,16 @@ export async function postElement (name, category) {
   }
 }
 
-export async function putElement (elementId, newName, newCategory) {
+export async function putElement (elementId, name, description, category) {
   try {
     const response = await axios({
       method: 'put',
       url: '/api/element/update',
       data: {
         elementId,
-        newName,
-        newCategory
+        name,
+        description,
+        category
       }
     })
     return response
