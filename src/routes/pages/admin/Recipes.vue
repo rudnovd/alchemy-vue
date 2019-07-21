@@ -1,126 +1,82 @@
 <template lang='pug'>
   b-container
+    Table(
+      :data='recipes'
+      :fields='fields'
+      :totalRows='totalRows'
+      :loading='loading.recipes'
+      :error='errors.recipes'
+      target='recipe'
+      @commonButtonClick='beforeCreateRecipe'
+      @editButtonClick='beforeEditRecipe'
+      @deleteButtonClick='beforeDeleteRecipe'
+    )
 
-    //- Search and records per page row
-    b-row.mb-3
-
-      //- Search input
-      b-col(cols='4'): b-input-group
-        b-form-input(v-model='data.table.search' placeholder='Search element')
-        b-input-group-append(): b-btn(:disabled='!data.table.search' @click='data.table.search = null') Clear
-
-      //- Open 'create recipe' modal button
-      b-col(cols='4' sm='3' md='2' lg='2' xl='2'): b-btn.mb-3(variant='success' @click='createRecipeModalShow()') Create recipe
-
-      //- Select records per page
-      b-col(cols='4' sm='3' md='2' lg='2' xl='2' offset-md='4'): b-form-select(:options='data.table.pagination.pageOptions' v-model='data.table.pagination.perPage')
-
-    //- Recipes row
-    b-row(): b-col(cols='12')
-
-      //- Loading section
-      loading-spinner(size='large' v-if='data.table.loading')
-
-      //- Error section
-      b-row.justify-content-md-center(v-if='data.table.error')
-        b-col.error(cols='12' md='auto')
-          b-alert(show variant='danger')
-            | {{ data.table.error }}
-
-      //- Table with data
-      b-table(
-        v-if='!data.table.loading && !data.table.error'
-        show-empty
-        responsive
-        hover
-        flex
-        fixed=false
-        :items='data.recipes'
-        :fields='data.table.fields'
-        :current-page='data.table.pagination.currentPage'
-        :per-page='data.table.pagination.perPage'
-        :filter='data.table.search'
-      )
-        //- Recipe row
-        template(slot='recipe' slot-scope='row')
-          a(v-for='(value, index) in row.item.recipe')
-            |  {{ value.name }}
-
-        //- Actions row
-        template(slot='action' slot-scope='actionRow')
-          b-button-group(size='sm')
-
-            //- Edit recipe button
-            b-btn.mr-1(variant='warning' size='sm' @click='editRecipeModalShow(actionRow)')
-              font-awesome-icon(icon='edit')
-
-            //- Delete recipe button
-            b-btn(variant='danger' size='sm' @click='deleteRecipeModalShow(actionRow)')
-              font-awesome-icon(icon='trash')
-
-      //- Pagination for table
-      b-pagination(
-        align='center'
-        :total-rows='data.table.totalRows'
-        v-model='data.table.pagination.currentPage'
-        :per-page='data.table.pagination.perPage'
-      )
-
-    //- Create recipe modal
     b-modal(
+      v-model='modals.create'
       title='Create new recipe'
-      ref='createRecipeModal'
       size='xl'
       hide-header-close=true
       no-close-on-backdrop=true
       no-close-on-esc=true
       ok-title='Create'
       ok-variant='success'
+      :ok-disabled='loading.createRecipe'
+      :cancel-disabled='loading.createRecipe'
       cancel-variant='danger'
-      @show='createRecipeModalShow()'
-      @ok='createRecipe()'
-      @cancel='createRecipeModalHide()'
+      @ok='createRecipe'
+      @hidden='afterCreateRecipe'
     )
+      b-row
+        //- Select result, first, second elements
+        b-col(cols='4')
+          b-row
+            b-col(cols='12')
+              b-form-group(label='Result element:')
+                multiselect(
+                  v-model='create.resultElement',
+                  placeholder='Result element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
+                )
 
-      //- Loading section
-      loading-spinner(size='large' v-if='data.create.loading')
+          b-row(class='mt-2')
+            b-col(cols='12')
+              b-form-group(label='First element:')
+                multiselect(
+                  v-model='create.firstElement',
+                  placeholder='First element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
+                )
 
-      //- Error section
-      b-row.justify-content-md-center(v-if='data.create.error')
-        b-col.error(cols='12' md='auto')
-          b-alert(show variant='danger')
-            | {{ data.create.error }}
-
-      //- Modal content
-      b-row(v-if='!data.create.loading && !data.create.error')
-
-        b-col(md='4')
-
-          //- Select result element
-          b-row(): b-col(md='12')
-            b-form-group(label='Result element' label-for='createRecipeResult')
-              v-select#createRecipeResult(
-                v-model='data.create.result'
-                :options='data.elements'
-                label='name'
-                clearSearchOnSelect=false
-              )
-
-          //- Select recipe elements
-          template(v-if='data.create.dropdownsCount' v-cloak)
-            b-row.mt-2(v-for='(row, index) in data.create.dropdownsCount' :key='row'): b-col(md='12')
-              b-form-group(label-for='createRecipeElements')
-                | Element {{ index + 1}}
-                v-select#createRecipeElements.mt-1(
-                  v-model='data.create.recipe[index]'
-                  :options='data.elements'
-                  label='name'
-                  clearSearchOnSelect=false
-                  @input='createRecipeCheckNewDropdown(data.create.recipe[index], index)'
+          b-row(class='mt-2')
+            b-col(cols='12')
+              b-form-group(label='Second element:')
+                multiselect(
+                  v-model='create.secondElement',
+                  placeholder='Second element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
                 )
 
         //- All elements list
-        b-col(md='8')
+        b-col(cols='8')
           b-card(no-body)
             b-tabs(
               card
@@ -129,71 +85,87 @@
               small
               nav-wrapper-class='w-25'
             )
-              b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
-                b-btn.mr-2.mb-2(
+              b-tab(v-for='category in categories' :title='category.name' :key='category._id')
+                b-btn(
+                  class='mr-2 mb-2'
                   size='sm'
                   variant='outline-success'
-                  v-for='element in data.elements'
+                  v-for='element in elements'
                   :key='element._id'
                   v-if='element.category === category.name'
-                  @click='data.create.recipe.push(element)'
+                  @click='pushElement(element)'
                 )
                   | {{ element.name }}
 
+        b-col(cols='12' v-if='errors.createRecipe')
+          b-alert(show variant='danger')
+            | {{ errors.createRecipe }}
+
     //- Edit recipe modal
     b-modal(
+      v-model='modals.edit'
       title='Edit recipe'
-      ref='editRecipeModal'
       size='xl'
       hide-header-close=true
       no-close-on-backdrop=true
       no-close-on-esc=true
       ok-title='Save'
       ok-variant='success'
+      :ok-disabled='loading.editRecipe'
+      :cancel-disabled='loading.editRecipe'
       cancel-variant='danger'
-      @ok='editRecipe()'
-      @cancel='editRecipeModalHide()'
+      @ok='editRecipe'
+      @hidden='afterEditRecipe'
     )
+      b-row
+        b-col(cols='4')
+          b-row
+            b-col(cols='12')
+              b-form-group(label='Result element:')
+                multiselect(
+                  v-model='edit.resultElement',
+                  placeholder='Result element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
+                )
 
-      //- Loading section
-      loading-spinner(size='large' v-if='data.edit.loading')
+          b-row(class='mt-2')
+            b-col(cols='12')
+              b-form-group(label='First element:')
+                multiselect(
+                  v-model='edit.firstElement',
+                  placeholder='First element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
+                )
 
-      //- Error section
-      b-row.justify-content-md-center(v-if='data.edit.error')
-        b-col.error(cols='12' md='auto')
-          b-alert(show variant='danger')
-            | {{ data.edit.error }}
-
-      //- Modal content
-      b-row(v-if='!data.edit.loading && !data.edit.error')
-
-        b-col(md='4')
-
-          //- Select result element
-          b-row(): b-col(md='12')
-            b-form-group(label='Result element' label-for='editRecipeResult')
-              v-select#editRecipeResult(
-                v-model='data.edit.result'
-                :options='data.elements'
-                label='name'
-                clearSearchOnSelect=false
-              )
-
-          //- Select recipe elements
-          template(v-if='data.edit.dropdownsCount' v-cloak)
-            b-row.mt-2(v-for='(row, index) in data.edit.dropdownsCount' :key='row'): b-col(md='12')
-              b-form-group(label-for='editRecipeElements')
-                | Element {{ index + 1}}
-                v-select#editRecipeElements.mt-1(
-                  v-model='data.edit.recipe[index]'
-                  :options='data.elements'
-                  label='name'
-                  clearSearchOnSelect=false
-                  @input='editRecipeCheckNewDropdown(data.edit.recipe[index], index)'
+          b-row(class='mt-2')
+            b-col(cols='12')
+              b-form-group(label='Second element:')
+                multiselect(
+                  v-model='edit.secondElement',
+                  placeholder='Second element',
+                  label='name',
+                  deselectLabel='',
+                  :options='elements',
+                  :searchable='true',
+                  :allow-empty='false',
+                  :clear-on-select='false',
+                  :maxHeight='280'
                 )
 
         //- All elements list
-        b-col(md='8')
+        b-col(cols='8')
           b-card(no-body)
             b-tabs(
               card
@@ -202,38 +174,50 @@
               small
               nav-wrapper-class='w-25'
             )
-              b-tab(v-for='category in data.categories' :title='category.name' :key='category._id')
-                b-btn.mr-2.mb-2(
+              b-tab(v-for='category in categories' :title='category.name' :key='category._id' @click='showRecipe = []')
+                b-btn(
+                  class='mr-2 mb-2'
                   size='sm'
                   variant='outline-success'
-                  v-for='element in data.elements'
+                  v-for='element in elements'
                   :key='element._id'
                   v-if='element.category === category.name'
-                  @click='data.edit.recipe.push(element)'
-                ) {{ element.name }}
+                  @click='showElementRecipe(element)'
+                )
+                  | {{ element.name }}
 
-    //- Delete recipe modal
+              b-col(cols='12' v-if='showRecipe.length > 0')
+                p(class='text-muted')
+                  | Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
+
+          b-col(cols='12' v-if='errors.createRecipe')
+            b-alert(show variant='danger')
+              | {{ errors.createRecipe }}
+
+    //- Delete element modal
     b-modal(
+      v-model='modals.delete'
       size='md'
-      ref='deleteRecipeModal'
       hide-header-close=true
       no-close-on-backdrop=true
       no-close-on-esc=true
       ok-title='Delete'
       ok-variant='success'
+      :ok-disabled='loading.deleteRecipe'
+      :cancel-disabled='loading.deleteRecipe'
       cancel-variant='danger'
       hide-header=true
-      @ok='deleteRecipe()'
-      @cancel='deleteRecipeModalHide()'
+      @ok='deleteRecipe'
+      @hidden='afterDeleteRecipe'
     )
-
-      //- Modal content
-      b-row.justify-content-md-center
-
-        b-col(cols='12' md='auto')
-          h4 Delete recipe
-            strong.text-danger  {{ data.delete.name }}
-            |?
+      b-row(class='text-center')
+        b-col(cols='12' v-if='!errors.deleteElement')
+          h4 Delete recipe of
+            strong(class='text-danger')  {{ this.delete.name }}
+            | ?
+        b-col(cols='12' v-if='errors.deleteElement')
+          b-alert(show variant='danger')
+            | {{ errors.deleteElement }}
 </template>
 
 <script>
@@ -244,9 +228,15 @@ import { getCategories } from '@/js/api/categories'
 
 import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
 
+import Table from '@/components/admin/Table'
+
 export default {
-  name: 'Recipes',
+  components: {
+    Table
+  },
   created () {
+    this.getElements()
+    this.getCategories()
     this.getRecipes()
   },
   watch: {
@@ -255,240 +245,215 @@ export default {
   },
   data () {
     return {
-      data: {
-        elements: [],
-        categories: [],
-        recipes: [],
+      elements: [],
+      categories: [],
+      recipes: [],
 
-        table: {
-          totalRows: 0,
-          loading: false,
-          error: null,
-
-          fields: [
-            {
-              key: 'result.name',
-              label: 'Element',
-              class: 'align-middle text-center',
-              sortable: true
-            },
-            {
-              key: 'recipe',
-              label: 'Recipe',
-              class: 'align-middle text-center',
-              sortable: true
-            },
-            {
-              key: 'action',
-              label: 'Action',
-              class: 'align-middle text-center',
-              sortable: false
-            }
-          ],
-          pagination: {
-            perPage: 10,
-            currentPage: 1,
-            pageOptions: [5, 10, 25, 50]
-          },
-          search: null
+      totalRows: 0,
+      fields: [
+        {
+          key: 'result.name',
+          label: 'Element',
+          class: 'align-middle text-center',
+          sortable: true
         },
-
-        create: {
-          loading: false,
-          error: null,
-
-          dropdownsCount: 2,
-
-          recipe: [],
-          result: null
-
+        {
+          key: 'recipe',
+          label: 'Recipe',
+          class: 'align-middle text-center',
+          sortable: true
         },
-
-        delete: {
-          loading: false,
-          error: null,
-
-          recipeId: null,
-          name: null
-        },
-
-        edit: {
-          loading: false,
-          error: null,
-
-          dropdownsCount: 2,
-
-          recipeId: null,
-          recipe: [],
-          result: null
+        {
+          key: 'action',
+          label: 'Action',
+          class: 'align-middle text-center',
+          sortable: false
         }
+      ],
 
-      }
+      loading: {
+        elements: false,
+        categories: false,
+        recipes: false,
+
+        createRecipe: false,
+        editRecipe: false,
+        deleteRecipe: false
+      },
+
+      errors: {
+        elements: null,
+        categories: null,
+        recipes: null,
+
+        createRecipe: null,
+        editRecipe: null,
+        deleteRecipe: null
+      },
+
+      modals: {
+        create: false,
+        edit: false,
+        delete: false
+      },
+
+      create: {
+        resultElement: null,
+        firstElement: null,
+        secondElement: null
+      },
+
+      delete: {
+        recipeId: null,
+        name: null
+      },
+
+      edit: {
+        firstElement: null,
+        secondElement: null,
+        resultElement: null,
+        recipeId: null
+      },
+
+      showRecipe: []
     }
   },
   methods: {
-    // Get elements, categories, recipes
     getElements () {
-      this.data.table.loading = true
+      this.errors.elements = null
+      this.loading.elements = true
       getElements().then(response => {
-        this.data.table.loading = false
+        this.loading.elements = false
         if (response.status === 200) {
-          this.data.elements = response.data.response
-          this.data.create.error = null
-          this.data.edit.error = null
-        } else {
-          this.data.create.error = response.data
-          this.data.edit.error = response.data
-        }
-      })
-    },
-    getCategories () {
-      getCategories().then(response => {
-        this.data.create.loading = false
-        if (response.status === 200) {
-          this.data.categories = response.data.response
-          this.data.create.error = null
-          this.data.edit.error = null
-        } else {
-          this.data.create.error = response.data
-          this.data.edit.error = response.data
-        }
-      })
-    },
-    getRecipes () {
-      this.data.table.loading = true
-      getRecipes().then(response => {
-        this.data.table.loading = false
-        if (response.status === 200) {
-          this.data.recipes = response.data.response
-          this.data.table.totalRows = this.data.recipes.length // Total rows for pagination
-          this.data.table.error = null
+          this.elements = response.data.response
         } else {
           this.data.table.error = response.data
         }
       })
     },
-
-    // Search
-    onTableSearch (search) {
-      this.data.table.totalRows = search.length
-      this.data.table.pagination.currentPage = 1
-    },
-
-    // Check for new dropdowns in modals
-    createRecipeCheckNewDropdown (data, index) {
-      if (data && index === this.data.create.dropdownsCount - 1) {
-        this.data.create.dropdownsCount++
-      } else if (!data && index !== this.data.create.dropdownsCount - 1) {
-        this.data.create.recipe = this.data.create.recipe.filter(x => x)
-        this.data.create.dropdownsCount--
-      }
-    },
-    editRecipeCheckNewDropdown (data, index) {
-      if (data && index === this.data.edit.dropdownsCount - 1) {
-        this.data.edit.dropdownsCount++
-      } else if (!data && index !== this.data.edit.dropdownsCount - 1) {
-        this.data.edit.recipe = this.data.edit.recipe.filter(x => x)
-        this.data.edit.dropdownsCount--
-      }
-    },
-
-    // Create/edit/delete recipes
-    createRecipe (event) {
-      if (this.data.create.result && this.data.create.recipe) {
-        let recipeArray = []
-        for (let i = 0; i < this.data.create.recipe.length; i++) {
-          recipeArray.push(this.data.create.recipe[i]._id)
-        }
-
-        this.data.create.loading = true
-        postRecipe(recipeArray, this.data.create.result._id).then(response => {
-          this.data.create.loading = false
-          if (response.status === 201) {
-            this.getRecipes()
-            this.createRecipeModalHide()
-            this.data.create.error = null
-          } else {
-            this.data.create.error = response.data
-          }
-        })
-      } else {
-        event.preventDefault()
-      }
-    },
-    editRecipe (event) {
-      if (this.data.edit.recipeId && this.data.edit.result && this.data.edit.recipe) {
-        let recipeArray = []
-        for (let i = 0; i < this.data.edit.recipe.length; i++) {
-          recipeArray.push(this.data.edit.recipe[i]._id)
-        }
-
-        this.data.edit.loading = true
-        putRecipe(recipeArray, this.data.edit.result._id, this.data.edit.recipeId).then(response => {
-          this.data.edit.loading = false
-          if (response.status === 200) {
-            this.getRecipes()
-            this.editRecipeModalHide()
-            this.data.edit.error = null
-          } else {
-            this.data.edit.error = response.data
-          }
-        })
-      } else {
-        event.preventDefault()
-      }
-    },
-    deleteRecipe (event) {
-      this.data.delete.loading = true
-      deleteRecipe(this.data.delete.recipeId).then(response => {
-        this.data.delete.loading = false
+    getCategories () {
+      this.errors.categories = null
+      this.loading.categories = true
+      getCategories().then(response => {
+        this.loading.categories = false
         if (response.status === 200) {
-          this.getRecipes()
-          this.data.delete.error = null
+          this.categories = response.data.response
         } else {
-          this.data.delete.error = response.data
+          this.errors.categories = response.data
+        }
+      })
+    },
+    getRecipes () {
+      this.errors.recipes = null
+      this.loading.recipes = true
+      getRecipes().then(response => {
+        this.loading.recipes = false
+        if (response.status === 200) {
+          this.recipes = response.data.response
+          this.totalRows = response.data.response.length // Total rows for pagination
+        } else {
+          this.errors.recipes = response.data
         }
       })
     },
 
-    // Show modals
-    createRecipeModalShow () {
-      this.$refs.createRecipeModal.show()
-
-      this.getElements()
-      this.getCategories()
+    beforeCreateRecipe () {
+      this.modals.create = true
     },
-    editRecipeModalShow (row) {
-      this.data.edit.recipeId = row.item._id
-      this.data.edit.recipe = row.item.recipe
-      this.data.edit.result = row.item.result
-      this.data.edit.dropdownsCount = row.item.recipe.length
-
-      this.$refs.editRecipeModal.show()
-
-      this.getElements()
-      this.getCategories()
+    createRecipe (event) {
+      event.preventDefault()
+      if (!this.create.resultElement || !this.create.firstElement || !this.create.secondElement) {
+        return
+      }
+      this.loading.createRecipe = true
+      postRecipe([this.create.firstElement._id, this.create.secondElement._id], this.create.resultElement._id).then(response => {
+        this.loading.createRecipe = false
+        if (response.status === 201) {
+          this.modals.create = false
+          this.getRecipes()
+        } else {
+          this.errors.createRecipe = response.data
+        }
+      })
     },
-    deleteRecipeModalShow (row) {
-      this.$refs.deleteRecipeModal.show()
-
-      this.data.delete.recipeId = row.item._id
-      this.data.delete.name = row.item.result.name
+    afterCreateRecipe () {
+      this.modals.create = false
+      this.create.resultElement = null
+      this.create.firstElement = null
+      this.create.secondElement = null
     },
 
-    // Hide modals
-    createRecipeModalHide () {
-      this.$refs.createRecipeModal.hide()
+    beforeEditRecipe (row) {
+      this.modals.edit = true
+      this.edit.firstElement = row.item.recipe[0]
+      this.edit.secondElement = row.item.recipe[1]
+      this.edit.resultElement = row.item.result
+      this.edit.recipeId = row.item.result._id
+    },
+    editRecipe (event) {
+      event.preventDefault()
+      this.loading.editRecipe = true
+      putRecipe([this.edit.firstElement._id, this.edit.secondElement._id], this.edit.resultElement._id, this.edit.recipeId).then(response => {
+        this.loading.editRecipe = false
+        if (response.status === 200) {
+          this.modals.edit = null
+          this.getRecipes()
+        } else {
+          this.errors.editRecipe = response.data
+        }
+      })
+    },
+    afterEditRecipe () {
+      this.modals.edit = false
+      this.edit.firstElement = null
+      this.edit.secondElement = null
+      this.edit.resultElement = null
+      this.edit.recipeId = null
+    },
 
-      this.data.create.recipe = []
-      this.data.create.result = null
-      this.data.create.dropdownsCount = 2
+    beforeDeleteRecipe (row) {
+      this.modals.delete = true
+      this.delete.recipeId = row.item.result._id
+      this.delete.name = row.item.result.name
     },
-    editRecipeModalHide () {
-      this.$refs.editRecipeModal.hide()
+    deleteRecipe (event) {
+      event.preventDefault()
+      this.loading.deleteRecipe = true
+      deleteRecipe(this.delete.recipeId).then(response => {
+        this.loading.deleteRecipe = false
+        if (response.status === 200) {
+          this.modals.delete = false
+          this.getRecipes()
+        } else {
+          this.errors.deleteRecipe = response.data
+        }
+      })
     },
-    deleteRecipeModalHide () {
-      this.$refs.deleteRecipeModal.hide()
+    afterDeleteRecipe () {
+      this.modals.delete = false
+      this.errors.deleteRecipe = null
+      this.delete.recipeId = null
+    },
+
+    pushElement (element) {
+      if (!this.create.resultElement) {
+        this.create.resultElement = element
+      } else if (!this.create.firstElement) {
+        this.create.firstElement = element
+      } else if (!this.create.secondElement) {
+        this.create.secondElement = element
+      }
+    },
+    showElementRecipe (element) {
+      this.showRecipe = []
+      for (let i = 0; i < this.recipes.length; i++) {
+        if (element._id === this.recipes[i].result._id) {
+          this.showRecipe[0] = element
+          this.showRecipe[1] = this.recipes[i].recipe[0]
+          this.showRecipe[2] = this.recipes[i].recipe[1]
+          return
+        }
+      }
     }
   }
 }
