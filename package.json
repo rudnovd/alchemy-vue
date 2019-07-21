@@ -20,8 +20,8 @@
     "shortid": "^2.2.14",
     "vue": "^2.6.10",
     "vue-draggable-resizable": "^2.0.0-rc1",
+    "vue-multiselect": "^2.1.6",
     "vue-router": "^3.0.7",
-    "vue-select": "^3.1.0",
     "vuelidate": "^0.7.4",
     "vuex": "^3.1.1"
   },
