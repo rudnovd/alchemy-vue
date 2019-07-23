@@ -7,7 +7,7 @@ b-col(class='game-field' cols='12')
 
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .game-field {
   position: relative;
   box-shadow: 0 0 5px color('alchemy-light-green');
