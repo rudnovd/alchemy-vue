@@ -50,11 +50,14 @@ export async function putResetPassword (email) {
   }
 }
 
-export async function getAccountElements () {
+export async function getAccountElements (id) {
   try {
     const response = await axios({
       method: 'get',
-      url: '/api/account/elements'
+      url: '/api/account/elements',
+      params: {
+        id
+      }
     })
     return response
   } catch (error) {
