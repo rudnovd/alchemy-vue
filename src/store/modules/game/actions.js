@@ -40,15 +40,13 @@ export default {
     commit('REMOVE_SELECTED_ELEMENT')
   },
 
-  setOpenedCategories ({ commit }, elements) {
-    let openedCategories = []
-    for (let i = 0; i < elements.length; i++) {
-      if (openedCategories.indexOf(elements[i].category) === -1) {
-        openedCategories.push(elements[i].category)
-      }
-    }
-    commit('SET_OPENED_CATEGORIES', openedCategories)
+  setOpenedCategories ({ commit }, categories) {
+    commit('SET_OPENED_CATEGORIES', categories)
   },
+  addOpenedCategory ({ commit }, category) {
+    commit('ADD_OPENED_CATEGORY', category)
+  },
+
   updateOpenedElementsPositions ({ commit }) {
     commit('UPDATE_OPENED_ELEMENTS_POSITIONS')
   },
@@ -68,7 +66,10 @@ export default {
     commit('SET_ELEMENTS_LIST_FIELD_SIZE', { x, y })
   },
 
-  sendError ({ commit }, error) {
-    commit('SEND_ERROR', error)
+  setOpenedRecipes ({ commit }, recipes) {
+    commit('SET_OPENED_RECIPES', recipes)
+  },
+  addOpenedRecipe ({ commit }, recipe) {
+    commit('ADD_OPENED_RECIPE', recipe)
   }
 }

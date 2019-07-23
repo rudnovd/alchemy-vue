@@ -45,6 +45,10 @@ export default {
   SET_OPENED_CATEGORIES (state, categories) {
     state.openedCategories = categories
   },
+  ADD_OPENED_CATEGORIES (state, category) {
+    state.openedCategories.push(category)
+  },
+
   UPDATE_OPENED_ELEMENTS_POSITIONS (state) {
     for (let i = 0; i < state.openedElements.length; i++) {
       state.openedElements[i].x = state.settings.gameFieldSize.x - (state.settings.gameFieldSize.x * 0.2)
@@ -65,7 +69,10 @@ export default {
     state.settings.elementListFieldSize.y = y
   },
 
-  SEND_ERROR (state, error) {
-    state.error = error
+  SET_OPENED_RECIPES (state, recipes) {
+    state.openedRecipes = recipes
+  },
+  ADD_OPENED_RECIPE (state, recipe) {
+    state.openedRecipes.push(recipe)
   }
 }

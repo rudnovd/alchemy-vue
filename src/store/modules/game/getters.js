@@ -23,7 +23,7 @@ export default {
     return state.settings.elementListFieldSize
   },
 
-  error: state => {
-    return state.error
+  openedRecipes: state => {
+    return state.openedRecipes
   }
 }
