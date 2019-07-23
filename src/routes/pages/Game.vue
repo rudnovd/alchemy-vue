@@ -34,6 +34,10 @@ import { mapGetters, mapActions } from 'vuex'
 
 import { getElements } from '@/js/api/elements'
 
+import { getCategories } from '@/js/api/categories'
+
+import { getRecipes } from '@/js/api/recipes'
+
 export default {
   components: {
     Element,
@@ -50,72 +54,48 @@ export default {
       this.updateOpenedElementsPositions()
     })
 
-    this.setActiveElements([
-      {
-        _id: '5c543755405e9d103878d4be',
-        name: 'Earth',
-        category: 'Elements',
-        x: 200,
-        y: 250,
-        gameId: this.generateGameId()
-      },
-      {
-        _id: '5c543755405e9d103878d4bf',
-        name: 'Fire',
-        category: 'Elements',
-        x: 400,
-        y: 250,
-        gameId: this.generateGameId()
-      },
-      {
-        _id: '5c543755405e9d103878d4c0',
-        name: 'Water',
-        category: 'Elements',
-        x: 600,
-        y: 250,
-        gameId: this.generateGameId()
-      }
-    ])
-
     getElements().then(response => {
       if (response.status === 200) {
         for (let i = 0; i < response.data.response.length; i++) {
           response.data.response[i].x = null
           response.data.response[i].y = null
+          response.data.response[i].z = 100
         }
         this.setOpenedElements(response.data.response)
+      }
+    })
+
+    getCategories().then(response => {
+      if (response.status === 200) {
+        this.setOpenedCategories(response.data.response)
+      }
+    })
+
+    getRecipes().then(response => {
+      if (response.status === 200) {
+        this.setOpenedRecipes(response.data.response)
       }
     })
   },
   computed: {
     ...mapGetters({
       gameFieldSize: 'game/gameFieldSize',
-
       openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
       selectedElement: 'game/selectedElement',
-
-      openedCategories: 'game/openedCategories'
+      openedCategories: 'game/openedCategories',
+      openedRecipes: 'game/openedRecipes'
     })
   },
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
-
       setOpenedElements: 'game/setOpenedElements',
-      addOpenedElement: 'game/addOpenedElement',
-      removeOpenedElement: 'game/removeOpenedElement',
-
       setActiveElements: 'game/setActiveElements',
-      addActiveElement: 'game/addActiveElement',
-      removeActiveElement: 'game/removeActiveElement',
-
-      setSelectedElement: 'game/setSelectedElement',
-      setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
-      removeSelectedElement: 'game/removeSelectedElement',
-
       setOpenedCategories: 'game/setOpenedCategories',
-      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
+      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
+      setOpenedRecipes: 'game/setOpenedRecipes',
+      addOpenedRecipe: 'game/addOpenedRecipe'
     }),
     generateGameId () {
       let gameId = shortid.generate()
