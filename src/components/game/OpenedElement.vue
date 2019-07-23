@@ -13,6 +13,7 @@ vue-draggable-resizable(
   :h='50'
   :x='elementData.x'
   :y='elementData.y'
+  :z='elementData.z'
   :parent="'.game-field'"
   :onDragStart='onDragStart'
   @activated='onActivated'
@@ -73,23 +74,13 @@ export default {
     onDragstop (x, y) {
       this.setSelectedElementCoordinates({ x, y })
 
-      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x) {
-        const activeElements = this.activeElements.length
-        let newElement = null
-        for (let i = 0; i < activeElements; i++) {
-          newElement = game.onDropCombine(this.selectedElement, this.activeElements[i])
-
-          if (newElement) {
-            this.removeActiveElement(this.selectedElement.gameId)
-            this.removeActiveElement(this.activeElements[i].gameId)
-
-            this.addActiveElement(newElement)
-
-            break
-          }
-        }
-
-        if (!newElement) {
+      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x && this.activeElements.length > 0) {
+        let combineElement = game.findClosest(this.selectedElement, this.activeElements)
+        if (combineElement) {
+          this.removeActiveElement(this.selectedElement.gameId)
+          this.removeActiveElement(combineElement.gameId)
+          this.addActiveElement(combineElement)
+        } else {
           this.addActiveElement({
             _id: this.elementData._id,
             name: this.elementData.name,
@@ -99,6 +90,17 @@ export default {
             gameId: shortid.generate()
           })
         }
+      }
+
+      if (this.activeElements.length === 0) {
+        this.addActiveElement({
+          _id: this.elementData._id,
+          name: this.elementData.name,
+          category: this.elementData.name.category,
+          x: x,
+          y: y,
+          gameId: shortid.generate()
+        })
       }
 
       this.removeSelectedElement()
