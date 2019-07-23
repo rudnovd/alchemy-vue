@@ -64,28 +64,14 @@ export default {
       if (!this.selectedElement) {
         return
       }
-
       this.setSelectedElementCoordinates({ x, y, z: 100 })
 
-      const activeElements = this.activeElements.length
-      let newElement = null
-      for (let i = 0; i < activeElements; i++) {
-        newElement = game.onDropCombine(this.selectedElement, this.activeElements[i])
-
-        if (newElement) {
-          this.removeActiveElement(this.selectedElement.gameId)
-          this.removeActiveElement(this.activeElements[i].gameId)
-
-          this.addActiveElement(newElement)
-
-          break
-        }
-      }
-
-      if ((this.selectedElement.x >= 0 && this.selectedElement.x <= 50) && (this.selectedElement.y >= 0 && this.selectedElement.y <= 50)) {
+      let combineElement = game.findClosest(this.selectedElement, this.activeElements)
+      if (combineElement) {
         this.removeActiveElement(this.selectedElement.gameId)
+        this.removeActiveElement(combineElement.gameId)
+        this.addActiveElement(combineElement)
       }
-
       this.removeSelectedElement()
     }
   }
