@@ -11,7 +11,7 @@ div(class='data-table')
 
     //- Create element modal button
     b-col(cols='4' sm='3' md='2' lg='2' xl='2')
-      b-btn(class='mb-3' variant='success' @click='commonButtonClick')
+      b-btn(class='mb-3' v-if='commonButton' variant='success' @click='commonButtonClick')
         | Create {{ target }}
 
     //- Select records per page
@@ -20,14 +20,13 @@ div(class='data-table')
 
   b-row
     b-col(cols='12')
-      //- Loading section
-      loading-spinner(size='large' v-if='loading')
+      //- If loading
+      div(class='text-center')
+        b-spinner(v-if='loading' variant='success' style='width: 3rem; height: 3rem;')
 
       //- Error section
-      b-row(class='justify-content-md-center' v-if='error')
-        b-col(class='error' cols='12' md='auto')
-          b-alert(show variant='danger')
-            | {{ error }}
+      b-alert(class='text-center' v-if='error' show variant='danger')
+        | {{ error }}
 
       //- Table with data
       b-table(
@@ -46,11 +45,11 @@ div(class='data-table')
         template(slot='action' slot-scope='actionRow')
           b-button-group(size='sm')
             //- Edit element button
-            b-btn(class='mr-1' variant='warning' size='sm' @click='editButtonClick(actionRow)')
+            b-btn(class='mr-1' v-if='editButton' variant='warning' size='sm' @click='editButtonClick(actionRow)')
               font-awesome-icon(icon='edit')
 
             //- Delete element button
-            b-btn(variant='danger' size='sm' @click='deleteButtonClick(actionRow)')
+            b-btn(v-if='deleteButton' variant='danger' size='sm' @click='deleteButtonClick(actionRow)')
               font-awesome-icon(icon='trash')
 
         //- Pagination for table
@@ -65,12 +64,39 @@ div(class='data-table')
 <script>
 export default {
   props: {
-    data: Array,
-    fields: Array,
-    totalRows: Number,
-    loading: Boolean,
+    data: {
+      value: Array,
+      default: []
+    },
+    fields: {
+      value: Array,
+      default: []
+    },
+    totalRows: {
+      value: Number,
+      default: 0
+    },
+    loading: {
+      value: Boolean,
+      default: false
+    },
     error: String,
-    target: String
+    target: {
+      value: String,
+      default: ''
+    },
+    commonButton: {
+      value: Boolean,
+      default: true
+    },
+    editButton: {
+      value: Boolean,
+      default: true
+    },
+    deleteButton: {
+      value: Boolean,
+      default: true
+    }
   },
   data () {
     return {
