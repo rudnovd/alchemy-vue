@@ -2,7 +2,9 @@ import Vue from 'vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 
-import { faEdit, faTrash, faPlus, faClipboard, faTimes, faUser, faSmile, faUserSlash, faFire, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faTrash, faPlus, faClipboard, faTimes,
+  faUser, faSmile, faUserSlash, faFire, faEyeSlash, faArrowUp,
+  faArrowDown, faKey } from '@fortawesome/free-solid-svg-icons'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -16,7 +18,8 @@ import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
-library.add(faEdit, faTrash, faPlus, faClipboard, faTimes, faUser, faSmile, faUserSlash, faFire, faEyeSlash)
+library.add(faEdit, faTrash, faPlus, faClipboard,
+  faTimes, faUser, faSmile, faUserSlash, faFire, faEyeSlash, faArrowUp, faArrowDown, faKey)
 
 // register components:
 Vue.component('font-awesome-icon', FontAwesomeIcon)
