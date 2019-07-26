@@ -17,8 +17,6 @@
       title='Create new recipe'
       size='xl'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Create'
       ok-variant='success'
       :ok-disabled='loading.createRecipe'
@@ -107,8 +105,6 @@
       title='Edit recipe'
       size='xl'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Save'
       ok-variant='success'
       :ok-disabled='loading.editRecipe'
@@ -199,8 +195,6 @@
       v-model='modals.delete'
       size='md'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Delete'
       ok-variant='success'
       :ok-disabled='loading.deleteRecipe'

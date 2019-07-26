@@ -16,8 +16,6 @@ b-container
     title='Edit user'
     size='xl'
     hide-header-close=true
-    no-close-on-backdrop=true
-    no-close-on-esc=true
     ok-title='Save'
     ok-variant='success'
     :ok-disabled='loading.blockUser'

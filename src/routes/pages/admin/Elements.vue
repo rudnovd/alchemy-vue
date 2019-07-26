@@ -17,8 +17,6 @@
       title='Create new element'
       size='xl'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Create'
       ok-variant='success'
       :ok-disabled='loading.createElement'
@@ -130,8 +128,6 @@
       title='Edit element'
       size='xl'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Save'
       ok-variant='success'
       :ok-disabled='loading.editElement'
@@ -202,8 +198,6 @@
       v-model='modals.delete'
       size='md'
       hide-header-close=true
-      no-close-on-backdrop=true
-      no-close-on-esc=true
       ok-title='Delete'
       ok-variant='success'
       :ok-disabled='loading.deleteElement'
