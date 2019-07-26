@@ -5,7 +5,6 @@ b-modal(
   hide-header=true
   hide-footer=true
   centered=true
-  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3')
     //- Sign in text
@@ -118,6 +117,7 @@ export default {
           if (response.status === 200) {
             this.showModal = false
             this.setUser(response.data.user)
+            this.clearInputs()
             this.$router.push({ path: '/game' })
           } else {
             this.error = response.data.error

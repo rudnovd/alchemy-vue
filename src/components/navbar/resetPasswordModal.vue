@@ -5,7 +5,6 @@ b-modal(
   size='md'
   hide-footer=true
   centered=true
-  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3' v-if='!resetSuccess')
     //- Reset password text
@@ -98,6 +97,7 @@ export default {
         putResetPassword(this.email).then(response => {
           if (response.status === 200) {
             this.resetSuccess = true
+            this.clearInputs()
             this.textStatus = 'Email has been sent'
           } else if (response.status === 404) {
             this.textStatus = 'Error'

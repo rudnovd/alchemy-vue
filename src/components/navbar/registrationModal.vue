@@ -5,7 +5,6 @@ b-modal(
   hide-header=true
   hide-footer=true
   centered=true
-  @hidden='clearInputs'
 )
   b-row(class='ml-3 mr-3')
     //- Sign up text
@@ -107,6 +106,7 @@ export default {
         postAccount(this.email, this.username, this.password).then(response => {
           if (response.status === 200) {
             this.showModal = false
+            this.clearInputs()
             this.$router.push({ path: '/game' })
           }
         })
