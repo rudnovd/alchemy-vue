@@ -64,3 +64,18 @@ export async function getAccountElements (id) {
     return error.response
   }
 }
+
+export async function addOpenedElement (elementId) {
+  try {
+    const response = await axios({
+      method: 'put',
+      url: '/api/account/element/add',
+      data: {
+        elementId
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+}

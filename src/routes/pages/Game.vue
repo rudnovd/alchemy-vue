@@ -1,22 +1,20 @@
 <template lang='pug'>
 b-container
-  b-row
-    GameField
-      b-row
-        div(class='active-elements')
-          Element(
-            v-for='element in activeElements'
-            :key='element.gameId'
-            :elementData='element'
-          )
-          ClearGameField
+  GameField
+    div(class='active-elements')
+      Element(
+        v-for='element in activeElements'
+        :key='element.gameId'
+        :elementData='element'
+      )
+      ClearGameField
 
-        div(class='opened-elements')
-          OpenedElement(
-            v-for='element in openedElements'
-            :key='element._id'
-            :elementData='element'
-          )
+    div(class='opened-elements')
+      OpenedElement(
+        v-for='element in openedElements'
+        :key='element._id'
+        :elementData='element'
+      )
 </template>
 
 <script>
@@ -73,7 +71,7 @@ export default {
 
     getRecipes().then(response => {
       if (response.status === 200) {
-        this.setOpenedRecipes(response.data.response)
+        this.setRecipes(response.data.response)
       }
     })
   },
@@ -84,7 +82,8 @@ export default {
       activeElements: 'game/activeElements',
       selectedElement: 'game/selectedElement',
       openedCategories: 'game/openedCategories',
-      openedRecipes: 'game/openedRecipes'
+      openedRecipes: 'game/openedRecipes',
+      recipes: 'game/recipes'
     })
   },
   methods: {
@@ -95,7 +94,8 @@ export default {
       setOpenedCategories: 'game/setOpenedCategories',
       updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
       setOpenedRecipes: 'game/setOpenedRecipes',
-      addOpenedRecipe: 'game/addOpenedRecipe'
+      addOpenedRecipe: 'game/addOpenedRecipe',
+      setRecipes: 'game/setRecipes'
     }),
     generateGameId () {
       let gameId = shortid.generate()
@@ -118,6 +118,7 @@ export default {
   min-height: 100%;
   min-width: 80%;
   border-right: 2px solid black;
+  padding: 20px;
 }
 
 .opened-elements {
@@ -130,5 +131,35 @@ export default {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+@media screen and (max-width : 360px) and (min-width : 100px) {
+  .container {
+    min-width: 360px;
+  }
+}
+
+@media screen and (max-width : 500px) and (min-width : 100px) {
+  .container {
+    max-width: 90%;
+  }
+}
+
+@media screen and (min-width : 1200px) {
+  .container {
+    min-width: 1200px;
+  }
+}
+
+@media screen and (min-width : 1300px) {
+  .container {
+    min-width: 1300px;
+  }
+}
+
+@media screen and (min-width : 1400px) {
+  .container {
+    min-width: 1400px;
+  }
 }
 </style>
