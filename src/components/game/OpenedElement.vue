@@ -74,25 +74,27 @@ export default {
     onDragstop (x, y) {
       this.setSelectedElementCoordinates({ x, y })
 
-      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x && this.activeElements.length > 0) {
-        let combineElement = game.findClosest(this.selectedElement, this.activeElements)
-        if (combineElement) {
-          this.removeActiveElement(this.selectedElement.gameId)
-          this.removeActiveElement(combineElement.gameId)
-          this.addActiveElement(combineElement)
-        } else {
-          this.addActiveElement({
-            _id: this.elementData._id,
-            name: this.elementData.name,
-            category: this.elementData.name.category,
-            x: x,
-            y: y,
-            gameId: shortid.generate()
-          })
+      let addElement = false
+
+      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x - 150) {
+        if (this.activeElements.length > 0) {
+          let combineElement = game.findClosest(this.selectedElement, this.activeElements)
+          if (combineElement) {
+            this.removeActiveElement(this.selectedElement.gameId)
+            this.removeActiveElement(combineElement.gameId)
+            this.addActiveElement(combineElement)
+          } else {
+            addElement = true
+          }
+        } else if (this.activeElements.length === 0) {
+          addElement = true
         }
+      } else if (x >= this.gameFieldSize.x - this.elementsListFieldSize.x - 1 && x === this.selectedElement.x && y === this.selectedElement.y) {
+        this.setSelectedElementCoordinates({ x: 200, y: 200 })
+        addElement = true
       }
 
-      if (this.activeElements.length === 0) {
+      if (addElement) {
         this.addActiveElement({
           _id: this.elementData._id,
           name: this.elementData.name,
