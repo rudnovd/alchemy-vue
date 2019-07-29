@@ -1,5 +1,5 @@
 <template lang='pug'>
-b-col(class='game-field' cols='12')
+b-col(class='game-field pl-0 pr-0' cols='12')
   slot
 </template>
 
@@ -9,11 +9,13 @@ b-col(class='game-field' cols='12')
 
 <style lang='scss' scoped>
 .game-field {
-  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
   box-shadow: 0 0 5px color('alchemy-light-green');
   background-color: color('white');
-  min-height: 60vh;
-  min-width: 100%;
-  max-width: inherit;
+  min-height: 85vh;
 }
 </style>
