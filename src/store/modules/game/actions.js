@@ -71,5 +71,8 @@ export default {
   },
   addOpenedRecipe ({ commit }, recipe) {
     commit('ADD_OPENED_RECIPE', recipe)
+  },
+  setRecipes ({ commit }, recipes) {
+    commit('SET_RECIPES', recipes)
   }
 }

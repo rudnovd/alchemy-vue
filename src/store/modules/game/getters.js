@@ -25,5 +25,8 @@ export default {
 
   openedRecipes: state => {
     return state.openedRecipes
+  },
+  recipes: state => {
+    return state.recipes
   }
 }

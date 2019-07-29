@@ -74,5 +74,8 @@ export default {
   },
   ADD_OPENED_RECIPE (state, recipe) {
     state.openedRecipes.push(recipe)
+  },
+  SET_RECIPES (state, recipes) {
+    state.recipes = recipes
   }
 }

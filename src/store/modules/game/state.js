@@ -7,6 +7,7 @@ export default {
   selectedCategory: null,
 
   openedRecipes: [],
+  recipes: [],
 
   settings: {
     gameFieldSize: {
