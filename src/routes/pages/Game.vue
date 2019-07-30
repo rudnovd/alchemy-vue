@@ -52,30 +52,35 @@ export default {
       this.updateOpenedElementsPositions()
     })
 
-    getElements().then(response => {
-      if (response.status === 200) {
-        for (let i = 0; i < response.data.response.length; i++) {
-          response.data.response[i].x = null
-          response.data.response[i].y = null
-          response.data.response[i].z = 100
+    if (this.openedElements.length === 0) {
+      getElements().then(response => {
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            response.data.response[i].x = null
+            response.data.response[i].y = null
+            response.data.response[i].z = 100
+          }
+          this.setOpenedElements(response.data.response)
         }
-        this.setOpenedElements(response.data.response)
-      }
-    })
+      })
+    }
 
-    getCategories().then(response => {
-      if (response.status === 200) {
-        this.setOpenedCategories(response.data.response)
-      }
-    })
+    if (this.openedCategories.length === 0) {
+      getCategories().then(response => {
+        if (response.status === 200) {
+          this.setOpenedCategories(response.data.response)
+        }
+      })
+    }
 
-    getRecipes().then(response => {
-      if (response.status === 200) {
-        this.setRecipes(response.data.response)
-        this.setOpenedRecipes([])
-        this.findOpenedRecipes()
-      }
-    })
+    if (this.recipes.length === 0) {
+      getRecipes().then(response => {
+        if (response.status === 200) {
+          this.setRecipes(response.data.response)
+          this.findOpenedRecipes()
+        }
+      })
+    }
   },
   computed: {
     ...mapGetters({
@@ -112,6 +117,7 @@ export default {
       return gameId
     },
     findOpenedRecipes () {
+      let userRecipes = []
       for (let i = 0; i < this.recipes.length; i++) {
         let firstElement = this.recipes[i].recipe[0]._id
         let secondElement = this.recipes[i].recipe[1]._id
@@ -126,13 +132,14 @@ export default {
             secondFound = true
           }
           if (firstFound && secondFound) {
-            this.addOpenedRecipe(this.recipes[i])
+            userRecipes.push(this.recipes[i])
             break
           }
         }
         firstFound = false
         secondFound = false
       }
+      this.setOpenedRecipes(userRecipes)
     }
   }
 }
