@@ -72,6 +72,8 @@ export default {
     getRecipes().then(response => {
       if (response.status === 200) {
         this.setRecipes(response.data.response)
+        this.setOpenedRecipes([])
+        this.findOpenedRecipes()
       }
     })
   },
@@ -108,6 +110,29 @@ export default {
       }
 
       return gameId
+    },
+    findOpenedRecipes () {
+      for (let i = 0; i < this.recipes.length; i++) {
+        let firstElement = this.recipes[i].recipe[0]._id
+        let secondElement = this.recipes[i].recipe[1]._id
+
+        let firstFound = false
+        let secondFound = false
+        for (let j = 0; j < this.openedElements.length; j++) {
+          if (firstElement === this.openedElements[j]._id) {
+            firstFound = true
+          }
+          if (secondElement === this.openedElements[j]._id) {
+            secondFound = true
+          }
+          if (firstFound && secondFound) {
+            this.addOpenedRecipe(this.recipes[i])
+            break
+          }
+        }
+        firstFound = false
+        secondFound = false
+      }
     }
   }
 }
