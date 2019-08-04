@@ -50,9 +50,16 @@ export default {
   },
 
   UPDATE_OPENED_ELEMENTS_POSITIONS (state) {
+    let j = 0
     for (let i = 0; i < state.openedElements.length; i++) {
-      state.openedElements[i].x = state.settings.gameFieldSize.x - (state.settings.gameFieldSize.x * 0.2)
-      state.openedElements[i].y = i * 55
+      if (state.openedElements[i].show) {
+        state.openedElements[j].x = state.settings.gameFieldSize.x - (state.settings.gameFieldSize.x * 0.2)
+        state.openedElements[j].y = j * 55
+        j++
+      } else {
+        state.openedElements[i].x = state.settings.gameFieldSize.x - (state.settings.gameFieldSize.x * 0.2)
+        state.openedElements[i].y = i * 55 + 1000
+      }
     }
   },
 
@@ -77,5 +84,13 @@ export default {
   },
   SET_RECIPES (state, recipes) {
     state.recipes = recipes
+  },
+  UPDATE_OPENED_ELEMENTS_BY_CATEGORY (state, category) {
+    for (let i = 0; i < state.openedElements.length; i++) {
+      state.openedElements[i].show = false
+      if (category === state.openedElements[i].category) {
+        state.openedElements[i].show = true
+      }
+    }
   }
 }

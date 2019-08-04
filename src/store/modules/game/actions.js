@@ -74,5 +74,10 @@ export default {
   },
   setRecipes ({ commit }, recipes) {
     commit('SET_RECIPES', recipes)
+  },
+  updateOpenedElementsByCategory ({ commit }, category) {
+    commit('UPDATE_OPENED_ELEMENTS_BY_CATEGORY', category)
+
+    commit('UPDATE_OPENED_ELEMENTS_POSITIONS')
   }
 }
