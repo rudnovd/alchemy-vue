@@ -1,5 +1,5 @@
 <template lang='pug'>
-b-col(class='game-field pl-0 pr-0' cols='12')
+b-col(class='game-field' cols='9')
   slot
 </template>
 

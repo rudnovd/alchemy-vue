@@ -1,19 +1,34 @@
 <template lang='pug'>
-b-container
-  GameField
-    div(class='active-elements')
-      Element(
-        v-for='element in activeElements'
-        :key='element.gameId'
-        :elementData='element'
+b-container(fluid)
+  b-row
+    CategoriesList
+      SelectCategoryButton(
+        v-for='openedCategory in openedCategories'
+        :key='openedCategory._id'
+        :categoryName='openedCategory.name'
       )
-      ClearGameField
+    GameField
+      div(class='active-elements')
+        Element(
+          v-for='element in activeElements'
+          :key='element.gameId'
+          :elementData='element'
+        )
+        ClearGameField
 
-    div(class='opened-elements')
-      OpenedElement(
-        v-for='element in openedElements'
-        :key='element._id'
-        :elementData='element'
+      div(class='opened-elements')
+        OpenedElement(
+          v-for='element in openedElements'
+          :key='element._id'
+          :elementData='element'
+          v-if='element.show'
+        )
+  b-row
+    OpenedRecipesList
+      OpenedRecipe(
+        v-for='recipe in openedRecipes'
+        :key='recipe._id'
+        :recipeName='recipe.result.name'
       )
 </template>
 
@@ -28,6 +43,14 @@ import GameField from '@/components/game/GameField.vue'
 
 import ClearGameField from '@/components/game/ClearGameField.vue'
 
+import CategoriesList from '@/components/game/CategoriesList.vue'
+
+import OpenedRecipesList from '@/components/game/OpenedRecipesList.vue'
+
+import OpenedRecipe from '@/components/game/OpenedRecipe.vue'
+
+import SelectCategoryButton from '@/components/game/SelectCategoryButton.vue'
+
 import { mapGetters, mapActions } from 'vuex'
 
 import { getElements } from '@/js/api/elements'
@@ -41,7 +64,11 @@ export default {
     Element,
     OpenedElement,
     GameField,
-    ClearGameField
+    ClearGameField,
+    CategoriesList,
+    OpenedRecipesList,
+    SelectCategoryButton,
+    OpenedRecipe
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
@@ -59,7 +86,9 @@ export default {
             response.data.response[i].x = null
             response.data.response[i].y = null
             response.data.response[i].z = 100
+            response.data.response[i].show = false
           }
+
           this.setOpenedElements(response.data.response)
         }
       })
@@ -69,6 +98,10 @@ export default {
       getCategories().then(response => {
         if (response.status === 200) {
           this.setOpenedCategories(response.data.response)
+          this.setSelectedCategory(this.openedCategories[0].name)
+          this.updateOpenedElementsByCategory(this.selectedCategory)
+
+          this.updateOpenedElementsPositions()
         }
       })
     }
@@ -90,7 +123,8 @@ export default {
       selectedElement: 'game/selectedElement',
       openedCategories: 'game/openedCategories',
       openedRecipes: 'game/openedRecipes',
-      recipes: 'game/recipes'
+      recipes: 'game/recipes',
+      selectedCategory: 'game/selectedCategory'
     })
   },
   methods: {
@@ -102,7 +136,9 @@ export default {
       updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
       setOpenedRecipes: 'game/setOpenedRecipes',
       addOpenedRecipe: 'game/addOpenedRecipe',
-      setRecipes: 'game/setRecipes'
+      setRecipes: 'game/setRecipes',
+      setSelectedCategory: 'game/setSelectedCategory',
+      updateOpenedElementsByCategory: 'game/updateOpenedElementsByCategory'
     }),
     generateGameId () {
       let gameId = shortid.generate()
