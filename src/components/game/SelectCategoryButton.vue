@@ -1,8 +1,8 @@
 <template lang='pug'>
 b-btn(
-  variant='info'
-  block
+  class='select-category-button'
   @click='selectCategory'
+  :class='{ "btn-success": categoryName === selectedCategory}'
 ) {{ categoryName }}
 </template>
 
@@ -15,30 +15,35 @@ export default {
   },
   computed: {
     ...mapGetters({
-      openedElements: 'game/openedElements',
       selectedCategory: 'game/selectedCategory'
     })
   },
   methods: {
     ...mapActions({
-      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
       setSelectedCategory: 'game/setSelectedCategory',
-
-      setOpenedElements: 'game/setOpenedElements',
       updateOpenedElementsByCategory: 'game/updateOpenedElementsByCategory'
     }),
     selectCategory () {
       this.setSelectedCategory(this.categoryName)
       this.updateOpenedElementsByCategory(this.categoryName)
-
-      this.$nextTick(() => {
-        this.updateOpenedElementsPositions()
-      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 768px) {
+  .select-category-button {
+    margin-right: 5px;
+    width: 100px;
+  }
+}
 
+@media screen and (min-width: 768px) {
+  .select-category-button {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
 </style>
