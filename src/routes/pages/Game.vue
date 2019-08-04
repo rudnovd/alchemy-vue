@@ -24,12 +24,9 @@ b-container(fluid)
           v-if='element.show'
         )
   b-row
-    OpenedRecipesList
-      OpenedRecipe(
-        v-for='recipe in openedRecipes'
-        :key='recipe._id'
-        :recipeName='recipe.result.name'
-      )
+    b-btn(variant='success' @click='openedRecipesModalShow') Show recipes
+  OpenedRecipesModal
+
 </template>
 
 <script>
@@ -45,9 +42,7 @@ import ClearGameField from '@/components/game/ClearGameField.vue'
 
 import CategoriesList from '@/components/game/CategoriesList.vue'
 
-import OpenedRecipesList from '@/components/game/OpenedRecipesList.vue'
-
-import OpenedRecipe from '@/components/game/OpenedRecipe.vue'
+import OpenedRecipesModal from '@/components/game/OpenedRecipesModal.vue'
 
 import SelectCategoryButton from '@/components/game/SelectCategoryButton.vue'
 
@@ -66,9 +61,8 @@ export default {
     GameField,
     ClearGameField,
     CategoriesList,
-    OpenedRecipesList,
-    SelectCategoryButton,
-    OpenedRecipe
+    OpenedRecipesModal,
+    SelectCategoryButton
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
@@ -176,6 +170,9 @@ export default {
         secondFound = false
       }
       this.setOpenedRecipes(userRecipes)
+    },
+    openedRecipesModalShow () {
+      this.$root.$emit('openedRecipesModalShow')
     }
   }
 }
