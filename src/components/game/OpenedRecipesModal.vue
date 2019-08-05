@@ -1,14 +1,14 @@
 <template lang='pug'>
 b-modal(
   v-model='showModal'
-  size='lg'
+  size='xl'
   hide-header=true
   hide-footer=true
   centered=true
 )
   b-row(class='ml-3 mr-3')
     //- text
-    b-col(class='mt-4' cols='8')
+    b-col(cols='8')
       h4 Opened recipes
 
     //- Close button
@@ -21,7 +21,7 @@ b-modal(
       )
         font-awesome-icon(class='c-pointer fa-2x' icon='times')
 
-    b-col(class='mt-2' cols='4')
+    b-col(class='mt-2 opened-recipes-categories' cols='4')
       b-btn(
         block
         v-for='category in openedCategories'
@@ -30,11 +30,12 @@ b-modal(
         @click='selectedCategory = category.name'
       ) {{ category.name }}
 
-    b-col(class='mt-2' cols='8')
+    b-col(class='mt-2 opened-recipes-list' cols='7')
       OpenedRecipe(
         v-for='recipe in openedRecipes'
         :key='recipe._id'
         :recipe='recipe'
+        v-if='recipe.result.category === selectedCategory'
       )
 
 </template>
@@ -72,3 +73,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.opened-recipes-categories {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.opened-recipes-list {
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+</style>
