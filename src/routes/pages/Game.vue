@@ -103,6 +103,13 @@ export default {
     if (this.recipes.length === 0) {
       getRecipes().then(response => {
         if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            for (let j = 0; j < this.openedElements.length; j++) {
+              if (response.data.response[i].result._id === this.openedElements[j]._id) {
+                response.data.response[i].result.category = this.openedElements[j].category
+              }
+            }
+          }
           this.setRecipes(response.data.response)
           this.findOpenedRecipes()
         }
