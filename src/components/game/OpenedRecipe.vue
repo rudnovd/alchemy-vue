@@ -1,5 +1,5 @@
 <template lang='pug'>
-b-col(class='opened-recipe-col' cols='12')
+div(class='opened-recipe')
   b-row(class='row align-items-center')
     b-col(cols='5')
       b-row
@@ -29,11 +29,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.opened-recipe-col {
-  background-color: rgb(250, 250, 250);
-  display: inline-block;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin-bottom: 20px;
+.opened-recipe {
+
 }
 </style>

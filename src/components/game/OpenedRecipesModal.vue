@@ -31,12 +31,14 @@ b-modal(
       ) {{ category.name }}
 
     b-col(class='mt-2 opened-recipes-list' cols='7')
-      OpenedRecipe(
-        v-for='recipe in openedRecipes'
-        :key='recipe._id'
-        :recipe='recipe'
-        v-if='recipe.result.category === selectedCategory'
-      )
+      b-row(class='opened-recipes-list-item')
+        b-col(cols='12')
+          OpenedRecipe(
+            v-for='recipe in openedRecipes'
+            :key='recipe._id'
+            :recipe='recipe'
+            v-if='recipe.result.category === selectedCategory'
+          )
 
 </template>
 
@@ -83,6 +85,13 @@ export default {
 .opened-recipes-list {
   max-height: 80vh;
   overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.opened-recipes-list-item {
+  background-color: rgb(250, 250, 250);
+  border: 1px solid black;
+  border-radius: 5px;
   margin-bottom: 20px;
 }
 </style>
