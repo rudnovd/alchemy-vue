@@ -91,5 +91,13 @@ export default {
         state.openedElements[i].show = true
       }
     }
+  },
+
+  ADD_HISTORY (state, action) {
+    state.history.last.firstElement = action.firstElement
+    state.history.last.secondElement = action.secondElement
+    state.history.last.result = action.result
+
+    state.history.past.push(action)
   }
 }

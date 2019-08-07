@@ -28,5 +28,9 @@ export default {
   },
   recipes: state => {
     return state.recipes
+  },
+
+  history: state => {
+    return state.history
   }
 }

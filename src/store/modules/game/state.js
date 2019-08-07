@@ -9,6 +9,15 @@ export default {
   openedRecipes: [],
   recipes: [],
 
+  history: {
+    last: {
+      firstElement: null,
+      secondElement: null,
+      result: null
+    },
+    past: []
+  },
+
   settings: {
     gameFieldSize: {
       x: 0,

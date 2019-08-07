@@ -79,5 +79,9 @@ export default {
     commit('UPDATE_OPENED_ELEMENTS_BY_CATEGORY', category)
 
     commit('UPDATE_OPENED_ELEMENTS_POSITIONS')
+  },
+
+  addHistory ({ commit }, action) {
+    commit('ADD_HISTORY', action)
   }
 }
