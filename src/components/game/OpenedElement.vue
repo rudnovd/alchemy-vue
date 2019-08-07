@@ -28,6 +28,10 @@ import * as shortid from 'shortid'
 
 import * as game from '@/js/game/game'
 
+import { addOpenedElement } from '@/js/api/account'
+
+import { getElements } from '@/js/api/elements'
+
 export default {
   props: {
     elementData: Object
@@ -39,7 +43,9 @@ export default {
 
       openedElements: 'game/openedElements',
       activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement'
+      selectedElement: 'game/selectedElement',
+      recipes: 'game/recipes',
+      openedRecipes: 'game/openedRecipes'
     })
   },
   methods: {
@@ -51,7 +57,11 @@ export default {
       setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
       removeSelectedElement: 'game/removeSelectedElement',
 
-      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions'
+      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
+
+      addHistory: 'game/addHistory',
+      addOpenedRecipe: 'game/addOpenedRecipe',
+      setOpenedElements: 'game/setOpenedElements'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -80,9 +90,51 @@ export default {
         if (this.activeElements.length > 0) {
           let combineElement = game.findClosest(this.selectedElement, this.activeElements)
           if (combineElement) {
-            this.removeActiveElement(this.selectedElement.gameId)
-            this.removeActiveElement(combineElement.gameId)
-            this.addActiveElement(combineElement)
+            let resultOfRecipe = game.findRecipe(this.selectedElement, combineElement, this.recipes)
+            if (resultOfRecipe) {
+              let isOpenedRecipe = false
+              for (let i = 0; i < this.openedRecipes.length; i++) {
+                if (resultOfRecipe._id === this.openedRecipes[i].result._id) {
+                  isOpenedRecipe = true
+                }
+              }
+              if (!isOpenedRecipe) {
+                let d = this.selectedElement
+                addOpenedElement(resultOfRecipe._id).then(response => {
+                  if (response.status === 200) {
+                    this.addOpenedRecipe({
+                      recipe: [
+                        { _id: d._id, name: d.name },
+                        { _id: combineElement._id, name: combineElement.name }
+                      ],
+                      result: {
+                        _id: resultOfRecipe._id,
+                        name: resultOfRecipe._name
+                      }
+                    })
+
+                    getElements().then(response => {
+                      if (response.status === 200) {
+                        for (let i = 0; i < response.data.response.length; i++) {
+                          response.data.response[i].x = null
+                          response.data.response[i].y = null
+                          response.data.response[i].z = 100
+                        }
+                        this.setOpenedElements(response.data.response)
+                      }
+                    })
+                  }
+                })
+              }
+              this.addHistory({
+                firstElement: this.selectedElement.name,
+                secondElement: combineElement.name,
+                result: resultOfRecipe.name
+              })
+              this.removeActiveElement(this.selectedElement.gameId)
+              this.removeActiveElement(combineElement.gameId)
+              this.addActiveElement(resultOfRecipe)
+            }
           } else {
             addElement = true
           }
