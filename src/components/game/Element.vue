@@ -53,7 +53,9 @@ export default {
 
       setOpenedElements: 'game/setOpenedElements',
 
-      addOpenedRecipe: 'game/addOpenedRecipe'
+      addOpenedRecipe: 'game/addOpenedRecipe',
+
+      addHistory: 'game/addHistory'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -127,6 +129,11 @@ export default {
             x: x,
             y: y,
             gameId: shortid.generate()
+          })
+          this.addHistory({
+            firstElement: this.selectedElement.name,
+            secondElement: combineElement.name,
+            result: resultOfRecipe.name
           })
           this.removeActiveElement(this.selectedElement.gameId)
           this.removeActiveElement(combineElement.gameId)
