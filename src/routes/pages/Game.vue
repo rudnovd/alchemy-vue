@@ -8,13 +8,25 @@ b-container(fluid)
         :categoryName='openedCategory.name'
       )
     GameField
-      div(class='active-elements')
+      b-row(class='active-elements')
+
+        b-col(class='text-right' cols='12')
+          b-row(class='row align-items-start')
+            b-col(cols='12')
+              b-btn(variant='success' @click='openedRecipesModalShow') Recipes
+
         Element(
           v-for='element in activeElements'
           :key='element.gameId'
           :elementData='element'
         )
-        ClearGameField
+
+        b-col(cols='12')
+          b-row(class='h-100 row align-items-end')
+            b-col(cols='6' order='1')
+              ActiveElementsAction
+            b-col(class='ml-auto text-right' cols='1' order='2')
+              ClearGameField
 
       div(class='opened-elements')
         OpenedElement(
@@ -23,8 +35,7 @@ b-container(fluid)
           :elementData='element'
           v-if='element.show'
         )
-  b-row
-    b-btn(variant='success' @click='openedRecipesModalShow') Show recipes
+
   OpenedRecipesModal
 
 </template>
@@ -46,6 +57,8 @@ import OpenedRecipesModal from '@/components/game/OpenedRecipesModal.vue'
 
 import SelectCategoryButton from '@/components/game/SelectCategoryButton.vue'
 
+import ActiveElementsAction from '@/components/game/ActiveElementsAction.vue'
+
 import { mapGetters, mapActions } from 'vuex'
 
 import { getElements } from '@/js/api/elements'
@@ -62,7 +75,8 @@ export default {
     ClearGameField,
     CategoriesList,
     OpenedRecipesModal,
-    SelectCategoryButton
+    SelectCategoryButton,
+    ActiveElementsAction
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
@@ -189,7 +203,7 @@ export default {
 .active-elements {
   min-height: 100%;
   min-width: 80%;
-  border-right: 2px solid black;
+  border-right: 1px solid black;
   padding: 20px;
 }
 
