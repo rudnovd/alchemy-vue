@@ -1,14 +1,4 @@
 export default {
-  openedElements: [],
-  activeElements: [],
-  selectedElement: null,
-
-  openedCategories: [],
-  selectedCategory: null,
-
-  openedRecipes: [],
-  recipes: [],
-
   history: {
     last: {
       firstElement: null,
@@ -18,14 +8,12 @@ export default {
     past: []
   },
 
-  settings: {
-    gameFieldSize: {
-      x: 0,
-      y: 0
-    },
-    elementListFieldSize: {
-      x: 0,
-      y: 0
-    }
+  gameFieldSize: {
+    x: 0,
+    y: 0
+  },
+  elementListFieldSize: {
+    x: 0,
+    y: 0
   }
 }
