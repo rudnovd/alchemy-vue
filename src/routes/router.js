@@ -4,8 +4,6 @@ import Router from 'vue-router'
 
 import store from '@/store'
 
-import { getLogin } from '@/js/api/authentication'
-
 Vue.use(Router)
 
 const router = new Router({
@@ -87,18 +85,7 @@ router.beforeEach((to, from, next) => {
   // Set page title
   document.title = to.meta.title
 
-  // If not logged in, check login
-  if (!store.getters['user/isLoggedIn']) {
-    getLogin().then(response => {
-      // If find session, move user data in store
-      if (response.data.user) {
-        store.dispatch('user/setUser', response.data.user)
-      }
-      next()
-    })
-  } else {
-    next()
-  }
+  next()
 })
 
 router.beforeResolve((to, from, next) => {
@@ -118,7 +105,7 @@ router.beforeResolve((to, from, next) => {
 function requireAuthPassed (to) {
   // If route need auth, check logged in
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (store.getters['user/isLoggedIn']) {
+    if (store.getters['user/user'].isLoggedIn) {
       return true
     } else {
       return false
@@ -131,7 +118,7 @@ function requireAuthPassed (to) {
 function requireAdminRolePassed (to) {
   // If route need admin role, check role
   if (to.matched.some(record => record.meta.adminRoleRequired)) {
-    if (store.getters['user/isAdmin']) {
+    if (store.getters['user/user'].role === 'Admin') {
       return true
     } else {
       return false
