@@ -1,4 +1,4 @@
-$body-bg: #EEEEEE;
+$body-bg: rgb(236, 240, 241);
 $body-color: #333333;
 
 @import '@/css/colors.scss';
@@ -8,8 +8,6 @@ $body-color: #333333;
 @import '~bootstrap/scss/bootstrap';
 
 @import '~bootstrap-vue/src/index.scss';
-
-@import '@/css/buttons.scss';
 
 .modal {
   color: black;
@@ -22,4 +20,19 @@ $body-color: #333333;
 .form-control:focus {
   box-shadow: none;
   border-color: #ced4da;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+#app {
+  height: 100%;
+}
+
+[v-cloak] {
+  display: none;
 }
