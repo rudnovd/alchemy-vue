@@ -42,7 +42,6 @@ export function findClosest (selectedElement, activeElements) {
 
 export function findRecipe (firstElement, secondElement, recipes) {
   for (let i = 0; i < recipes.length; i++) {
-    console.log(firstElement._id, recipes[i].recipe[0]._id, secondElement._id, recipes[i].recipe[1]._id)
     if (firstElement._id === recipes[i].recipe[0]._id && secondElement._id === recipes[i].recipe[1]._id) {
       return recipes[i].result
     }

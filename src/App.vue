@@ -1,16 +1,17 @@
-<template lang="pug">
-  #app
-    b-navbar.mb-3(toggleable='sm' type='dark' variant='dark')
-      Navbar
+<template>
+  <div id='app'>
+    <b-navbar class='mb-3' type='dark' variant='dark'>
+      <Navbar/>
+    </b-navbar>
 
-    router-view(:key="$route.fullPath")
+    <router-view :key='$route.fullPath'/>
+  </div>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 
 export default {
-  name: 'App',
   components: {
     Navbar: Navbar
   }
