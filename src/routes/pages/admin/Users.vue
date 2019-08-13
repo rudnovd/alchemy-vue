@@ -1,6 +1,6 @@
-<template lang='pug'>
-b-container
-  Table(
+<template>
+<b-container>
+  <Table
     :data='users'
     :fields='fields'
     :totalRows='totalRows'
@@ -10,12 +10,13 @@ b-container
     :commonButton='false'
     :deleteButton='false'
     @editButtonClick='beforeSaveUser'
-  )
-  b-modal(
+  />
+
+  <b-modal
     v-model='modals.edit'
     title='Edit user'
     size='xl'
-    hide-header-close=true
+    hide-header-close='hide-header-close'
     ok-title='Save'
     ok-variant='success'
     :ok-disabled='loading.blockUser'
@@ -23,53 +24,97 @@ b-container
     cancel-variant='danger'
     @ok='saveUser'
     @hidden='afterSaveUser'
-  )
-    b-row
-      b-col(cols='5')
-        b-row
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Username:')
-              b-form-input(type='text' readonly v-model='user.username')
+  >
+    <b-row>
+      <b-col cols='5'>
+        <b-row>
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Username:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.username'/>
+            </b-form-group>
+          </b-col>
 
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Email:')
-              b-form-input(type='text' readonly v-model='user.email')
-          b-col(class='pl-0' cols='3')
-            b-btn(variant='primary' @click='resetPassword = true' :disabled='resetPassword')
-              font-awesome-icon(icon='key')
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Email:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.email'/>
+            </b-form-group>
+          </b-col>
 
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Created:')
-              b-form-input(type='text' readonly v-model='user.created')
+          <b-col class='pl-0' cols='3'>
+            <b-btn variant='primary' @click='resetPassword = true' :disabled='resetPassword'>
+              <font-awesome-icon icon='key'/>
+            </b-btn>
+          </b-col>
 
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Last entered:')
-              b-form-input(type='text' readonly v-model='user.lastEntered')
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Created:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.created'/>
+            </b-form-group>
+          </b-col>
 
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Disabled:')
-              b-form-input(type='text' readonly v-model='user.isDisabled')
-          b-col(class='pl-0' cols='3')
-            b-btn(v-if='!user.isDisabled' variant='success' @click='user.isDisabled = true')
-              font-awesome-icon(icon='user')
-            b-btn(v-else variant='danger' @click='user.isDisabled = false')
-              font-awesome-icon(icon='user-slash')
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Last entered:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.lastEntered'/>
+            </b-form-group>
+          </b-col>
 
-          b-col(cols='9')
-            b-form-group(:label-cols='4' label='Role:')
-              b-form-input(type='text' readonly v-model='user.role')
-          b-col(class='pl-0' cols='3')
-            b-btn(v-if='user.role != "Admin"' variant='success' @click='user.role="Admin"')
-              font-awesome-icon(icon='arrow-up')
-            b-btn(v-else variant='danger' @click='user.role="User"')
-              font-awesome-icon(icon='arrow-down')
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Disabled:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.isDisabled'/>
+            </b-form-group>
+          </b-col>
 
-      b-col(cols='7')
-        b-row
-          b-col(cols='12')
-            h5 Opened elements
-            b-progress(:value='userElements.length' :max='maxElements' show-value class="mb-3")
+          <b-col class='pl-0' cols='3'>
+            <b-btn v-if='!user.isDisabled' variant='success' @click='user.isDisabled = true'>
+              <font-awesome-icon icon='user'/>
+            </b-btn>
 
+            <b-btn v-if='user.isDisabled' variant='danger' @click='user.isDisabled = false'>
+              <font-awesome-icon icon='user-slash'/>
+            </b-btn>
+          </b-col>
+
+          <b-col cols='9'>
+            <b-form-group :label-cols='4' label='Role:'>
+              <b-form-input type='text' readonly='readonly' v-model='user.role'/>
+            </b-form-group>
+          </b-col>
+
+          <b-col class='pl-0' cols='3'>
+            <b-btn
+              v-if='user.role != "Admin"'
+              variant='success'
+              @click='user.role="Admin"'
+            >
+              <font-awesome-icon icon='arrow-up'/>
+            </b-btn>
+
+            <b-btn v-if='user.role == "User"' variant='danger' @click='user.role="User"'>
+              <font-awesome-icon icon='arrow-down'/>
+            </b-btn>
+          </b-col>
+        </b-row>
+      </b-col>
+
+      <b-col cols='7'>
+        <b-row>
+          <b-col cols='12'>
+            <h5>
+              Opened elements
+            </h5>
+
+            <b-progress
+              class='mb-3'
+              :value='userElements.length'
+              :max='maxElements'
+              show-value='show-value'
+            />
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
+  </b-modal>
+</b-container>
 </template>
 
 <script>
@@ -251,12 +296,9 @@ export default {
       this.getUserElements()
     },
     saveUser () {
-      console.log('saveUser')
-
       if (this.resetPassword) {
         putResetPassword(this.user.email).then(response => {
           if (response.status === 200) {
-
           }
         })
       }

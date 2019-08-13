@@ -1,6 +1,6 @@
-<template lang='pug'>
-  b-container
-    Table(
+<template>
+  <b-container>
+    <Table
       :data='recipes'
       :fields='fields'
       :totalRows='totalRows'
@@ -10,13 +10,13 @@
       @commonButtonClick='beforeCreateRecipe'
       @editButtonClick='beforeEditRecipe'
       @deleteButtonClick='beforeDeleteRecipe'
-    )
+    />
 
-    b-modal(
+    <b-modal
       v-model='modals.create'
       title='Create new recipe'
       size='xl'
-      hide-header-close=true
+      hide-header-close='hide-header-close'
       ok-title='Create'
       ok-variant='success'
       :ok-disabled='loading.createRecipe'
@@ -24,67 +24,79 @@
       cancel-variant='danger'
       @ok='createRecipe'
       @hidden='afterCreateRecipe'
-    )
-      b-row
-        //- Select result, first, second elements
-        b-col(cols='4')
-          b-row
-            b-col(cols='12')
-              b-form-group(label='Result element:')
-                multiselect(
-                  v-model='create.resultElement',
-                  placeholder='Result element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+    >
+      <b-row>
+        <b-col cols='4'>
+          <b-row>
+            <b-col cols='12'>
+              <b-form-group label='Result element:'>
+                <multiselect
+                  v-model='create.resultElement'
+                  placeholder='Result element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
 
-          b-row(class='mt-2')
-            b-col(cols='12')
-              b-form-group(label='First element:')
-                multiselect(
-                  v-model='create.firstElement',
-                  placeholder='First element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+          <b-row class='mt-2'>
+            <b-col cols='12'>
+              <b-form-group label='First element:'>
+                <multiselect
+                  v-model='create.firstElement'
+                  placeholder='First element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
 
-          b-row(class='mt-2')
-            b-col(cols='12')
-              b-form-group(label='Second element:')
-                multiselect(
-                  v-model='create.secondElement',
-                  placeholder='Second element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+          <b-row class='mt-2'>
+            <b-col cols='12'>
+              <b-form-group label='Second element:'>
+                <multiselect
+                  v-model='create.secondElement'
+                  placeholder='Second element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-col>
 
-        //- All elements list
-        b-col(cols='8')
-          b-card(no-body)
-            b-tabs(
-              card
-              pills
-              vertical
-              small
+        <b-col cols='8'>
+          <b-card no-body='no-body'>
+            <b-tabs
+              card='card'
+              pills='pills'
+              vertical='vertical'
+              small='small'
               nav-wrapper-class='w-25'
-            )
-              b-tab(v-for='category in categories' :title='category.name' :key='category._id')
-                b-btn(
+            >
+              <b-tab
+                v-for='category in categories'
+                :title='category.name'
+                :key='category._id'
+              >
+                <b-btn
                   class='mr-2 mb-2'
                   size='sm'
                   variant='outline-success'
@@ -92,19 +104,26 @@
                   :key='element._id'
                   v-if='element.category === category.name'
                   @click='pushElement(element)'
-                )
-                  | {{ element.name }}
+                >
+                  {{ element.name }}
+                </b-btn>
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </b-col>
 
-        b-col(cols='12' v-if='errors.createRecipe')
-          b-alert(show variant='danger')
-            | {{ errors.createRecipe }}
-
-    //- Edit recipe modal
-    b-modal(
+        <b-col cols='12' v-if='errors.createRecipe'>
+          <b-alert show='show' variant='danger'>
+            {{ errors.createRecipe }}
+          </b-alert>
+        </b-col>
+      </b-row>
+    </b-modal>
+    <b-modal
       v-model='modals.edit'
       title='Edit recipe'
       size='xl'
-      hide-header-close=true
+      hide-header-close='hide-header-close'
       ok-title='Save'
       ok-variant='success'
       :ok-disabled='loading.editRecipe'
@@ -112,66 +131,80 @@
       cancel-variant='danger'
       @ok='editRecipe'
       @hidden='afterEditRecipe'
-    )
-      b-row
-        b-col(cols='4')
-          b-row
-            b-col(cols='12')
-              b-form-group(label='Result element:')
-                multiselect(
-                  v-model='edit.resultElement',
-                  placeholder='Result element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+    >
+      <b-row>
+        <b-col cols='4'>
+          <b-row>
+            <b-col cols='12'>
+              <b-form-group label='Result element:'>
+                <multiselect
+                  v-model='edit.resultElement'
+                  placeholder='Result element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
 
-          b-row(class='mt-2')
-            b-col(cols='12')
-              b-form-group(label='First element:')
-                multiselect(
-                  v-model='edit.firstElement',
-                  placeholder='First element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+          <b-row class='mt-2'>
+            <b-col cols='12'>
+              <b-form-group label='First element:'>
+                <multiselect
+                  v-model='edit.firstElement'
+                  placeholder='First element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
 
-          b-row(class='mt-2')
-            b-col(cols='12')
-              b-form-group(label='Second element:')
-                multiselect(
-                  v-model='edit.secondElement',
-                  placeholder='Second element',
-                  label='name',
-                  deselectLabel='',
-                  :options='elements',
-                  :searchable='true',
-                  :allow-empty='false',
-                  :clear-on-select='false',
+          <b-row class='mt-2'>
+            <b-col cols='12'>
+              <b-form-group label='Second element:'>
+                <multiselect
+                  v-model='edit.secondElement'
+                  placeholder='Second element'
+                  label='name'
+                  deselectLabel
+                  :options='elements'
+                  :searchable='true'
+                  :allow-empty='false'
+                  :clear-on-select='false'
                   :maxHeight='280'
-                )
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-col>
 
-        //- All elements list
-        b-col(cols='8')
-          b-card(no-body)
-            b-tabs(
-              card
-              pills
-              vertical
-              small
+        <b-col cols='8'>
+          <b-card no-body='no-body'>
+            <b-tabs
+              card='card'
+              pills='pills'
+              vertical='vertical'
+              small='small'
               nav-wrapper-class='w-25'
-            )
-              b-tab(v-for='category in categories' :title='category.name' :key='category._id' @click='showRecipe = []')
-                b-btn(
+            >
+              <b-tab
+                v-for='category in categories'
+                :title='category.name'
+                :key='category._id'
+                @click='showRecipe = []'
+              >
+                <b-btn
                   class='mr-2 mb-2'
                   size='sm'
                   variant='outline-success'
@@ -179,43 +212,61 @@
                   :key='element._id'
                   v-if='element.category === category.name'
                   @click='showElementRecipe(element)'
-                )
-                  | {{ element.name }}
+                >
+                  {{ element.name }}
+                </b-btn>
+              </b-tab>
 
-              b-col(cols='12' v-if='showRecipe.length > 0')
-                p(class='text-muted')
-                  | Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
+              <b-col cols='12' v-if='showRecipe.length &gt; 0'>
+                <p class='text-muted'>
+                  Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
+                </p>
+              </b-col>
+            </b-tabs>
+          </b-card>
 
-          b-col(cols='12' v-if='errors.createRecipe')
-            b-alert(show variant='danger')
-              | {{ errors.createRecipe }}
-
-    //- Delete element modal
-    b-modal(
+          <b-col cols='12' v-if='errors.createRecipe'>
+            <b-alert show='show' variant='danger'>
+              {{ errors.createRecipe }}
+            </b-alert>
+          </b-col>
+        </b-col>
+      </b-row>
+    </b-modal>
+    <b-modal
       v-model='modals.delete'
       size='md'
-      hide-header-close=true
+      hide-header-close='hide-header-close'
       ok-title='Delete'
       ok-variant='success'
       :ok-disabled='loading.deleteRecipe'
       :cancel-disabled='loading.deleteRecipe'
       cancel-variant='danger'
-      hide-header=true
+      hide-header='hide-header'
       @ok='deleteRecipe'
       @hidden='afterDeleteRecipe'
-    )
-      b-row(class='text-center')
-        b-col(cols='12' v-if='!errors.deleteElement')
-          h4 Delete recipe of
-            strong(class='text-danger')  {{ this.delete.name }}
-            | ?
-        b-col(cols='12' v-if='errors.deleteElement')
-          b-alert(show variant='danger')
-            | {{ errors.deleteElement }}
+    >
+      <b-row class='text-center'>
+        <b-col cols='12' v-if='!errors.deleteElement'>
+          <h4>
+            Delete recipe of
+            <strong class='text-danger'>
+              {{ this.delete.name }}
+            </strong>
+            ?
+          </h4>
+        </b-col>
+        <b-col cols='12' v-if='errors.deleteElement'>
+          <b-alert show='show' variant='danger'>
+            {{ errors.deleteElement }}
+          </b-alert>
+        </b-col>
+      </b-row>
+    </b-modal>
+  </b-container>
 </template>
 
 <script>
-
 import { getElements } from '@/js/api/elements'
 
 import { getCategories } from '@/js/api/categories'
@@ -235,7 +286,7 @@ export default {
   },
   watch: {
     // call again the method if the route changes
-    '$route': 'getRecipes'
+    $route: 'getRecipes'
   },
   data () {
     return {
@@ -445,7 +496,7 @@ export default {
           this.showRecipe[0] = element
           this.showRecipe[1] = this.recipes[i].recipe[0]
           this.showRecipe[2] = this.recipes[i].recipe[1]
-          return
+          break
         }
       }
     }

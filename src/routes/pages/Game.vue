@@ -1,63 +1,56 @@
-<template lang='pug'>
-b-container(fluid)
-  b-row
-    CategoriesList
-      SelectCategoryButton(
-        v-for='openedCategory in openedCategories'
-        :key='openedCategory._id'
-        :categoryName='openedCategory.name'
-      )
-    GameField
-      b-row(class='active-elements')
+<template>
+  <b-container>
+    <b-row class='h-100'>
+      <CategoriesList />
 
-        b-col(class='text-right' cols='12')
-          b-row(class='row align-items-start')
-            b-col(cols='12')
-              b-btn(variant='success' @click='openedRecipesModalShow') Recipes
+      <GameField>
+        <b-row class='active-elements'>
+          <ActiveElement
+            v-for='element in activeElements'
+            :key='element.gameId'
+            :elementData='element'
+          />
 
-        Element(
-          v-for='element in activeElements'
-          :key='element.gameId'
-          :elementData='element'
-        )
+          <b-col cols='12'>
+            <b-row class='h-100 row align-items-end'>
+              <b-col cols='10' order='1'>
+                <ActiveElementsAction />
+              </b-col>
 
-        b-col(cols='12')
-          b-row(class='h-100 row align-items-end')
-            b-col(cols='6' order='1')
-              ActiveElementsAction
-            b-col(class='ml-auto text-right' cols='1' order='2')
-              ClearGameField
+              <b-col class='ml-auto text-right' cols='2' order='2'>
+                <ClearGameField />
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
 
-      div(class='opened-elements')
-        OpenedElement(
-          v-for='element in openedElements'
-          :key='element._id'
-          :elementData='element'
-          v-if='element.show'
-        )
-
-  OpenedRecipesModal
-
+        <div class='opened-elements'>
+          <OpenedElement
+            v-for='element in openedElements'
+            :key='element._id'
+            :elementData='element'
+            v-if='element.show'
+          />
+        </div>
+      </GameField>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import * as shortid from 'shortid'
 
-import Element from '@/components/game/Element.vue'
+import ActiveElement from '@/components/game/elements/ActiveElement.vue'
 
-import OpenedElement from '@/components/game/OpenedElement.vue'
+import OpenedElement from '@/components/game/elements/OpenedElement.vue'
 
 import GameField from '@/components/game/GameField.vue'
 
 import ClearGameField from '@/components/game/ClearGameField.vue'
 
-import CategoriesList from '@/components/game/CategoriesList.vue'
+import CategoriesList from '@/components/game/categories/CategoriesList.vue'
 
-import OpenedRecipesModal from '@/components/game/OpenedRecipesModal.vue'
-
-import SelectCategoryButton from '@/components/game/SelectCategoryButton.vue'
-
-import ActiveElementsAction from '@/components/game/ActiveElementsAction.vue'
+import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -69,21 +62,25 @@ import { getRecipes } from '@/js/api/recipes'
 
 export default {
   components: {
-    Element,
+    ActiveElement,
     OpenedElement,
     GameField,
     ClearGameField,
     CategoriesList,
-    OpenedRecipesModal,
-    SelectCategoryButton,
     ActiveElementsAction
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-field')
-    this.setGameFieldSize({ x: gameField[0].clientWidth, y: gameField[0].clientHeight })
+    this.setGameFieldSize({
+      x: gameField[0].clientWidth,
+      y: gameField[0].clientHeight
+    })
 
     window.addEventListener('resize', () => {
-      this.setGameFieldSize({ x: gameField[0].clientWidth, y: gameField[0].clientHeight })
+      this.setGameFieldSize({
+        x: gameField[0].clientWidth,
+        y: gameField[0].clientHeight
+      })
       this.updateOpenedElementsPositions()
     })
 
@@ -133,27 +130,27 @@ export default {
   computed: {
     ...mapGetters({
       gameFieldSize: 'game/gameFieldSize',
-      openedElements: 'game/openedElements',
-      activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement',
-      openedCategories: 'game/openedCategories',
-      openedRecipes: 'game/openedRecipes',
-      recipes: 'game/recipes',
-      selectedCategory: 'game/selectedCategory'
+      openedElements: 'elements/openedElements',
+      activeElements: 'elements/activeElements',
+      selectedElement: 'elements/selectedElement',
+      openedCategories: 'categories/openedCategories',
+      openedRecipes: 'recipes/openedRecipes',
+      recipes: 'recipes/recipes',
+      selectedCategory: 'categories/selectedCategory'
     })
   },
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
-      setOpenedElements: 'game/setOpenedElements',
-      setActiveElements: 'game/setActiveElements',
-      setOpenedCategories: 'game/setOpenedCategories',
-      updateOpenedElementsPositions: 'game/updateOpenedElementsPositions',
-      setOpenedRecipes: 'game/setOpenedRecipes',
-      addOpenedRecipe: 'game/addOpenedRecipe',
-      setRecipes: 'game/setRecipes',
-      setSelectedCategory: 'game/setSelectedCategory',
-      updateOpenedElementsByCategory: 'game/updateOpenedElementsByCategory'
+      setOpenedElements: 'elements/setOpenedElements',
+      setActiveElements: 'elements/setActiveElements',
+      setOpenedCategories: 'categories/setOpenedCategories',
+      updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',
+      setOpenedRecipes: 'recipes/setOpenedRecipes',
+      addOpenedRecipe: 'recipes/addOpenedRecipe',
+      setRecipes: 'recipes/setRecipes',
+      setSelectedCategory: 'categories/setSelectedCategory',
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
     }),
     generateGameId () {
       let gameId = shortid.generate()
@@ -191,9 +188,6 @@ export default {
         secondFound = false
       }
       this.setOpenedRecipes(userRecipes)
-    },
-    openedRecipesModalShow () {
-      this.$root.$emit('openedRecipesModalShow')
     }
   }
 }
@@ -203,12 +197,11 @@ export default {
 .active-elements {
   min-height: 100%;
   min-width: 80%;
-  border-right: 1px solid black;
   padding: 20px;
 }
 
 .opened-elements {
-  min-height: 60vh;
+  min-height: 100%;
   min-width: 20%;
 }
 
@@ -219,33 +212,29 @@ export default {
   opacity: 0;
 }
 
-@media screen and (max-width : 360px) and (min-width : 100px) {
+@media screen and (max-width: 360px) and (min-width: 100px) {
   .container {
     min-width: 360px;
+    width: 95%;
   }
 }
 
-@media screen and (max-width : 500px) and (min-width : 100px) {
+@media screen and (max-width: 500px) and (min-width: 360px) {
   .container {
-    max-width: 90%;
+    width: 95%;
   }
 }
 
-@media screen and (min-width : 1200px) {
+@media screen and (min-width: 1300px) and (max-width: 1920px) {
   .container {
-    min-width: 1200px;
+    min-width: 100%;
+    min-height: 100%;
   }
 }
 
-@media screen and (min-width : 1300px) {
+@media screen and (min-width: 1921px) {
   .container {
-    min-width: 1300px;
-  }
-}
-
-@media screen and (min-width : 1400px) {
-  .container {
-    min-width: 1400px;
+    min-width: 75%;
   }
 }
 </style>

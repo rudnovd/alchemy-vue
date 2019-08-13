@@ -1,62 +1,69 @@
-<template lang='pug'>
-b-modal(
-  v-model='showModal'
-  :title='textStatus'
-  size='md'
-  hide-footer=true
-  centered=true
-)
-  b-row(class='ml-3 mr-3' v-if='!resetSuccess')
-    //- Reset password text
-    b-col(class='mt-4' cols='8')
-      h4 Reset password
+<template>
+  <b-modal
+    v-model='showModal'
+    :title='textStatus'
+    size='md'
+    hide-footer='hide-footer'
+    centered='centered'
+  >
+    <b-row class='ml-3 mr-3' v-if='!resetSuccess'>
+      <b-col class='mt-4' cols='8'>
+        <h4>
+          Reset password
+        </h4>
+      </b-col>
 
-    //- Close button
-    b-col(class='ml-auto text-right' cols='2')
-      b-button(
-        class='close-button'
-        size='sm'
-        variant='link'
-        @click='showModal = false'
-      )
-        font-awesome-icon(class='c-pointer fa-2x' icon='times')
+      <b-col class='ml-auto text-right' cols='2'>
+        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
+          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
+        </b-button>
+      </b-col>
 
-    //- Input email
-    b-col(class='mt-2' cols='12')
-      b-form-group(label='Email' label-for='email')
-        b-form-input(
-          required
-          id='email'
-          type='text'
-          v-model='email'
-          v-model.trim.lazy='$v.email.$model'
-          :class="{ 'form-error': $v.email.$error, 'form-success': !$v.email.$error && this.email}"
-        )
+      <b-col class='mt-2' cols='12'>
+        <b-form-group label='Email' label-for='email'>
+          <b-form-input
+            required='required'
+            id='email'
+            type='text'
+            v-model='email'
+            v-model.trim.lazy='$v.email.$model'
+            :class='{ "form-error": $v.email.$error, "form-success": !$v.email.$error && this.email}'
+          />
+        </b-form-group>
+      </b-col>
 
-    //- Send reset password
-    b-col(class='mt-2 mb-3' cols='12')
-      b-btn(block variant='success' @click='resetPassword')
-        | Reset password
+      <b-col class='mt-2 mb-3' cols='12'>
+        <b-btn block='block' variant='success' @click='resetPassword'>
+          Reset password
+        </b-btn>
+      </b-col>
 
-    //- Error
-    b-col(class='mt-2' cols='12')
-      b-alert(v-if='error' show variant='danger')
-        | {{ error }}
+      <b-col class='mt-2' cols='12'>
+        <b-alert v-if='error' show='show' variant='danger'>
+          {{ error }}
+        </b-alert>
+      </b-col>
+    </b-row>
 
-  //- Success message
-  b-row(class='ml-3 mr-3' v-if='resetSuccess')
-    //- Close button
-    b-col(class='ml-auto text-right' cols='2')
-      b-button(
-        class='close-button'
-        size='sm'
-        variant='link'
-        @click='showModal = false; resetSuccess = false'
-      )
-        font-awesome-icon(class='c-pointer fa-2x' icon='times')
+    <b-row class='ml-3 mr-3' v-if='resetSuccess'>
+      <b-col class='ml-auto text-right' cols='2'>
+        <b-button
+          class='close-button'
+          size='sm'
+          variant='link'
+          @click='showModal = false; resetSuccess = false'
+        >
+          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
+        </b-button>
+      </b-col>
 
-    b-col(class='mt-4' cols='12')
-      p Check your email
+      <b-col class='mt-4' cols='12'>
+        <p>
+          Check your email
+        </p>
+      </b-col>
+    </b-row>
+  </b-modal>
 </template>
 
 <script>

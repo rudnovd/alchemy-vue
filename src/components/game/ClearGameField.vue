@@ -1,13 +1,20 @@
-<template lang='pug'>
-div(class='clear-game-field-button')
-  font-awesome-icon(id='clear-game-field-button' class='clear-game-field-button' icon='trash' @click='onClick')
-  b-popover(
-    target='clear-game-field-button'
-    placement='bottom'
-    content='Click for clear game field'
-    :show='showPopover'
-    @shown='onShown'
-  )
+<template>
+  <div class='clear-game-field-button'>
+    <font-awesome-icon
+      id='clear-game-field-button'
+      class='clear-game-field-button'
+      icon='trash'
+      @click='onClick'
+    />
+
+    <b-popover
+      target='clear-game-field-button'
+      placement='bottom'
+      content='Click for clear game field'
+      :show='showPopover'
+      @shown='onShown'
+    />
+  </div>
 </template>
 
 <script>
@@ -22,7 +29,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      removeAllActiveElements: 'game/removeAllActiveElements'
+      removeAllActiveElements: 'elements/deleteActiveElements'
     }),
     onClick () {
       if (!this.showPopover && !this.isTimeout) {

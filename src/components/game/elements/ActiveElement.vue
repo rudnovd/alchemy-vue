@@ -1,21 +1,22 @@
-<template lang='pug'>
-vue-draggable-resizable(
-  class-name-active='selected-element'
-  class-name='element'
-  :resizable='false'
-  :disable-user-select='true'
-  :w='100'
-  :h='50'
-  :x='elementData.x'
-  :y='elementData.y'
-  :z='elementData.z'
-  :parent='".active-elements"'
-  :onDragStart='onDragStart'
-  @activated='onActivated'
-  @dragstop='onDragstop'
-  @deactivated='onDeactivated'
-)
-  | {{ elementData.name }}
+<template>
+  <vue-draggable-resizable
+    class-name-active='selected-element'
+    class-name='element'
+    :resizable='false'
+    :disable-user-select='true'
+    :w='100'
+    :h='50'
+    :x='elementData.x'
+    :y='elementData.y'
+    :z='elementData.z'
+    :parent='".active-elements"'
+    :onDragStart='onDragStart'
+    @activated='onActivated'
+    @dragstop='onDragstop'
+    @deactivated='onDeactivated'
+  >
+    {{ elementData.name }}
+  </vue-draggable-resizable>
 </template>
 
 <script>
@@ -35,26 +36,21 @@ export default {
   },
   computed: {
     ...mapGetters({
-      activeElements: 'game/activeElements',
-      selectedElement: 'game/selectedElement',
-
-      openedRecipes: 'game/openedRecipes',
-      recipes: 'game/recipes'
+      activeElements: 'elements/activeElements',
+      selectedElement: 'elements/selectedElement',
+      openedRecipes: 'recipes/openedRecipes',
+      recipes: 'recipes/recipes'
     })
   },
   methods: {
     ...mapActions({
-      addActiveElement: 'game/addActiveElement',
-      removeActiveElement: 'game/removeActiveElement',
-
-      setSelectedElement: 'game/setSelectedElement',
-      setSelectedElementCoordinates: 'game/setSelectedElementCoordinates',
-      removeSelectedElement: 'game/removeSelectedElement',
-
-      setOpenedElements: 'game/setOpenedElements',
-
-      addOpenedRecipe: 'game/addOpenedRecipe',
-
+      addActiveElement: 'elements/addActiveElement',
+      deleteActiveElement: 'elements/deleteActiveElement',
+      setSelectedElement: 'elements/setSelectedElement',
+      setSelectedElementCoordinates: 'elements/setSelectedElementCoordinates',
+      deleteSelectedElement: 'elements/deleteSelectedElement',
+      setOpenedElements: 'elements/setOpenedElements',
+      addOpenedRecipe: 'recipes/addOpenedRecipe',
       addHistory: 'game/addHistory'
     }),
 
@@ -65,13 +61,17 @@ export default {
 
     // Called whenever the user clicks anywhere outside the component, in order to deactivate it
     onDeactivated () {
-      this.removeSelectedElement()
+      this.deleteSelectedElement()
     },
 
     // Called when dragging starts (element is clicked or touched)
     onDragStart () {
       this.setSelectedElement(this.elementData)
-      this.setSelectedElementCoordinates({ x: this.elementData.x, y: this.elementData.y, z: 101 })
+      this.setSelectedElementCoordinates({
+        x: this.elementData.x,
+        y: this.elementData.y,
+        z: 101
+      })
     },
 
     // Called whenever the component stops getting dragged
@@ -128,6 +128,7 @@ export default {
             name: resultOfRecipe.name,
             x: x,
             y: y,
+            z: 100,
             gameId: shortid.generate()
           })
           this.addHistory({
@@ -135,21 +136,21 @@ export default {
             secondElement: combineElement.name,
             result: resultOfRecipe.name
           })
-          this.removeActiveElement(this.selectedElement.gameId)
-          this.removeActiveElement(combineElement.gameId)
+          this.deleteActiveElement(this.selectedElement)
+          this.deleteActiveElement(combineElement)
         }
       }
-      this.removeSelectedElement()
+      this.deleteSelectedElement()
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .element {
   text-align: center;
   line-height: 50px;
-  background-color: #AAA;
+  background-color: #aaa;
   width: 100%;
   height: 100%;
   display: inline-block;

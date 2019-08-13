@@ -1,67 +1,73 @@
-<template lang='pug'>
-b-modal(
-  v-model='showModal'
-  size='md'
-  hide-header=true
-  hide-footer=true
-  centered=true
-)
-  b-row(class='ml-3 mr-3')
-    //- Sign up text
-    b-col(class='mt-4' cols='8')
-      h4 Sign up
+<template>
+  <b-modal
+    v-model='showModal'
+    size='md'
+    hide-header='hide-header'
+    hide-footer='hide-footer'
+    centered='centered'
+  >
+    <b-row class='ml-3 mr-3'>
+      <b-col class='mt-4' cols='8'>
+        <h4>
+          Sign up
+        </h4>
+      </b-col>
 
-    //- Close button
-    b-col(class='ml-auto text-right' cols='2')
-      b-button(
-        class='close-button'
-        size='sm'
-        variant='link'
-        @click='showModal = false'
-      )
-        font-awesome-icon(class='c-pointer fa-2x' icon='times')
+      <b-col class='ml-auto text-right' cols='2'>
+        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
+          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
+        </b-button>
+      </b-col>
 
-    //- Input username
-    b-col(class='mt-3' cols='12')
-      b-form-group(label='Username' label-for='username')
-        b-form-input(
-          required
-          id='username'
-          type='text'
-          v-model='username'
-          v-model.trim.lazy='$v.username.$model'
-          :class="{ 'form-error': $v.username.$error, 'form-success': !$v.username.$error && this.username}"
-        )
+      <b-col class='mt-3' cols='12'>
+        <b-form-group label='Username' label-for='username'>
+          <b-form-input
+            required='required'
+            id='username'
+            type='text'
+            v-model='username'
+            v-model.trim.lazy='$v.username.$model'
+            :class='{ "form-error": $v.username.$error, "form-success": !$v.username.$error && this.username}'
+          />
+        </b-form-group>
+      </b-col>
 
-    //- Input email
-    b-col(class='mt-2' cols='12')
-      b-form-group(label='Email' label-for='email')
-        b-form-input(
-          required
-          id='email'
-          type='text'
-          v-model='email'
-          v-model.trim.lazy='$v.email.$model'
-          :class="{ 'form-error': $v.email.$error, 'form-success': !$v.email.$error && this.email}"
-        )
+      <b-col class='mt-2' cols='12'>
+        <b-form-group label='Email' label-for='email'>
+          <b-form-input
+            required='required'
+            id='email'
+            type='text'
+            v-model='email'
+            v-model.trim.lazy='$v.email.$model'
+            :class='{ "form-error": $v.email.$error, "form-success": !$v.email.$error && this.email}'
+          />
+        </b-form-group>
+      </b-col>
 
-    //- Input password
-    b-col(class='mt-2' cols='12')
-      b-form-group(label='Password' label-for='password')
-        b-form-input(
-          required
-          id='password'
-          type='password'
-          v-model='password'
-          v-model.trim.lazy='$v.password.$model'
-          :class="{ 'form-error': $v.password.$error, 'form-success': !$v.password.$error && this.password}"
-        )
-        p(class='error' v-show='$v.password.$error') password must contain at least 4 characters
+      <b-col class='mt-2' cols='12'>
+        <b-form-group label='Password' label-for='password'>
+          <b-form-input
+            required='required'
+            id='password'
+            type='password'
+            v-model='password'
+            v-model.trim.lazy='$v.password.$model'
+            :class='{ "form-error": $v.password.$error, "form-success": !$v.password.$error && this.password}'
+          />
+          <p class='error' v-show='$v.password.$error'>
+            password must contain at least 4 characters
+          </p>
+        </b-form-group>
+      </b-col>
 
-    //- Send registration
-    b-col(class='mt-2 mb-3' cols='12')
-      b-btn(block variant='success' @click='registration')
-        | Sign up
+      <b-col class='mt-2 mb-3' cols='12'>
+        <b-btn block='block' variant='success' @click='registration'>
+          Sign up
+        </b-btn>
+      </b-col>
+    </b-row>
+  </b-modal>
 </template>
 
 <script>

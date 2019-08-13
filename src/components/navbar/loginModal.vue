@@ -1,70 +1,75 @@
-<template lang='pug'>
-b-modal(
-  v-model='showModal'
-  size='md'
-  hide-header=true
-  hide-footer=true
-  centered=true
-)
-  b-row(class='ml-3 mr-3')
-    //- Sign in text
-    b-col(class='mt-4' cols='8')
-      h4 Sign in
+<template>
+  <b-modal
+    v-model='showModal'
+    size='md'
+    hide-header='hide-header'
+    hide-footer='hide-footer'
+    centered='centered'
+  >
+    <b-row class='ml-3 mr-3'>
+      <b-col class='mt-4' cols='8'>
+        <h4>
+          Sign in
+        </h4>
+      </b-col>
 
-    //- Close button
-    b-col(class='ml-auto text-right' cols='2')
-      b-button(
-        class='close-button'
-        size='sm'
-        variant='link'
-        @click='showModal = false'
-      )
-        font-awesome-icon(class='c-pointer fa-2x' icon='times')
+      <b-col class='ml-auto text-right' cols='2'>
+        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
+          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
+        </b-button>
+      </b-col>
 
-    //- Input username or email
-    b-col(class='mt-2' cols='12')
-      b-form-group(label='Email or username' label-for='usernameOrEmail')
-        b-form-input(
-          required
-          id='usernameOrEmail'
-          type='text'
-          v-model='usernameOrEmail'
-          :autocomplete='autocomplete'
-        )
+      <b-col class='mt-2' cols='12'>
+        <b-form-group label='Email or username' label-for='usernameOrEmail'>
+          <b-form-input
+            required='required'
+            id='usernameOrEmail'
+            type='text'
+            v-model='usernameOrEmail'
+            :autocomplete='autocomplete'
+          />
+        </b-form-group>
+      </b-col>
 
-    //- Input password
-    b-col(class='mt-2' cols='12')
-      b-form-group(label='Password' label-for='password')
-        b-form-input(
-          required
-          id='password'
-          type='password'
-          v-model='password'
-          :autocomplete='autocomplete'
-        )
+      <b-col class='mt-2' cols='12'>
+        <b-form-group label='Password' label-for='password'>
+          <b-form-input
+            required='required'
+            id='password'
+            type='password'
+            v-model='password'
+            :autocomplete='autocomplete'
+          />
+        </b-form-group>
+      </b-col>
 
-    //- Remember login checkbox
-    b-col(cols='12')
-      b-form-checkbox(
-        v-model='rememberLogin'
-        name='remember-login-checkbox'
-        unchecked-value=false
-      ) Remember me
+      <b-col cols='12'>
+        <b-form-checkbox v-model='rememberLogin' name='remember-login-checkbox'>
+          Remember me
+        </b-form-checkbox>
+      </b-col>
 
-    //- Reset password
-    b-col(class='mt-3' cols='12')
-      p(class='text-center text-muted')
-        u(class='c-pointer' @click='resetPasswordModalShow()')
-          | Don't remember your password?
+      <b-col class='mt-3' cols='12'>
+        <p class='text-center text-muted'>
+          <u class='c-pointer' @click='resetPasswordModalShow()'>
+            Don't remember your password?
+          </u>
+        </p>
+      </b-col>
 
-    //- Sign in button
-    b-col(cols='12' class='mt-2 mb-3')
-      b-btn(block variant='success' @click='login')
-        | Sign in
+      <b-col class='mt-2 mb-3' cols='12'>
+        <b-btn block='block' variant='success' @click='login'>
+          Sign in
+        </b-btn>
+      </b-col>
 
-    //- Error
-    b-col(cols='12' v-if='error')
-      b-alert(show variant='danger') {{ error }}
+      <b-col cols='12' v-if='error'>
+        <b-alert show='show' variant='danger'>
+          {{ error }}
+        </b-alert>
+      </b-col>
+    </b-row>
+  </b-modal>
 </template>
 
 <script>

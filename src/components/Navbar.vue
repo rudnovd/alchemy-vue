@@ -1,42 +1,74 @@
-<template lang='pug'>
-  b-container
-    b-navbar-brand(to='/') Home
+<template>
+  <b-container>
+    <b-navbar-brand to='/'>
+      <img src='@/assets/logo.svg' heigth='50px' width='50px'/>Home
+    </b-navbar-brand>
 
-    b-navbar-toggle(class='ml-auto' target='nav_collapse')
+    <b-btn
+      class='nav-button opened-recipes-button ml-auto'
+      id='opened-recipes-button'
+      v-if='$route.path === "/game"'
+      title='Recipes'
+    >
+      <font-awesome-icon class='nav-icon' icon='scroll' @click='openedRecipesModalShow'/>
+    </b-btn>
 
-    b-collapse(id='#nav_collapse' is-nav)
-      b-navbar-nav(class='ml-auto')
-        b-btn(
-          class='text-white'
-          v-if='!isLoggedIn'
-          variant='link'
-          @click='loginModalShow'
-        ) Sign in
+    <b-navbar-nav>
+      <b-btn
+        class='text-white'
+        v-if='!user.isLoggedIn && !loadingLogin'
+        variant='link'
+        @click='loginModalShow'
+      >
+        Sign in
+      </b-btn>
 
-        b-btn(
-          class='text-white'
-          v-if='!isLoggedIn'
-          variant='link'
-          @click='registrationModalShow'
-        ) Sign up
+      <b-btn
+        class='text-white'
+        v-if='!user.isLoggedIn && !loadingLogin'
+        variant='link'
+        @click='registrationModalShow'
+      >
+        Sign up
+      </b-btn>
 
-        b-nav-item-dropdown(v-if='isLoggedIn' :text='username' right)
-          b-dropdown-item(to='/game') Game
+      <b-nav-item-dropdown v-if='user.isLoggedIn' :text='user.username' left='left'>
+        <b-dropdown-item to='/game'>
+          Game
+        </b-dropdown-item>
 
-          template(v-if='isLoggedIn && isAdmin')
-            b-dropdown-divider
-            b-dropdown-item(to='/admin/dashboard') Dashboard
-            b-dropdown-item(to='/admin/elements') Elements
-            b-dropdown-item(to='/admin/recipes') Recipes
-            b-dropdown-item(to='/admin/users') Users
+        <template v-if='user.isLoggedIn && user.role === "Admin"'>
+          <b-dropdown-divider/>
 
-          b-dropdown-divider
-          b-dropdown-item(v-if='!isLoggedIn' @click='loginModalShow()') Log in
-          b-dropdown-item(v-if='isLoggedIn' @click='logout()') Logout
+          <b-dropdown-item to='/admin/dashboard'>
+            Dashboard
+          </b-dropdown-item>
 
-    LoginModal
-    RegistrationModal
-    ResetPasswordModal
+          <b-dropdown-item to='/admin/elements'>
+            Elements
+          </b-dropdown-item>
+
+          <b-dropdown-item to='/admin/recipes'>
+            Recipes
+          </b-dropdown-item>
+
+          <b-dropdown-item to='/admin/users'>
+            Users
+          </b-dropdown-item>
+        </template>
+
+        <b-dropdown-divider />
+
+        <b-dropdown-item v-if='user.isLoggedIn' @click='logout()'>
+          Logout
+        </b-dropdown-item>
+      </b-nav-item-dropdown>
+    </b-navbar-nav>
+    <LoginModal />
+    <RegistrationModal />
+    <ResetPasswordModal />
+    <OpenedRecipesModal />
+  </b-container>
 </template>
 
 <script>
@@ -48,30 +80,48 @@ import RegistrationModal from '@/components/navbar/RegistrationModal.vue'
 
 import ResetPasswordModal from '@/components/navbar/ResetPasswordModal.vue'
 
-import { getLogout } from '@/js/api/authentication'
+import OpenedRecipesModal from '@/components/game/recipes/OpenedRecipesModal.vue'
+
+import { getLogin, getLogout } from '@/js/api/authentication'
 
 export default {
   components: {
     LoginModal,
     RegistrationModal,
-    ResetPasswordModal
+    ResetPasswordModal,
+    OpenedRecipesModal
+  },
+  created () {
+    if (!this.isLoggedIn) {
+      this.loadingLogin = true
+      getLogin().then(response => {
+        this.loadingLogin = false
+        if (response.data.user) {
+          this.setUser(response.data.user)
+        }
+      })
+    }
+  },
+  data () {
+    return {
+      loadingLogin: false
+    }
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: 'user/isLoggedIn',
-      isAdmin: 'user/isAdmin',
-      username: 'user/username'
+      user: 'user/user'
     })
   },
   methods: {
     ...mapActions({
-      clearUser: 'user/clearUser'
+      deleteUser: 'user/deleteUser',
+      setUser: 'user/setUser'
     }),
     logout () {
       getLogout().then(response => {
         if (response.status === 200 || response.status === 304) {
-          this.$router.push({ path: '/' })
           this.clearUser()
+          this.$router.push({ path: '/' })
         }
       })
     },
@@ -80,6 +130,9 @@ export default {
     },
     registrationModalShow () {
       this.$root.$emit('registrationModalShow')
+    },
+    openedRecipesModalShow () {
+      this.$root.$emit('openedRecipesModalShow')
     }
   }
 }
@@ -101,5 +154,27 @@ export default {
       font-weight: bold;
     }
   }
+}
+
+.nav-button {
+  color: white;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.nav-icon {
+  width: 80% !important;
+  height: 80%;
+}
+
+.opened-recipes-button {
+  margin-right: 50px;
+}
+
+.navbar-nav .dropdown-menu {
+  position: absolute;
 }
 </style>

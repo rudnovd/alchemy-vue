@@ -1,64 +1,94 @@
-<template lang='pug'>
-div(class='data-table')
-  b-row(class='mb-3')
-    //- Search input
-    b-col(cols='4')
-      b-input-group
-        b-form-input(v-model='search' placeholder='Search')
-        b-input-group-append
-          b-btn(:disabled='!search' @click='search = null')
-            | Clear
+<template>
+  <div class='data-table'>
+    <b-row class='mb-3'>
+      <b-col cols='4'>
+        <b-input-group>
+          <b-form-input v-model='search' placeholder='Search'/>
+          <b-input-group-append>
+            <b-btn :disabled='!search' @click='search = null'>
+              Clear
+            </b-btn>
+          </b-input-group-append>
+        </b-input-group>
+      </b-col>
 
-    //- Create element modal button
-    b-col(cols='4' sm='3' md='2' lg='2' xl='2')
-      b-btn(class='mb-3' v-if='commonButton' variant='success' @click='commonButtonClick')
-        | Create {{ target }}
+     <b-col cols='4' sm='3' md='2' lg='2' xl='2'>
+        <b-btn
+          class='mb-3'
+          v-if='commonButton'
+          variant='success'
+          @click='commonButtonClick'
+        >
+          Create {{ target }}
+        </b-btn>
+      </b-col>
 
-    //- Select records per page
-    b-col(cols='4' sm='3' md='2' lg='2' xl='2' offset-md='4')
-      b-form-select(:options='pagination.pageOptions' v-model='pagination.perPage')
+      <slot type='button'></slot>
 
-  b-row
-    b-col(cols='12')
-      //- If loading
-      div(class='text-center')
-        b-spinner(v-if='loading' variant='success' style='width: 3rem; height: 3rem;')
+      <b-col cols='4' sm='3' md='2' lg='2' xl='2' offset-md='4'>
+        <b-form-select :options='pagination.pageOptions' v-model='pagination.perPage'/>
+      </b-col>
+    </b-row>
 
-      //- Error section
-      b-alert(class='text-center' v-if='error' show variant='danger')
-        | {{ error }}
+    <b-row>
+      <b-col cols='12'>
+        <div class='text-center'>
+          <b-spinner
+            v-if='loading'
+            variant='success'
+            style='width: 3rem; height: 3rem;'
+          />
+        </div>
 
-      //- Table with data
-      b-table(
-        v-if='!loading && !error'
-        show-empty
-        responsive
-        hover
-        flex
-        fixed=false
-        :items='data'
-        :fields='fields'
-        :current-page='pagination.currentPage'
-        :per-page='pagination.perPage'
-        :filter='search'
-      )
-        template(slot='action' slot-scope='actionRow')
-          b-button-group(size='sm')
-            //- Edit element button
-            b-btn(class='mr-1' v-if='editButton' variant='warning' size='sm' @click='editButtonClick(actionRow)')
-              font-awesome-icon(icon='edit')
+        <b-alert class='text-center' v-if='error' show='show' variant='danger'>
+          {{ error }}
+        </b-alert>
 
-            //- Delete element button
-            b-btn(v-if='deleteButton' variant='danger' size='sm' @click='deleteButtonClick(actionRow)')
-              font-awesome-icon(icon='trash')
-
-        //- Pagination for table
-        b-pagination(
-          align='center'
-          :total-rows='totalRows'
-          v-model='pagination.currentPage'
+        <b-table
+          v-if='!loading &amp;&amp; !error'
+          show-empty='show-empty'
+          responsive='responsive'
+          hover='hover'
+          flex='flex'
+          :items='data'
+          :fields='fields'
+          :current-page='pagination.currentPage'
           :per-page='pagination.perPage'
-        )
+          :filter='search'
+        >
+          <template slot='action' slot-scope='actionRow'>
+            <b-button-group size='sm'>
+              <b-btn
+                class='mr-1'
+                v-if='editButton'
+                variant='warning'
+                size='sm'
+                @click='editButtonClick(actionRow)'
+              >
+                <font-awesome-icon icon='edit'/>
+              </b-btn>
+
+              <b-btn
+                v-if='deleteButton'
+                variant='danger'
+                size='sm'
+                @click='deleteButtonClick(actionRow)'
+              >
+                <font-awesome-icon icon='trash'/>
+              </b-btn>
+            </b-button-group>
+          </template>
+
+          <b-pagination
+            align='center'
+            :total-rows='totalRows'
+            v-model='pagination.currentPage'
+            :per-page='pagination.perPage'
+          />
+        </b-table>
+      </b-col>
+    </b-row>
+  </div>
 </template>
 
 <script>
@@ -101,7 +131,6 @@ export default {
   data () {
     return {
       search: null,
-
       pagination: {
         perPage: 10,
         currentPage: 1,
