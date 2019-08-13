@@ -1,9 +1,9 @@
 export default {
   gameFieldSize: state => {
-    return state.settings.gameFieldSize
+    return state.gameFieldSize
   },
   elementsListFieldSize: state => {
-    return state.settings.elementListFieldSize
+    return state.elementListFieldSize
   },
   history: state => {
     return state.history

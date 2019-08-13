@@ -41,5 +41,12 @@ export default {
   },
   deleteSelectedElement ({ commit }) {
     commit('DELETE_SELECTED_ELEMENT')
+  },
+
+  updateOpenedElementsPositions ({ commit, rootState }) {
+    commit('UPDATE_OPENED_ELEMENTS_POSITIONS', rootState.game.gameFieldSize)
+  },
+  updateOpenedElementsByCategory ({ commit }, category) {
+    commit('UPDATE_OPENED_ELEMENTS_BY_CATEGORY', category)
   }
 }
