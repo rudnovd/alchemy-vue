@@ -5,6 +5,9 @@ export default {
   elementsListFieldSize: state => {
     return state.elementListFieldSize
   },
+  openedElementsFieldSize: state => {
+    return state.openedElementsFieldSize
+  },
   history: state => {
     return state.history
   }

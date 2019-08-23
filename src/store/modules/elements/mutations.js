@@ -37,7 +37,7 @@ export default {
   UPDATE_OPENED_ELEMENTS_POSITIONS (state, gameField) {
     let j = 0
     for (let i = 0; i < state.openedElements.length; i++) {
-      state.openedElements[i].x = gameField.x - (gameField.x * 0.15)
+      state.openedElements[i].x = gameField.x - (gameField.x * 0.20)
       if (state.openedElements[i].show) {
         state.openedElements[i].y = j * 45
         j++
