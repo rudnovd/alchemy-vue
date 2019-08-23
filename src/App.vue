@@ -1,6 +1,6 @@
 <template>
   <div id='app'>
-    <b-navbar class='mb-3' type='dark' variant='dark'>
+    <b-navbar type='dark' variant='dark'>
       <Navbar/>
     </b-navbar>
 
@@ -17,3 +17,7 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@import '@/css/main.scss';
+</style>

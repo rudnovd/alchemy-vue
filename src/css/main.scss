@@ -1,9 +1,7 @@
 $body-bg: rgb(236, 240, 241);
 $body-color: #333333;
 
-@import '@/css/colors.scss';
-
-@import '@/css/fonts.scss';
+@import 'fonts.scss';
 
 @import '~bootstrap/scss/bootstrap';
 
