@@ -7,7 +7,7 @@
     :resizable='false'
     :minHeight='40'
     :maxHeight='40'
-    :w='gameFieldSize.x * 0.15'
+    :w='openedElementsFieldSize.width * 0.2'
     :h='40'
     :x='elementData.x'
     :y='elementData.y'
@@ -44,7 +44,8 @@ export default {
       activeElements: 'elements/activeElements',
       selectedElement: 'elements/selectedElement',
       recipes: 'recipes/recipes',
-      openedRecipes: 'recipes/openedRecipes'
+      openedRecipes: 'recipes/openedRecipes',
+      openedElementsFieldSize: 'game/openedElementsFieldSize'
     })
   },
   methods: {
@@ -177,10 +178,6 @@ export default {
   text-align: center;
   line-height: 40px;
   background-color: rgb(245, 245, 245);
-  width: 100%;
-  height: 100%;
-  display: inline-block;
-  position: absolute;
   user-select: none;
   font-size: 1.2rem;
 }

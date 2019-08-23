@@ -36,35 +36,47 @@ export default {
 <style lang='scss' scoped>
 @media screen and (max-width: 767px) {
   .select-category-button {
-    width: 100px;
+    height: 70px;
+    width: 31%;
+    font-size: 1rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
   }
 }
 
 @media screen and (min-width: 768px) {
   .select-category-button {
-    display: block;
+    height: 70px;
     width: 100%;
+    font-size: 1.2rem;
+    display: block;
+  }
+
+  .select-category-button:hover {
+    opacity: 0.8;
+    border: 1px solid  map-get($colors, 'alchemy-light-green');
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .select-category-button {
+    font-size: 0.8rem;
   }
 }
 
 .select-category-button {
-  height: 50px;
+  color: black;
   background: rgb(240, 240, 240);
   opacity: 0.5;
-  color: black;
-  word-break: normal;
-}
-
-.select-category-button:hover {
-  opacity: 0.8;
-  border: 1px solid color('alchemy-light-green');
+  word-break: break-word;
+  vertical-align:middle
 }
 
 .select-category-button.active {
   opacity: 1;
-  background-color: color('alchemy-green');
-  border-color: color('alchemy-light-green');
+  background-color: map-get($colors, 'alchemy-green');
+  border-color: map-get($colors, 'alchemy-light-green');
   font-weight: bold;
-  border: 1px solid color('dark');
+  border: 2px solid black;
 }
 </style>

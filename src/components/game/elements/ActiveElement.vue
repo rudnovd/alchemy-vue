@@ -4,8 +4,8 @@
     class-name='element'
     :resizable='false'
     :disable-user-select='true'
-    :w='100'
-    :h='50'
+    :w='75'
+    :h='75'
     :x='elementData.x'
     :y='elementData.y'
     :z='elementData.z'
@@ -15,7 +15,12 @@
     @dragstop='onDragstop'
     @deactivated='onDeactivated'
   >
-    {{ elementData.name }}
+    <div class='d-block'>
+      <b-img :src='require("@/assets/images/elementExample.png")'/>
+    </div>
+    <span>
+      {{ elementData.name }}
+    </span>
   </vue-draggable-resizable>
 </template>
 
@@ -149,17 +154,17 @@ export default {
 <style lang='scss' scoped>
 .element {
   text-align: center;
-  line-height: 50px;
-  background-color: #aaa;
+  line-height: 35px;
+  background-color: rgb(223, 223, 223);
   width: 100%;
   height: 100%;
   display: inline-block;
   position: absolute;
-  border-radius: 25px;
   user-select: none;
+  border-radius: 100%;
 }
 
 .selected-element {
-  background-color: color('alchemy-green');
+  background-color: map-get($colors, 'alchemy-green');
 }
 </style>

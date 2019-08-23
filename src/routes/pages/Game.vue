@@ -1,20 +1,25 @@
 <template>
   <b-container>
-    <b-row class='h-100'>
-      <CategoriesList />
+    <b-row class='game-row'>
 
-      <GameField>
-        <b-row class='active-elements'>
-          <ActiveElement
-            v-for='element in activeElements'
-            :key='element.gameId'
-            :elementData='element'
-          />
+      <CategoriesList
+        class='pl-0 pl-sm-0 pl-md-2 pl-lg-3 pl-xl-3 pr-0 pr-sm-0 pr-md-2 pr-lg-3 pr-xl-3 col-sm-12 col-md-3 col-lg-2 col-xl-2 col-12'
+      />
 
-          <b-col cols='12'>
+      <GameField class='row'>
+
+          <b-col cols='9' sm='9' md='9' lg='9' xl='9' class='active-elements'>
+            <transition-group name="fade">
+              <ActiveElement
+                v-for='element in activeElements'
+                :key='element.gameId'
+                :elementData='element'
+              />
+            </transition-group>
+
             <b-row class='h-100 row align-items-end'>
               <b-col cols='10' order='1'>
-                <ActiveElementsAction />
+                <ActiveElementsAction v-show='history.last.firstElement' />
               </b-col>
 
               <b-col class='ml-auto text-right' cols='2' order='2'>
@@ -22,16 +27,17 @@
               </b-col>
             </b-row>
           </b-col>
-        </b-row>
 
-        <div class='opened-elements'>
-          <OpenedElement
-            v-for='element in openedElements'
-            :key='element._id'
-            :elementData='element'
-            v-if='element.show'
-          />
-        </div>
+          <div class='opened-elements'>
+              <OpenedElement
+                :elementData='element'
+                class='opened-element'
+                v-for='element in openedElements'
+                :key='element._id'
+                v-if='element.show'
+              />
+          </div>
+
       </GameField>
     </b-row>
   </b-container>
@@ -76,10 +82,21 @@ export default {
       y: gameField[0].clientHeight
     })
 
+    document.getElementsByClassName('opened-elements')[0].style.width = gameField[0].clientWidth + 'px'
+    const openedElementsField = document.getElementsByClassName('opened-elements')
+    this.setOpenedElementsFieldSize({
+      width: openedElementsField[0].clientWidth,
+      height: openedElementsField[0].clientHeight
+    })
+
     window.addEventListener('resize', () => {
       this.setGameFieldSize({
         x: gameField[0].clientWidth,
         y: gameField[0].clientHeight
+      })
+      this.setOpenedElementsFieldSize({
+        width: openedElementsField[0].clientWidth,
+        height: openedElementsField[0].clientHeight
       })
       this.updateOpenedElementsPositions()
     })
@@ -103,7 +120,7 @@ export default {
       getCategories().then(response => {
         if (response.status === 200) {
           this.setOpenedCategories(response.data.response)
-          this.setSelectedCategory(this.openedCategories[0].name)
+          this.setSelectedCategory(response.data.response[0].name)
           this.updateOpenedElementsByCategory(this.selectedCategory)
 
           this.updateOpenedElementsPositions()
@@ -136,7 +153,9 @@ export default {
       openedCategories: 'categories/openedCategories',
       openedRecipes: 'recipes/openedRecipes',
       recipes: 'recipes/recipes',
-      selectedCategory: 'categories/selectedCategory'
+      selectedCategory: 'categories/selectedCategory',
+      openedElementsFieldSize: 'game/openedElementsFieldSize',
+      history: 'game/history'
     })
   },
   methods: {
@@ -150,7 +169,8 @@ export default {
       addOpenedRecipe: 'recipes/addOpenedRecipe',
       setRecipes: 'recipes/setRecipes',
       setSelectedCategory: 'categories/setSelectedCategory',
-      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
+      setOpenedElementsFieldSize: 'game/setOpenedElementsFieldSize'
     }),
     generateGameId () {
       let gameId = shortid.generate()
@@ -194,15 +214,24 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.active-elements {
-  min-height: 100%;
-  min-width: 80%;
-  padding: 20px;
+.game-row {
+  height: 100%;
+  margin: 0;
 }
 
 .opened-elements {
-  min-height: 100%;
-  min-width: 20%;
+  height: inherit;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: fixed;
+  height: 100%;
+  max-height: 100%;
+  width: 0px;
+}
+
+.opened-element {
+  height: 40px;
+  width: 100%;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -212,29 +241,31 @@ export default {
   opacity: 0;
 }
 
-@media screen and (max-width: 360px) and (min-width: 100px) {
-  .container {
-    min-width: 360px;
-    width: 95%;
+.game-field {
+  width: 100%;
+}
+
+.container {
+  height: calc(100% - 66px);
+  min-width: 100%;
+  padding: 0;
+}
+
+.active-elements {
+  height: 100%;
+  padding: 10px;
+  z-index: 200;
+}
+
+@media screen and (max-width: 767px) {
+  .game-field {
+    height: calc(100% - 248px);
   }
 }
 
-@media screen and (max-width: 500px) and (min-width: 360px) {
-  .container {
-    width: 95%;
-  }
-}
-
-@media screen and (min-width: 1300px) and (max-width: 1920px) {
-  .container {
-    min-width: 100%;
-    min-height: 100%;
-  }
-}
-
-@media screen and (min-width: 1921px) {
-  .container {
-    min-width: 75%;
+@media screen and (min-width: 768px) {
+  .game-field {
+    height: 100%;
   }
 }
 </style>

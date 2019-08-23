@@ -4,14 +4,14 @@
       <img src='@/assets/logo.svg' heigth='50px' width='50px'/>Home
     </b-navbar-brand>
 
-    <b-btn
+    <font-awesome-icon
       class='nav-button opened-recipes-button ml-auto'
       id='opened-recipes-button'
       v-if='$route.path === "/game"'
       title='Recipes'
-    >
-      <font-awesome-icon class='nav-icon' icon='scroll' @click='openedRecipesModalShow'/>
-    </b-btn>
+      icon='scroll'
+      @click='openedRecipesModalShow'
+    />
 
     <b-navbar-nav>
       <b-btn
@@ -140,16 +140,17 @@ export default {
 
 <style lang='scss'>
 .navbar {
-  min-height: 5vh;
-  background: #222;
-  color: #9d9d9d;
+  height: 56px;
+  background: rgb(33, 33, 33);
+  color: rgb(157, 157, 157);
+  margin-bottom: 10px;
 
   .navbar-nav.ml-auto {
     a.dropdown-item {
-      color: color('dark');
+      color: black;
     }
     a.router-link-active {
-      color: color('alchemy-green');
+      color: ap-get($colors, 'alchemy-green');
       background: rgb(230, 230, 230);
       font-weight: bold;
     }
@@ -158,16 +159,8 @@ export default {
 
 .nav-button {
   color: white;
-  background: none;
-  border: none;
-  padding: 0;
-  width: 40px;
+  width: 1.5em;
   height: 40px;
-}
-
-.nav-icon {
-  width: 80% !important;
-  height: 80%;
 }
 
 .opened-recipes-button {

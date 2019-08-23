@@ -58,7 +58,7 @@ export default {
 <style lang='scss' scoped>
 .clear-game-field-button {
   cursor: pointer;
-  color: color('dark');
+  color: black;
   order: 0;
   margin-left: auto;
   width: 30px;

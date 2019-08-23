@@ -142,6 +142,6 @@ export default {
 }
 
 .form-success {
-  border-color: color('alchemy-green');
+  border-color: map-get($colors, 'alchemy-green');
 }
 </style>

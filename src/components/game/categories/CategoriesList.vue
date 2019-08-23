@@ -1,12 +1,5 @@
 <template>
-  <b-col
-    class='elements-categories pl-0 pl-sm-0 pl-md-2 pl-lg-3 pl-xl-3 pr-0 pr-sm-0 pr-md-2 pr-lg-3 pr-xl-3 text-center'
-    cols='12'
-    sm='12'
-    md='3'
-    lg='2'
-    xl='2'
-  >
+  <div class='elements-categories-list text-center'>
     <p class='text-center mb-1'>
       Categories
     </p>
@@ -17,7 +10,7 @@
       :key='openedCategory._id'
       :categoryName='openedCategory.name'
     />
-  </b-col>
+  </div>
 </template>
 
 <script>
@@ -39,29 +32,22 @@ export default {
 
 <style lang='scss' scoped>
 @media screen and (max-width: 767px) {
-  .elements-categories {
+  .elements-categories-list {
     overflow-y: auto;
     overflow-x: hidden;
     display: inline-block;
     float: none;
-    margin-bottom: 15px;
-    max-width: 300px;
+    min-width: 300px;
     min-height: 50px;
-    max-height: 10%;
-  }
-
-  .select-category-button {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    height: 40px;
-    width: 31%;
+    max-height: 175px;
   }
 }
 
-@media screen and (min-width: 768px) {
-  .elements-categories {
+@media (min-width: 768px) {
+  .elements-categories-list {
     max-height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .select-category-button {
