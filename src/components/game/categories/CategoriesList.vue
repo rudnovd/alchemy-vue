@@ -1,9 +1,5 @@
 <template>
   <div class='elements-categories-list text-center'>
-    <p class='text-center mb-1'>
-      Categories
-    </p>
-
     <SelectCategoryButton
       class='select-category-button'
       v-for='openedCategory in openedCategories'
@@ -39,7 +35,7 @@ export default {
     float: none;
     min-width: 300px;
     min-height: 50px;
-    max-height: 175px;
+    max-height: 110px;
   }
 }
 

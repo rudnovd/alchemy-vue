@@ -36,7 +36,7 @@ export default {
 <style lang='scss' scoped>
 @media screen and (max-width: 767px) {
   .select-category-button {
-    height: 70px;
+    height: 50px;
     width: 31%;
     font-size: 1rem;
     margin-right: 5px;
