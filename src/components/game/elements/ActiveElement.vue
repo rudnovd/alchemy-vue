@@ -9,7 +9,7 @@
     :x='elementData.x'
     :y='elementData.y'
     :z='elementData.z'
-    :parent='".active-elements"'
+    :parent='true'
     :onDragStart='onDragStart'
     @activated='onActivated'
     @dragstop='onDragstop'
@@ -156,8 +156,8 @@ export default {
   text-align: center;
   line-height: 35px;
   background-color: rgb(223, 223, 223);
-  width: 100%;
-  height: 100%;
+  width: 100px;
+  height: 100px;
   display: inline-block;
   position: absolute;
   user-select: none;

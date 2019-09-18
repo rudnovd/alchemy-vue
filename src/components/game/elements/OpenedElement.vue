@@ -12,7 +12,7 @@
     :x='elementData.x'
     :y='elementData.y'
     :z='elementData.z'
-    :parent='".game-field"'
+    :parent='true'
     :onDragStart='onDragStart'
     @activated='onActivated'
     @dragstop='onDragstop'
