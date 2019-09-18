@@ -9,13 +9,11 @@
       <GameField class='row'>
 
           <b-col cols='9' sm='9' md='9' lg='9' xl='9' class='active-elements'>
-            <transition-group name="fade">
-              <ActiveElement
-                v-for='element in activeElements'
-                :key='element.gameId'
-                :elementData='element'
-              />
-            </transition-group>
+            <ActiveElement
+              v-for='element in activeElements'
+              :key='element.gameId'
+              :elementData='element'
+            />
 
             <b-row class='h-100 row align-items-end'>
               <b-col cols='10' order='1'>
@@ -32,9 +30,8 @@
               <OpenedElement
                 :elementData='element'
                 class='opened-element'
-                v-for='element in openedElements'
+                v-for='element in filteredOpenedElements'
                 :key='element._id'
-                v-if='element.show'
               />
           </div>
 
@@ -59,12 +56,6 @@ import CategoriesList from '@/components/game/categories/CategoriesList.vue'
 import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
 
 import { mapGetters, mapActions } from 'vuex'
-
-import { getElements } from '@/js/api/elements'
-
-import { getCategories } from '@/js/api/categories'
-
-import { getRecipes } from '@/js/api/recipes'
 
 export default {
   components: {
@@ -101,74 +92,45 @@ export default {
       this.updateOpenedElementsPositions()
     })
 
-    if (this.openedElements.length === 0) {
-      getElements().then(response => {
-        if (response.status === 200) {
-          for (let i = 0; i < response.data.response.length; i++) {
-            response.data.response[i].x = null
-            response.data.response[i].y = null
-            response.data.response[i].z = 100
-            response.data.response[i].show = false
-          }
+    this.getOpenedElements()
 
-          this.setOpenedElements(response.data.response)
-        }
-      })
-    }
+    this.getOpenedCategories().then(() => {
+      this.setSelectedCategory(this.openedCategories[0].name)
+      this.updateOpenedElementsByCategory(this.selectedCategory)
+      this.updateOpenedElementsPositions()
+    })
 
-    if (this.openedCategories.length === 0) {
-      getCategories().then(response => {
-        if (response.status === 200) {
-          this.setOpenedCategories(response.data.response)
-          this.setSelectedCategory(response.data.response[0].name)
-          this.updateOpenedElementsByCategory(this.selectedCategory)
-
-          this.updateOpenedElementsPositions()
-        }
-      })
-    }
-
-    if (this.recipes.length === 0) {
-      getRecipes().then(response => {
-        if (response.status === 200) {
-          for (let i = 0; i < response.data.response.length; i++) {
-            for (let j = 0; j < this.openedElements.length; j++) {
-              if (response.data.response[i].result._id === this.openedElements[j]._id) {
-                response.data.response[i].result.category = this.openedElements[j].category
-              }
-            }
-          }
-          this.setRecipes(response.data.response)
-          this.findOpenedRecipes()
-        }
-      })
-    }
+    this.getRecipes().then(() => {
+      this.findOpenedRecipes()
+    })
   },
   computed: {
     ...mapGetters({
-      gameFieldSize: 'game/gameFieldSize',
       openedElements: 'elements/openedElements',
       activeElements: 'elements/activeElements',
-      selectedElement: 'elements/selectedElement',
       openedCategories: 'categories/openedCategories',
-      openedRecipes: 'recipes/openedRecipes',
       recipes: 'recipes/recipes',
       selectedCategory: 'categories/selectedCategory',
-      openedElementsFieldSize: 'game/openedElementsFieldSize',
       history: 'game/history'
-    })
+    }),
+    filteredOpenedElements () {
+      return this.openedElements.filter(openedElement => {
+        if (openedElement.show) {
+          return openedElement
+        }
+      })
+    }
   },
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
-      setOpenedElements: 'elements/setOpenedElements',
+      getOpenedElements: 'elements/getOpenedElements',
       setActiveElements: 'elements/setActiveElements',
-      setOpenedCategories: 'categories/setOpenedCategories',
+      getOpenedCategories: 'categories/getOpenedCategories',
+      setSelectedCategory: 'categories/setSelectedCategory',
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',
       setOpenedRecipes: 'recipes/setOpenedRecipes',
-      addOpenedRecipe: 'recipes/addOpenedRecipe',
-      setRecipes: 'recipes/setRecipes',
-      setSelectedCategory: 'categories/setSelectedCategory',
+      getRecipes: 'recipes/getRecipes',
       updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
       setOpenedElementsFieldSize: 'game/setOpenedElementsFieldSize'
     }),
@@ -259,7 +221,7 @@ export default {
 
 @media screen and (max-width: 767px) {
   .game-field {
-    height: calc(100% - 248px);
+    height: 80%;
   }
 }
 
