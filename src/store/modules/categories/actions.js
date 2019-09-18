@@ -1,6 +1,18 @@
+import { getCategories } from '@/js/api/categories'
+
 export default {
-  setOpenedCategories ({ commit }, categories) {
-    commit('SET_OPENED_CATEGORIES', categories)
+  async getOpenedCategories ({ state, dispatch, commit }) {
+    if (state.openedCategories.length === 0) {
+      commit('LOADING_START')
+      await getCategories().then(response => {
+        commit('LOADING_END')
+        if (response.status === 200) {
+          commit('SET_OPENED_CATEGORIES', response.data.response)
+        } else {
+          commit('SET_ERROR', response)
+        }
+      })
+    }
   },
   deleteOpenedCategories ({ commit }) {
     commit('DELETE_OPENED_CATEGORIES')

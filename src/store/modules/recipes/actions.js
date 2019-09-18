@@ -1,6 +1,23 @@
+import { getRecipes } from '@/js/api/recipes'
+
 export default {
-  setRecipes ({ commit }, recipes) {
-    commit('SET_RECIPES', recipes)
+  async getRecipes ({ state, rootState, commit }) {
+    if (state.recipes.length === 0) {
+      commit('LOADING_START')
+      await getRecipes().then(response => {
+        commit('LOADING_END')
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            for (let j = 0; j < rootState.elements.openedElements.length; j++) {
+              if (response.data.response[i].result._id === rootState.elements.openedElements[j]._id) {
+                response.data.response[i].result.category = rootState.elements.openedElements[j].category
+              }
+            }
+          }
+          commit('SET_RECIPES', response.data.response)
+        }
+      })
+    }
   },
   deleteRecipes ({ commit }) {
     commit('DELETE_RECIPES')

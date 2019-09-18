@@ -1,4 +1,11 @@
 export default {
+  LOADING_START (state) {
+    state.state.isLoading = true
+  },
+  LOADING_END (state) {
+    state.state.isLoading = false
+  },
+
   SET_OPENED_ELEMENTS (state, elements) {
     state.openedElements = elements
   },

@@ -1,6 +1,24 @@
+import { getElements } from '@/js/api/elements'
+
 export default {
-  setOpenedElements ({ commit }, elements) {
-    commit('SET_OPENED_ELEMENTS', elements)
+  async getOpenedElements ({ state, commit }) {
+    if (state.openedElements.length === 0) {
+      commit('LOADING_START')
+      await getElements().then(response => {
+        commit('LOADING_END')
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.response.length; i++) {
+            response.data.response[i].x = 0
+            response.data.response[i].y = 0
+            response.data.response[i].z = 100
+            response.data.response[i].show = false
+          }
+          commit('SET_OPENED_ELEMENTS', response.data.response)
+        } else {
+          commit('SET_ERROR', response)
+        }
+      })
+    }
   },
   deleteOpenedElements ({ commit }) {
     commit('DELETE_OPENED_ELEMENTS')

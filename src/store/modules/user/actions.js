@@ -1,8 +1,22 @@
+import { getLogin, getLogout } from '@/js/api/authentication'
+
 export default {
-  setUser ({ commit }, user) {
-    commit('SET_USER', user)
+  async getLogin ({ commit }) {
+    commit('LOADING_START')
+    await getLogin().then(response => {
+      commit('LOADING_END')
+      if (response.status === 200) {
+        commit('SET_USER', response.data.user)
+      }
+    })
   },
-  deleteUser ({ commit }) {
-    commit('DELETE_USER')
+  async getLogout ({ commit }) {
+    commit('LOADING_START')
+    await getLogout().then(response => {
+      commit('LOADING_END')
+      if (response.status === 200 || response.status === 304) {
+        commit('DELETE_USER')
+      }
+    })
   }
 }
