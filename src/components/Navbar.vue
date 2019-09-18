@@ -4,19 +4,34 @@
       <img src='@/assets/logo.svg' heigth='50px' width='50px'/>Home
     </b-navbar-brand>
 
-    <font-awesome-icon
-      class='nav-button opened-recipes-button ml-auto'
-      id='opened-recipes-button'
-      v-if='$route.path === "/game"'
-      title='Recipes'
-      icon='scroll'
-      @click='openedRecipesModalShow'
-    />
+    <button class='icon opened-recipes-button ml-auto' v-if='user.isLoggedIn && $route.path === "/game"'>
+      <font-awesome-icon
+        id='opened-recipes-button'
+        title='Recipes'
+        icon='scroll'
+        @click='openedRecipesModalShow'
+      />
+    </button>
+
+    <button class='icon' v-if='user.isLoggedIn'>
+      <font-awesome-icon
+        v-if='!fullscreenEnabled'
+        title='Enable fullscreen'
+        icon='expand-arrows-alt'
+        @click='enableFullscreen'
+      />
+      <font-awesome-icon
+        v-if='fullscreenEnabled'
+        title='Disable fullscreen'
+        icon='compress-arrows-alt'
+        @click='disableFullScreen'
+      />
+    </button>
 
     <b-navbar-nav>
       <b-btn
         class='text-white'
-        v-if='!user.isLoggedIn && !loadingLogin'
+        v-if='!user.isLoggedIn && !user.state.isLoading'
         variant='link'
         @click='loginModalShow'
       >
@@ -25,14 +40,14 @@
 
       <b-btn
         class='text-white'
-        v-if='!user.isLoggedIn && !loadingLogin'
+        v-if='!user.isLoggedIn && !user.state.isLoading'
         variant='link'
         @click='registrationModalShow'
       >
         Sign up
       </b-btn>
 
-      <b-nav-item-dropdown v-if='user.isLoggedIn' :text='user.username' left='left'>
+      <b-nav-item-dropdown v-if='user.isLoggedIn && !user.state.isLoading' :text='user.username' left='left'>
         <b-dropdown-item to='/game'>
           Game
         </b-dropdown-item>
@@ -82,8 +97,6 @@ import ResetPasswordModal from '@/components/navbar/ResetPasswordModal.vue'
 
 import OpenedRecipesModal from '@/components/game/recipes/OpenedRecipesModal.vue'
 
-import { getLogin, getLogout } from '@/js/api/authentication'
-
 export default {
   components: {
     LoginModal,
@@ -92,19 +105,13 @@ export default {
     OpenedRecipesModal
   },
   created () {
-    if (!this.isLoggedIn) {
-      this.loadingLogin = true
-      getLogin().then(response => {
-        this.loadingLogin = false
-        if (response.data.user) {
-          this.setUser(response.data.user)
-        }
-      })
+    if (!this.user.isLoggedIn) {
+      this.getLogin()
     }
   },
   data () {
     return {
-      loadingLogin: false
+      fullscreenEnabled: false
     }
   },
   computed: {
@@ -114,15 +121,12 @@ export default {
   },
   methods: {
     ...mapActions({
-      deleteUser: 'user/deleteUser',
-      setUser: 'user/setUser'
+      getLogout: 'user/getLogout',
+      getLogin: 'user/getLogin'
     }),
     logout () {
-      getLogout().then(response => {
-        if (response.status === 200 || response.status === 304) {
-          this.clearUser()
-          this.$router.push({ path: '/' })
-        }
+      this.getLogout().then(() => {
+        this.$router.push({ path: '/' })
       })
     },
     loginModalShow () {
@@ -133,12 +137,42 @@ export default {
     },
     openedRecipesModalShow () {
       this.$root.$emit('openedRecipesModalShow')
+    },
+    enableFullscreen () {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen()
+      } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+        document.documentElement.mozRequestFullScreen()
+      } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        document.documentElement.webkitRequestFullscreen()
+      } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+        document.documentElement.msRequestFullscreen()
+      }
+      this.fullscreenEnabled = true
+    },
+    disableFullScreen () {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen()
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen()
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen()
+      }
+      this.fullscreenEnabled = false
     }
   }
 }
 </script>
 
 <style lang='scss'>
+@media screen and (max-width: 767px) {
+  .navbar {
+    height: 30px !important;
+  }
+}
+
 .navbar {
   height: 56px;
   background: rgb(33, 33, 33);
@@ -155,16 +189,17 @@ export default {
       font-weight: bold;
     }
   }
-}
 
-.nav-button {
-  color: white;
-  width: 1.5em;
-  height: 40px;
-}
-
-.opened-recipes-button {
-  margin-right: 50px;
+  .icon {
+    color: white;
+    width: 50px;
+    height: 40px;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin-right: 10px;
+  }
 }
 
 .navbar-nav .dropdown-menu {
