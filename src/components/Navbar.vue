@@ -13,7 +13,7 @@
       />
     </button>
 
-    <button class='icon' v-if='user.isLoggedIn'>
+    <button class='icon' v-if='user.isLoggedIn && $route.path === "/game"'>
       <font-awesome-icon
         v-if='!fullscreenEnabled'
         title='Enable fullscreen'

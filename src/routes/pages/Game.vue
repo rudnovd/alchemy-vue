@@ -176,6 +176,13 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
 .game-row {
   height: 100%;
   margin: 0;
