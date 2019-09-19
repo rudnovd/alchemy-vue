@@ -26,7 +26,7 @@
       @hidden='afterCreateRecipe'
     >
       <b-row>
-        <b-col cols='4'>
+        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
           <b-row>
             <b-col cols='12'>
               <b-form-group label='Result element:'>
@@ -82,14 +82,14 @@
           </b-row>
         </b-col>
 
-        <b-col cols='8'>
+        <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
           <b-card no-body='no-body'>
             <b-tabs
               card='card'
               pills='pills'
               vertical='vertical'
               small='small'
-              nav-wrapper-class='w-25'
+              nav-wrapper-class='w-30'
             >
               <b-tab
                 v-for='category in categories'
@@ -189,14 +189,14 @@
           </b-row>
         </b-col>
 
-        <b-col cols='8'>
+        <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
           <b-card no-body='no-body'>
             <b-tabs
               card='card'
               pills='pills'
               vertical='vertical'
               small='small'
-              nav-wrapper-class='w-25'
+              nav-wrapper-class='w-30'
             >
               <b-tab
                 v-for='category in categories'
@@ -217,7 +217,7 @@
                 </b-btn>
               </b-tab>
 
-              <b-col cols='12' v-if='showRecipe.length &gt; 0'>
+              <b-col cols='12' v-if='showRecipe.length > 0'>
                 <p class='text-muted'>
                   Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
                 </p>
@@ -288,6 +288,9 @@ export default {
     // call again the method if the route changes
     $route: 'getRecipes'
   },
+  computed: {
+
+  },
   data () {
     return {
       elements: [],
@@ -303,8 +306,14 @@ export default {
           sortable: true
         },
         {
-          key: 'recipe',
-          label: 'Recipe',
+          key: 'recipe[0].name',
+          label: 'First element of recipe',
+          class: 'align-middle text-center',
+          sortable: true
+        },
+        {
+          key: 'recipe[1].name',
+          label: 'Second element of recipe',
           class: 'align-middle text-center',
           sortable: true
         },
@@ -503,3 +512,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@media screen and (max-width: 767px) {
+  .elements-tabs {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .elements-tabs {
+    width: 25%;
+  }
+}
+
+</style>

@@ -12,11 +12,9 @@
       @deleteButtonClick='beforeDeleteElement'
     >
       <slot type='button'>
-        <b-col cols='4' sm='3' md='2' lg='2' xl='2'>
-          <b-btn class='mb-3' variant='success' @click='commonButtonClick'>
-            Create category
-          </b-btn>
-        </b-col>
+        <b-btn class='mb-3' variant='success' @click='beforeCreateCategory'>
+          Create category
+        </b-btn>
       </slot>
     </Table>
 
@@ -34,7 +32,7 @@
       @hidden='afterCreateElement'
     >
       <b-row>
-        <b-col cols='4'>
+        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
           <b-row>
             <b-col cols='12'>
               <b-form-group :label-cols='3' label='Name:' label-for='createElementName'>
@@ -111,14 +109,14 @@
           </b-row>
         </b-col>
 
-        <b-col cols='8'>
+        <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
           <b-card no-body='no-body'>
             <b-tabs
               card='card'
               pills='pills'
               vertical='vertical'
               small='small'
-              nav-wrapper-class='w-25'
+              nav-wrapper-class='w-30'
             >
               <b-tab
                 v-for='category in categories'
@@ -148,6 +146,7 @@
         </b-col>
       </b-row>
     </b-modal>
+
     <b-modal
       v-model='modals.edit'
       title='Edit element'
@@ -162,7 +161,7 @@
       @hidden='afterEditElement'
     >
       <b-row>
-        <b-col cols='4'>
+        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
           <b-form-group :label-cols='3' label='Name:' label-for='editElementName'>
             <b-form-input
               id='editElementName'
@@ -199,14 +198,14 @@
           </b-form-group>
         </b-col>
 
-        <b-col cols='8'>
+        <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
           <b-card no-body='no-body'>
             <b-tabs
               card='card'
               pills='pills'
               vertical='vertical'
               small='small'
-              nav-wrapper-class='w-25'
+              nav-wrapper-class='w-30'
             >
               <b-tab v-for='category in categories' :title='category.name' :key='category._id'>
                 <b-btn
@@ -226,6 +225,7 @@
         </b-col>
       </b-row>
     </b-modal>
+
     <b-modal
       v-model='modals.delete'
       size='md'
@@ -253,6 +253,76 @@
         <b-col cols='12' v-if='errors.deleteElement'>
           <b-alert show='show' variant='danger'>
             {{ errors.deleteElement }}
+          </b-alert>
+        </b-col>
+      </b-row>
+    </b-modal>
+
+    <b-modal
+      v-model='modals.createCategory'
+      title='Create new category'
+      size='xl'
+      hide-header-close='hide-header-close'
+      ok-title='Create'
+      ok-variant='success'
+      :ok-disabled='loading.createCategory'
+      :cancel-disabled='loading.createCategory'
+      cancel-variant='danger'
+      @ok='createCategory'
+      @hidden='afterCreateCategory'
+    >
+      <b-row>
+        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+          <b-row>
+            <b-col cols='12'>
+              <b-form-group :label-cols='3' label='Name:' label-for='createCategoryName'>
+                <b-form-input
+                  id='createCategoryName'
+                  type='text'
+                  v-model='createCategoryData.name'
+                  required='required'
+                  trim='trim'
+                  placeholder='Elements'
+                  :state='validateName(createCategoryData.name, categories)'
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-col>
+
+        <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+          <b-card no-body='no-body'>
+            <b-tabs
+              card='card'
+              pills='pills'
+              vertical='vertical'
+              small='small'
+              nav-wrapper-class='w-30'
+            >
+              <b-tab
+                v-for='category in categories'
+                :title='category.name'
+                :key='category._id'
+              >
+                <b-btn
+                  class='mr-2 mb-2'
+                  size='sm'
+                  variant='outline-success'
+                  v-for='element in elements'
+                  :key='element._id'
+                  v-if='element.category === category.name'
+                  @click='create.name = element.name'
+                >
+                  {{ element.name }}
+                </b-btn>
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </b-col>
+
+        <b-col cols='12' v-if='errors.createCategory'>
+          <b-alert show='show' variant='danger'>
+            {{ errors.createCategory }}
           </b-alert>
         </b-col>
       </b-row>
@@ -322,7 +392,8 @@ export default {
 
         createElement: false,
         editElement: false,
-        deleteElement: false
+        deleteElement: false,
+        createCategory: false
       },
 
       errors: {
@@ -331,13 +402,15 @@ export default {
 
         createElement: null,
         editElement: null,
-        deleteElement: null
+        deleteElement: null,
+        createCategory: null
       },
 
       modals: {
         create: false,
         edit: false,
-        delete: false
+        delete: false,
+        createCategory: false
       },
 
       create: {
@@ -355,6 +428,10 @@ export default {
         name: null,
         description: null,
         categoryId: null
+      },
+
+      createCategoryData: {
+        name: ''
       },
 
       newCategory: {
@@ -489,6 +566,26 @@ export default {
       this.errors.deleteElement = null
       this.delete._id = null
       this.delete.name = null
+    },
+
+    beforeCreateCategory () {
+      this.modals.createCategory = true
+    },
+    createCategory () {
+      this.loading.createCategory = true
+      postCategory(this.createCategoryData.name).then(response => {
+        this.loading.createCategory = false
+        if (response.status === 201) {
+          this.getCategories()
+        } else {
+          this.errors.createCategory = response.data
+        }
+      })
+    },
+    afterCreateCategory () {
+      this.modals.createCategory = false
+      this.createCategoryData.name = ''
+      this.errors.createCategory = ''
     },
 
     validateName (name, inObject) {

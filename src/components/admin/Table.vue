@@ -1,31 +1,31 @@
 <template>
   <div class='data-table'>
     <b-row class='mb-3'>
-      <b-col cols='4'>
+      <b-col class='pr-0' cols='6' sm='6' md='4' lg='4' xl='4'>
         <b-input-group>
           <b-form-input v-model='search' placeholder='Search'/>
           <b-input-group-append>
-            <b-btn :disabled='!search' @click='search = null'>
+            <b-btn :disabled='!search' @click='search = ""'>
               Clear
             </b-btn>
           </b-input-group-append>
         </b-input-group>
       </b-col>
 
-     <b-col cols='4' sm='3' md='2' lg='2' xl='2'>
+     <b-col class='pr-xl-0 pr-lg-0 pr-md-0 mt-2 mt-sm-2 mt-md-0 mt-lg-0 mt-xl-0 text-right text-sm-right text-md-left text-lg-left text-xl-left' cols='12' sm='12' md='6' lg='6' xl='6' order='2' order-sm='2' order-md='1' order-lg='1' order-xl='1'>
         <b-btn
-          class='mb-3'
+          class='mb-3 mr-2'
           v-if='commonButton'
           variant='success'
           @click='commonButtonClick'
         >
           Create {{ target }}
         </b-btn>
+
+        <slot type='button'></slot>
       </b-col>
 
-      <slot type='button'></slot>
-
-      <b-col cols='4' sm='3' md='2' lg='2' xl='2' offset-md='4'>
+      <b-col cols='4' sm='4' md='2' lg='2' xl='2' order='1' order-sm='1' order-md='2' order-lg='2' order-xl='2' offset='2' offset-sm='2' offset-md='0' offset-lg='0' offset-xl='0'>
         <b-form-select :options='pagination.pageOptions' v-model='pagination.perPage'/>
       </b-col>
     </b-row>
@@ -45,7 +45,7 @@
         </b-alert>
 
         <b-table
-          v-if='!loading &amp;&amp; !error'
+          v-if='!loading && !error'
           show-empty='show-empty'
           responsive='responsive'
           hover='hover'
@@ -56,14 +56,14 @@
           :per-page='pagination.perPage'
           :filter='search'
         >
-          <template slot='action' slot-scope='actionRow'>
+          <template v-slot:cell(action)='row'>
             <b-button-group size='sm'>
               <b-btn
                 class='mr-1'
                 v-if='editButton'
                 variant='warning'
                 size='sm'
-                @click='editButtonClick(actionRow)'
+                @click='editButtonClick(row)'
               >
                 <font-awesome-icon icon='edit'/>
               </b-btn>
@@ -72,7 +72,7 @@
                 v-if='deleteButton'
                 variant='danger'
                 size='sm'
-                @click='deleteButtonClick(actionRow)'
+                @click='deleteButtonClick(row)'
               >
                 <font-awesome-icon icon='trash'/>
               </b-btn>
@@ -96,36 +96,48 @@ export default {
   props: {
     data: {
       value: Array,
-      default: []
+      default: [],
+      required: false
     },
     fields: {
       value: Array,
-      default: []
+      default: [],
+      required: false
     },
     totalRows: {
       value: Number,
-      default: 0
+      default: 0,
+      required: false
     },
     loading: {
       value: Boolean,
-      default: false
+      default: false,
+      required: false
     },
-    error: String,
+    error: {
+      value: String,
+      default: '',
+      required: false
+    },
     target: {
       value: String,
-      default: ''
+      default: '',
+      required: true
     },
     commonButton: {
       value: Boolean,
-      default: true
+      default: true,
+      required: false
     },
     editButton: {
       value: Boolean,
-      default: true
+      default: true,
+      required: false
     },
     deleteButton: {
       value: Boolean,
-      default: true
+      default: true,
+      required: false
     }
   },
   data () {
