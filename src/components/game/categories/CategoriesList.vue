@@ -41,9 +41,14 @@ export default {
 
 @media (min-width: 768px) {
   .elements-categories-list {
-    max-height: 100%;
+    height: inherit;
     overflow-y: auto;
     overflow-x: hidden;
+    position: fixed;
+    height: 100%;
+    max-height: 100%;
+    width: 300px;
+    z-index: 101;
   }
 
   .select-category-button {
