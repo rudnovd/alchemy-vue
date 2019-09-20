@@ -2,40 +2,36 @@
   <b-container>
     <b-row class='game-row'>
 
-      <CategoriesList
-        class='pl-0 pl-sm-0 pl-md-2 pl-lg-3 pl-xl-3 pr-0 pr-sm-0 pr-md-2 pr-lg-3 pr-xl-3 col-sm-12 col-md-3 col-lg-2 col-xl-2 col-12'
-      />
+      <CategoriesList class='pl-0 pl-sm-0 pl-md-2 pl-lg-3 pl-xl-3 pr-0 pr-sm-0 pr-md-2 pr-lg-3 pr-xl-3 col-sm-12 col-md-3 col-lg-2 col-xl-2 col-12'/>
 
-      <GameField class='row'>
+      <b-col class='game-field pl-0' cols='12' sm='12' md='9' lg='10' xl='10'>
+        <b-col cols='9' sm='9' md='9' lg='9' xl='9' class='active-elements'>
+          <ActiveElement
+            v-for='element in activeElements'
+            :key='element.gameId'
+            :elementData='element'
+          />
 
-          <b-col cols='9' sm='9' md='9' lg='9' xl='9' class='active-elements'>
-            <ActiveElement
-              v-for='element in activeElements'
-              :key='element.gameId'
-              :elementData='element'
-            />
+          <b-row class='h-100 row align-items-end'>
+            <b-col class='pr-0 pr-sm-0 pr-md-0' cols='9' sm='9' md='9' lg='8' xl='8' order='1'>
+              <ActiveElementsAction v-show='history.last.firstElement'/>
+            </b-col>
 
-            <b-row class='h-100 row align-items-end'>
-              <b-col cols='10' order='1'>
-                <ActiveElementsAction v-show='history.last.firstElement' />
-              </b-col>
+            <b-col class='ml-auto text-right' cols='3' sm='3' md='3' lg='2' xl='2' order='2'>
+              <ClearGameField />
+            </b-col>
+          </b-row>
+        </b-col>
 
-              <b-col class='ml-auto text-right' cols='2' order='2'>
-                <ClearGameField />
-              </b-col>
-            </b-row>
-          </b-col>
+        <div class='opened-elements'>
+          <OpenedElement
+            :elementData='element'
+            v-for='element in filteredOpenedElements'
+            :key='element._id'
+          />
+        </div>
 
-          <div class='opened-elements'>
-              <OpenedElement
-                :elementData='element'
-                class='opened-element'
-                v-for='element in filteredOpenedElements'
-                :key='element._id'
-              />
-          </div>
-
-      </GameField>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -46,8 +42,6 @@ import * as shortid from 'shortid'
 import ActiveElement from '@/components/game/elements/ActiveElement.vue'
 
 import OpenedElement from '@/components/game/elements/OpenedElement.vue'
-
-import GameField from '@/components/game/GameField.vue'
 
 import ClearGameField from '@/components/game/ClearGameField.vue'
 
@@ -61,7 +55,6 @@ export default {
   components: {
     ActiveElement,
     OpenedElement,
-    GameField,
     ClearGameField,
     CategoriesList,
     ActiveElementsAction
@@ -81,15 +74,11 @@ export default {
     })
 
     window.addEventListener('resize', () => {
-      this.setGameFieldSize({
-        x: gameField[0].clientWidth,
-        y: gameField[0].clientHeight
-      })
-      this.setOpenedElementsFieldSize({
-        width: openedElementsField[0].clientWidth,
-        height: openedElementsField[0].clientHeight
-      })
-      this.updateOpenedElementsPositions()
+      this.updateElementsPositions(gameField, openedElementsField)
+    })
+
+    window.addEventListener('ondeviceorientation', () => {
+      this.updateElementsPositions(gameField, openedElementsField)
     })
 
     this.getOpenedElements()
@@ -170,17 +159,51 @@ export default {
         secondFound = false
       }
       this.setOpenedRecipes(userRecipes)
+    },
+    updateElementsPositions (gameField, openedElementsField) {
+      this.setGameFieldSize({
+        x: gameField[0].clientWidth,
+        y: gameField[0].clientHeight
+      })
+      this.setOpenedElementsFieldSize({
+        width: openedElementsField[0].clientWidth,
+        height: openedElementsField[0].clientHeight
+      })
+      this.updateOpenedElementsPositions()
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
-html, body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
+@media screen and (max-width: 767px) {
+  .game-field {
+    height: 80%;
+  }
+
+  .active-elements {
+    height: calc(100vh - 166px);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .game-field {
+    height: 80%;
+    margin-left: 300px;
+  }
+
+  .active-elements {
+    height: calc(100vh - 66px);
+  }
+}
+
+.game-field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  background-color: rgb(236, 240, 241);
 }
 
 .game-row {
@@ -189,18 +212,11 @@ html, body {
 }
 
 .opened-elements {
-  height: inherit;
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
   height: 100%;
   max-height: 100%;
-  width: 0px;
-}
-
-.opened-element {
-  height: 40px;
-  width: 100%;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -221,20 +237,8 @@ html, body {
 }
 
 .active-elements {
-  height: 100%;
   padding: 10px;
   z-index: 200;
 }
 
-@media screen and (max-width: 767px) {
-  .game-field {
-    height: 80%;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .game-field {
-    height: 100%;
-  }
-}
 </style>
