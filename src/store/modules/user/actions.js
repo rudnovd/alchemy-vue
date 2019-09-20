@@ -6,7 +6,7 @@ export default {
       commit('LOADING_START')
       await getLogin().then(response => {
         commit('LOADING_END')
-        if (response.status === 200) {
+        if (response.data.user) {
           commit('SET_USER', response.data.user)
         }
       })
