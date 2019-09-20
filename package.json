@@ -6,9 +6,15 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build --modern",
     "lint": "vue-cli-service lint",
+    "capacitor-copy": "vue-cli-service capacitor-copy",
+    "capacitor-init": "vue-cli-service capacitor-init",
+    "capacitor-open": "vue-cli-service capacitor-open",
+    "capacitor-update": "vue-cli-service capacitor-update",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@capacitor/cli": "^1.0.0-alpha.38",
+    "@capacitor/core": "^1.0.0-alpha.38",
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/vue-fontawesome": "^0.1.7",
@@ -36,6 +42,7 @@
     "node-sass": "^4.12.0",
     "sass-loader": "^7.3.1",
     "stylelint-config-standard": "^19.0.0",
+    "vue-cli-plugin-pwa": "^1.0.0-alpha.1",
     "vue-template-compiler": "^2.6.10"
   }
 }
