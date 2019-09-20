@@ -7,7 +7,7 @@
     :resizable='false'
     :minHeight='40'
     :maxHeight='40'
-    :w='openedElementsFieldSize.width * 0.2'
+    :w='openedElementWidth'
     :h='40'
     :x='elementData.x'
     :y='elementData.y'
@@ -46,7 +46,14 @@ export default {
       recipes: 'recipes/recipes',
       openedRecipes: 'recipes/openedRecipes',
       openedElementsFieldSize: 'game/openedElementsFieldSize'
-    })
+    }),
+    openedElementWidth () {
+      if (this.openedElementsFieldSize.width < 500) {
+        return this.openedElementsFieldSize.width * 0.3
+      } else {
+        return this.openedElementsFieldSize.width * 0.2
+      }
+    }
   },
   methods: {
     ...mapActions({
@@ -179,6 +186,19 @@ export default {
   line-height: 40px;
   background-color: rgb(245, 245, 245);
   user-select: none;
-  font-size: 1.2rem;
+  height: 40px;
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .element {
+    font-size: 1.2rem;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .element {
+    font-size: 0.9rem;
+  }
 }
 </style>
