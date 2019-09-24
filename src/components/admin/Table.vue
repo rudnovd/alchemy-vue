@@ -59,7 +59,6 @@
           <template v-slot:cell(action)='row'>
             <b-button-group size='sm'>
               <b-btn
-                class='mr-1'
                 v-if='editButton'
                 variant='warning'
                 size='sm'

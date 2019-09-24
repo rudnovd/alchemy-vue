@@ -4,29 +4,31 @@
       <img src='@/assets/logo.svg' heigth='50px' width='50px'/>Home
     </b-navbar-brand>
 
-    <button class='icon opened-recipes-button ml-auto' v-if='user.isLoggedIn && $route.path === "/game"'>
-      <font-awesome-icon
-        id='opened-recipes-button'
-        title='Recipes'
-        icon='scroll'
-        @click='openedRecipesModalShow'
-      />
-    </button>
+    <div class='navbar-icons ml-auto'>
+      <button class='icon opened-recipes-button' v-if='user.isLoggedIn && $route.path === "/game"'>
+        <font-awesome-icon
+          id='opened-recipes-button'
+          title='Recipes'
+          icon='scroll'
+          @click='openedRecipesModalShow'
+        />
+      </button>
 
-    <button class='icon' v-if='user.isLoggedIn && $route.path === "/game"'>
-      <font-awesome-icon
-        v-if='!fullscreenEnabled'
-        title='Enable fullscreen'
-        icon='expand-arrows-alt'
-        @click='enableFullscreen'
-      />
-      <font-awesome-icon
-        v-if='fullscreenEnabled'
-        title='Disable fullscreen'
-        icon='compress-arrows-alt'
-        @click='disableFullScreen'
-      />
-    </button>
+      <button class='icon' v-if='user.isLoggedIn && $route.path === "/game"'>
+        <font-awesome-icon
+          v-if='!fullscreenEnabled'
+          title='Enable fullscreen'
+          icon='expand-arrows-alt'
+          @click='enableFullscreen'
+        />
+        <font-awesome-icon
+          v-if='fullscreenEnabled'
+          title='Disable fullscreen'
+          icon='compress-arrows-alt'
+          @click='disableFullScreen'
+        />
+      </button>
+    </div>
 
     <b-navbar-nav>
       <b-btn
@@ -167,7 +169,7 @@ export default {
 </script>
 
 <style lang='scss'>
-@media screen and (max-width: 767px) {
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .navbar {
     height: 30px !important;
   }
@@ -177,16 +179,23 @@ export default {
   height: 56px;
   background: rgb(33, 33, 33);
   color: rgb(157, 157, 157);
-  margin-bottom: 10px;
 
-  .navbar-nav.ml-auto {
-    a.dropdown-item {
-      color: black;
-    }
-    a.router-link-active {
-      color: ap-get($colors, 'alchemy-green');
-      background: rgb(230, 230, 230);
-      font-weight: bold;
+  .dropdown-menu {
+    a {
+      &.dropdown-item {
+        color: black;
+      }
+
+      &.router-link-active {
+        color: map-get($colors, 'alchemy-green');
+        background: rgb(230, 230, 230);
+        font-weight: bold;
+      }
+
+      &:active:hover {
+        color: black;
+        background-color: map-get($colors, 'alchemy-green');
+      }
     }
   }
 
@@ -202,7 +211,4 @@ export default {
   }
 }
 
-.navbar-nav .dropdown-menu {
-  position: absolute;
-}
 </style>

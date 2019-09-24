@@ -1,11 +1,12 @@
 <template>
-  <b-container>
-    <b-row class='game-row'>
+  <section class='section-game'>
+    <section class='section-categories'>
+      <CategoriesList/>
+    </section>
 
-      <CategoriesList class='pl-0 pl-sm-0 pl-md-2 pl-lg-3 pl-xl-3 pr-0 pr-sm-0 pr-md-2 pr-lg-3 pr-xl-3 col-sm-12 col-md-3 col-lg-2 col-xl-2 col-12'/>
-
-      <b-col class='game-field pl-0' cols='12' sm='12' md='9' lg='10' xl='10'>
-        <b-col cols='9' sm='9' md='9' lg='9' xl='9' class='active-elements'>
+    <section class='section-game-board'>
+      <b-container>
+        <div class='game-board'>
           <ActiveElement
             v-for='element in activeElements'
             :key='element.gameId'
@@ -21,19 +22,16 @@
               <ClearGameField />
             </b-col>
           </b-row>
-        </b-col>
-
-        <div class='opened-elements'>
-          <OpenedElement
-            :elementData='element'
-            v-for='element in filteredOpenedElements'
-            :key='element._id'
-          />
         </div>
+      </b-container>
+    </section>
 
-      </b-col>
-    </b-row>
-  </b-container>
+    <section class='section-opened-elements'>
+      <OpenedElementsList ref='openedElements'>
+        <OpenedElement :elementData='element' v-for='element in filteredOpenedElements' :key='element._id'/>
+      </OpenedElementsList>
+    </section>
+  </section>
 </template>
 
 <script>
@@ -49,6 +47,8 @@ import CategoriesList from '@/components/game/categories/CategoriesList.vue'
 
 import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
 
+import OpenedElementsList from '@/components/game/elements/OpenedElementsList.vue'
+
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -57,17 +57,17 @@ export default {
     OpenedElement,
     ClearGameField,
     CategoriesList,
-    ActiveElementsAction
+    ActiveElementsAction,
+    OpenedElementsList
   },
   mounted () {
-    const gameField = document.getElementsByClassName('game-field')
+    const gameField = document.getElementsByClassName('game-board')
     this.setGameFieldSize({
       x: gameField[0].clientWidth,
       y: gameField[0].clientHeight
     })
 
-    document.getElementsByClassName('opened-elements')[0].style.width = gameField[0].clientWidth + 'px'
-    const openedElementsField = document.getElementsByClassName('opened-elements')
+    const openedElementsField = document.getElementsByClassName('section-opened-elements')
     this.setOpenedElementsFieldSize({
       width: openedElementsField[0].clientWidth,
       height: openedElementsField[0].clientHeight
@@ -176,69 +176,61 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@media screen and (max-width: 767px) {
-  .game-field {
-    height: 80%;
-  }
-
-  .active-elements {
-    height: calc(100vh - 166px);
-  }
+.section-game {
+  padding-top: 10px;
+  height: 90vh;
 }
 
-@media screen and (min-width: 768px) {
-  .game-field {
-    height: 80%;
-    margin-left: 300px;
-  }
-
-  .active-elements {
-    height: calc(100vh - 66px);
-  }
-}
-
-.game-field {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  background-color: rgb(236, 240, 241);
-}
-
-.game-row {
-  height: 100%;
-  margin: 0;
-}
-
-.opened-elements {
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: fixed;
-  height: 100%;
-  max-height: 100%;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-.game-field {
+.section-opened-elements {
+  position: absolute;
+  right: 0;
+  top: 66px;
+  max-width: 300px;
   width: 100%;
+  height: 90vh
 }
 
-.container {
-  height: calc(100% - 66px);
-  min-width: 100%;
-  padding: 0;
+.section-game-board {
+  height: 90vh;
+
+  .container {
+    height: 100%;
+  }
+
+  .game-board {
+    position: relative;
+    border: 1px solid black;
+  }
 }
 
-.active-elements {
-  padding: 10px;
-  z-index: 200;
+@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
+  .game-board {
+    height: 100%;
+  }
+
+  .section-categories {
+    position: absolute;
+    left: 0;
+    max-width: 300px;
+    width: 100%;
+    height: 90vh
+  }
 }
 
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
+  .game-board {
+    height: 80%;
+  }
+
+  .section-categories {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 200px;
+  }
+
+  .game-board {
+    top: 200px;
+  }
+}
 </style>

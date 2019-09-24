@@ -7,12 +7,11 @@
     :resizable='false'
     :minHeight='40'
     :maxHeight='40'
-    :w='openedElementWidth'
+    :w='280'
     :h='40'
     :x='elementData.x'
     :y='elementData.y'
     :z='elementData.z'
-    :parent='true'
     :onDragStart='onDragStart'
     @activated='onActivated'
     @dragstop='onDragstop'
@@ -94,8 +93,10 @@ export default {
 
       let addElement = false
 
-      if (x < this.gameFieldSize.x - this.elementsListFieldSize.x - 150) {
-        if (this.activeElements.length > 0) {
+      if (x < this.gameFieldSize.x) { // if element dropped on game board
+        if (this.activeElements.length === 0) { // If game board without active elements then add active element
+          addElement = true
+        } else if (this.activeElements.length > 0) { // If game board has active elements then check elements on drop
           let combineElement = game.findClosest(this.selectedElement, this.activeElements)
           if (combineElement) {
             let resultOfRecipe = game.findRecipe(this.selectedElement, combineElement, this.recipes)
@@ -124,8 +125,8 @@ export default {
                     getElements().then(response => {
                       if (response.status === 200) {
                         for (let i = 0; i < response.data.response.length; i++) {
-                          response.data.response[i].x = null
-                          response.data.response[i].y = null
+                          response.data.response[i].x = 0
+                          response.data.response[i].y = 0
                           response.data.response[i].z = 100
                         }
                         this.setOpenedElements(response.data.response)
@@ -150,11 +151,9 @@ export default {
           } else {
             addElement = true
           }
-        } else if (this.activeElements.length === 0) {
-          addElement = true
         }
-      } else if (x >= this.gameFieldSize.x - this.elementsListFieldSize.x - 1 && x === this.selectedElement.x && y === this.selectedElement.y) {
-        this.setSelectedElementCoordinates({ x: 200, y: 200 })
+      } else if (x === 0) { // If click on element
+        this.setSelectedElementCoordinates({ x: 400, y: 400 })
         addElement = true
       }
 
@@ -163,8 +162,8 @@ export default {
           _id: this.elementData._id,
           name: this.elementData.name,
           category: this.elementData.name.category,
-          x: this.selectedElement.x,
-          y: this.selectedElement.y,
+          x: this.gameFieldSize.x - Math.abs(this.selectedElement.x),
+          y: Math.abs(this.selectedElement.y),
           z: 100,
           gameId: shortid.generate()
         })
@@ -188,6 +187,14 @@ export default {
   user-select: none;
   height: 40px;
   width: 100%;
+
+  &:hover {
+    cursor: grab;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 @media screen and (min-width: 768px) {

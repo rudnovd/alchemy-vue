@@ -1,7 +1,7 @@
 <template>
   <vue-draggable-resizable
-    class-name-active='selected-element'
     class-name='element'
+    class-name-active='selected-element'
     :resizable='false'
     :disable-user-select='true'
     :w='75'
@@ -15,12 +15,12 @@
     @dragstop='onDragstop'
     @deactivated='onDeactivated'
   >
-    <div class='d-block'>
+    <div class='element-content'>
       <b-img :src='require("@/assets/images/elementExample.png")'/>
+      <span>
+        {{ elementData.name }}
+      </span>
     </div>
-    <span>
-      {{ elementData.name }}
-    </span>
   </vue-draggable-resizable>
 </template>
 
@@ -153,18 +153,32 @@ export default {
 
 <style lang='scss' scoped>
 .element {
-  text-align: center;
-  line-height: 35px;
-  background-color: rgb(223, 223, 223);
-  width: 100px;
-  height: 100px;
-  display: inline-block;
-  position: absolute;
   user-select: none;
-  border-radius: 100%;
+  font-size: 16px;
+  background-color: rgb(223, 223, 223);
+  border: 1px solid map-get($colors, 'alchemy-green');
+  border-radius: 6px;
+  transition: background-color .4s;
+
+  .element-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  &:hover {
+    cursor: grab;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .selected-element {
   background-color: map-get($colors, 'alchemy-green');
+  color: #FFFFFF;
 }
 </style>

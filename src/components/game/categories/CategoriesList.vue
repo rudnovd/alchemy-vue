@@ -1,58 +1,126 @@
 <template>
-  <div class='elements-categories-list text-center'>
-    <SelectCategoryButton
+  <div class='categories-list'>
+    <button
       class='select-category-button'
       v-for='openedCategory in openedCategories'
       :key='openedCategory._id'
-      :categoryName='openedCategory.name'
-    />
+      @click='selectCategory(openedCategory.name)'
+      :class='{ "active": openedCategory.name === selectedCategory}'
+    >
+      {{ openedCategory.name }}
+    </button>
   </div>
 </template>
 
 <script>
-import SelectCategoryButton from '@/components/game/categories/SelectCategoryButton.vue'
-
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: {
-    SelectCategoryButton
-  },
   computed: {
     ...mapGetters({
+      selectedCategory: 'categories/selectedCategory',
       openedCategories: 'categories/openedCategories'
     })
+  },
+  methods: {
+    ...mapActions({
+      setSelectedCategory: 'categories/setSelectedCategory',
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
+    }),
+    selectCategory (category) {
+      this.setSelectedCategory(category)
+      this.updateOpenedElementsByCategory(category)
+    }
   }
 }
 </script>
 
 <style lang='scss' scoped>
-@media screen and (max-width: 767px) {
-  .elements-categories-list {
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: inline-block;
-    float: none;
-    min-width: 300px;
-    min-height: 50px;
-    max-height: 110px;
+.categories-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+
+  border: 1px solid black;
+}
+
+.select-category-button {
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  opacity: 0.5;
+  word-break: break-word;
+  vertical-align: middle;
+  color: black;
+  background: rgb(240, 240, 240);
+  border: 1px solid map-get($colors, 'alchemy-light-green');
+  border-radius: 6px;
+  transition: background-color .4s;
+
+  &.active {
+    font-weight: bold;
+    opacity: 1;
+    color: #FFFFFF;
+    background-color: map-get($colors, 'alchemy-green');
+    border: 1px solid map-get($colors, 'alchemy-light-green');
   }
 }
 
-@media (min-width: 768px) {
-  .elements-categories-list {
-    height: inherit;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: fixed;
+@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
+  .categories-list {
+    position: relative;
     height: 100%;
-    max-height: 100%;
-    width: 300px;
-    z-index: 101;
+    max-width: 300px;
+    direction: rtl;
+    padding-left: 10px;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      background-color: #F5F5F5;
+    }
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+    }
   }
 
   .select-category-button {
+    height: 70px;
+    width: 100%;
+    font-size: 1.2rem;
     margin-bottom: 8px;
+
+    &:hover {
+      opacity: 0.8;
+      border: 1px solid  map-get($colors, 'alchemy-dark-green');
+    }
+  }
+}
+
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
+  .categories-list {
+    display: inline-block;
+    float: none;
+    height: 50px;
+  }
+
+  .select-category-button {
+    height: 50px;
+    width: 31%;
+    font-size: 1rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: map-get($grid-breakpoints, 'min')) {
+  .select-category-button {
+    font-size: 0.8rem;
   }
 }
 </style>
