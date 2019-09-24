@@ -1,11 +1,19 @@
 <template>
-  <div id='app'>
-    <b-navbar type='dark' variant='dark'>
-      <Navbar/>
-    </b-navbar>
+  <body>
+    <noscript>
+      <strong>We're sorry but public doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
 
-    <router-view :key='$route.fullPath'/>
-  </div>
+    <header>
+      <b-navbar type='dark' variant='dark'>
+        <Navbar/>
+      </b-navbar>
+    </header>
+
+    <main>
+      <router-view :key='$route.fullPath'/>
+    </main>
+  </body>
 </template>
 
 <script>
