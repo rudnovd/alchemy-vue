@@ -7,19 +7,6 @@ $body-color: #333333;
 
 @import '~bootstrap-vue/src/index.scss';
 
-.modal {
-  color: black;
-}
-
-.c-pointer {
-  cursor: pointer;
-}
-
-.form-control:focus {
-  box-shadow: none;
-  border-color: #ced4da;
-}
-
 html, body {
   margin: 0;
   height: 100%;
