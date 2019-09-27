@@ -1,4 +1,7 @@
 export default {
+  state: state => {
+    return state.state
+  },
   openedElements: state => {
     return state.openedElements
   },

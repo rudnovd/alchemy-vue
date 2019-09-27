@@ -1,19 +1,19 @@
-import { getElements } from '@/js/api/elements'
+import { getAccountElements, addOpenedElement } from '@/js/api/account'
 
 export default {
   async getOpenedElements ({ state, commit }) {
     if (state.openedElements.length === 0) {
       commit('LOADING_START')
-      await getElements().then(response => {
+      await getAccountElements().then(response => {
         commit('LOADING_END')
         if (response.status === 200) {
-          for (let i = 0; i < response.data.response.length; i++) {
-            response.data.response[i].x = 0
-            response.data.response[i].y = 0
-            response.data.response[i].z = 100
-            response.data.response[i].show = false
+          for (let i = 0; i < response.data.elements.length; i++) {
+            response.data.elements[i].x = 0
+            response.data.elements[i].y = 0
+            response.data.elements[i].z = 100
+            response.data.elements[i].show = false
           }
-          commit('SET_OPENED_ELEMENTS', response.data.response)
+          commit('SET_OPENED_ELEMENTS', response.data.elements)
         } else {
           commit('SET_ERROR', response)
         }
@@ -23,8 +23,16 @@ export default {
   deleteOpenedElements ({ commit }) {
     commit('DELETE_OPENED_ELEMENTS')
   },
-  addOpenedElement ({ commit }, element) {
-    commit('ADD_OPENED_ELEMENT', element)
+  async addOpenedElement ({ commit }, element) {
+    commit('LOADING_START')
+    await addOpenedElement(element._id).then(response => {
+      commit('LOADING_END')
+      if (response.status === 200) {
+        commit('ADD_OPENED_ELEMENT', element)
+      } else {
+        commit('SET_ERROR', response)
+      }
+    })
   },
   deleteOpenedElement ({ commit, state }, element) {
     for (let i = 0; i < state.openedElements.length; i++) {

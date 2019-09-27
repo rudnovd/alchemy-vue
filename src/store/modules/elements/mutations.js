@@ -39,7 +39,7 @@ export default {
     state.selectedElement.z = z
   },
   DELETE_SELECTED_ELEMENT (state) {
-    state.selectedElement = null
+    state.selectedElement = {}
   },
   UPDATE_OPENED_ELEMENTS_POSITIONS (state, gameField) {
     let j = 0
@@ -55,11 +55,11 @@ export default {
     }
   },
   UPDATE_OPENED_ELEMENTS_BY_CATEGORY (state, category) {
-    for (let i = 0; i < state.openedElements.length; i++) {
-      state.openedElements[i].show = false
-      if (category === state.openedElements[i].category) {
-        state.openedElements[i].show = true
+    state.openedElements.forEach(element => {
+      element.show = false
+      if (category === element.category) {
+        element.show = true
       }
-    }
+    })
   }
 }
