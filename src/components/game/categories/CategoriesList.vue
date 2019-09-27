@@ -1,5 +1,15 @@
 <template>
   <div class='categories-list'>
+    <div class='loading' v-if='state.isLoading && !state.error'>
+      <b-spinner class='spinner'/>
+    </div>
+
+    <div class='error' v-if='state.error && !state.isLoading'>
+      <div class='error'>
+        {{ state.error }}
+      </div>
+    </div>
+
     <button
       class='select-category-button'
       v-for='openedCategory in openedCategories'
@@ -18,6 +28,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
+      state: 'categories/state',
       selectedCategory: 'categories/selectedCategory',
       openedCategories: 'categories/openedCategories'
     })
@@ -42,27 +53,41 @@ export default {
   width: 100%;
 
   border: 1px solid black;
-}
 
-.select-category-button {
-  font-size: 16px;
-  line-height: 20px;
-  text-align: center;
-  opacity: 0.5;
-  word-break: break-word;
-  vertical-align: middle;
-  color: black;
-  background: rgb(240, 240, 240);
-  border: 1px solid map-get($colors, 'alchemy-light-green');
-  border-radius: 6px;
-  transition: background-color .4s;
+  .loading, .error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
 
-  &.active {
-    font-weight: bold;
-    opacity: 1;
-    color: #FFFFFF;
-    background-color: map-get($colors, 'alchemy-green');
+    .spinner {
+      color: map-get($colors, "alchemy-green");
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .select-category-button {
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    opacity: 0.5;
+    word-break: break-word;
+    vertical-align: middle;
+    color: black;
+    background: rgb(240, 240, 240);
     border: 1px solid map-get($colors, 'alchemy-light-green');
+    border-radius: 6px;
+    transition: background-color .4s;
+
+    &.active {
+      font-weight: bold;
+      opacity: 1;
+      color: #FFFFFF;
+      background-color: map-get($colors, 'alchemy-green');
+      border: 1px solid map-get($colors, 'alchemy-light-green');
+    }
   }
 }
 
@@ -87,17 +112,17 @@ export default {
       background-color: darkgrey;
       outline: 1px solid slategrey;
     }
-  }
 
-  .select-category-button {
-    height: 70px;
-    width: 100%;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
+    .select-category-button {
+      height: 70px;
+      width: 100%;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
 
-    &:hover {
-      opacity: 0.8;
-      border: 1px solid  map-get($colors, 'alchemy-dark-green');
+      &:hover {
+        opacity: 0.8;
+        border: 1px solid  map-get($colors, 'alchemy-dark-green');
+      }
     }
   }
 }
@@ -107,15 +132,16 @@ export default {
     display: inline-block;
     float: none;
     height: 50px;
+
+    .select-category-button {
+      height: 50px;
+      width: 31%;
+      font-size: 1rem;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
   }
 
-  .select-category-button {
-    height: 50px;
-    width: 31%;
-    font-size: 1rem;
-    margin-right: 5px;
-    margin-bottom: 5px;
-  }
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'min')) {
