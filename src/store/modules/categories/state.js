@@ -4,5 +4,5 @@ export default {
     error: ''
   },
   openedCategories: [],
-  selectedCategory: null
+  selectedCategory: {}
 }
