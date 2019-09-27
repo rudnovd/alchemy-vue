@@ -1,5 +1,15 @@
 <template>
   <div class='opened-elements-list'>
+    <div class='loading' v-if='state.isLoading && !state.error'>
+      <b-spinner class='spinner'/>
+    </div>
+
+    <div class='error' v-if='state.error && !state.isLoading'>
+      <div class='error'>
+        {{ state.error }}
+      </div>
+    </div>
+
     <slot></slot>
   </div>
 </template>
@@ -10,6 +20,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
+      state: 'elements/state',
       openedCategories: 'categories/openedCategories'
     })
   },
@@ -34,6 +45,20 @@ export default {
 
   &:active {
     position: unset;
+  }
+
+  .loading, .error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    .spinner {
+      color: map-get($colors, "alchemy-green");
+      width: 3rem;
+      height: 3rem;
+    }
   }
 }
 
