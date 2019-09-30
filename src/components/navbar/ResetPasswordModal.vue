@@ -14,9 +14,9 @@
       </b-col>
 
       <b-col class='ml-auto text-right' cols='2'>
-        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
-          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
-        </b-button>
+        <button class='close-button' @click='showModal = false'>
+          <font-awesome-icon icon='times'/>
+        </button>
       </b-col>
 
       <b-col class='mt-2' cols='12'>
@@ -53,7 +53,7 @@
           variant='link'
           @click='showModal = false; resetSuccess = false'
         >
-          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
+          <font-awesome-icon class='fa-2x' icon='times'/>
         </b-button>
       </b-col>
 
@@ -80,11 +80,11 @@ export default {
   data () {
     return {
       showModal: false,
-      error: null,
+      error: '',
       textStatus: '',
 
-      email: null,
-      resetSuccess: null
+      email: '',
+      resetSuccess: ''
     }
   },
   methods: {
@@ -117,8 +117,8 @@ export default {
       }
     },
     clearInputs () {
-      this.email = null
-      this.resetSuccess = null
+      this.email = ''
+      this.resetSuccess = ''
     }
   },
   validations: {
@@ -143,5 +143,17 @@ export default {
 
 .form-success {
   border-color: map-get($colors, 'alchemy-green');
+}
+
+.close-button {
+  background: none;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 1.3em;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 </style>

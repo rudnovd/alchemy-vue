@@ -14,9 +14,9 @@
       </b-col>
 
       <b-col class='ml-auto text-right' cols='2'>
-        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
-          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
-        </b-button>
+        <button class='close-button' @click='showModal = false'>
+          <font-awesome-icon icon='times'/>
+        </button>
       </b-col>
 
       <b-col class='mt-2' cols='12'>
@@ -51,7 +51,7 @@
 
       <b-col class='mt-3' cols='12'>
         <p class='text-center text-muted'>
-          <u class='c-pointer' @click='resetPasswordModalShow()'>
+          <u @click='resetPasswordModalShow()'>
             Don't remember your password?
           </u>
         </p>
@@ -142,3 +142,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.close-button {
+  background: none;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 1.3em;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+</style>

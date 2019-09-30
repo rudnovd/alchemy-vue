@@ -14,17 +14,18 @@
       </b-col>
 
       <b-col class='ml-auto text-right' cols='2'>
-        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
-          <font-awesome-icon class='c-pointer fa-2x' icon='times'/>
-        </b-button>
+        <button class='close-button' @click='showModal = false'>
+          <font-awesome-icon icon='times'/>
+        </button>
       </b-col>
 
       <b-col class='mt-3' cols='12'>
-        <b-form-group label='Username' label-for='username'>
+        <b-form-group label='Username' label-for='registrationUsername'>
           <b-form-input
             required='required'
-            id='username'
+            id='registrationUsername'
             type='text'
+            autocomplete='off'
             v-model='username'
             v-model.trim.lazy='$v.username.$model'
             :class='{ "form-error": $v.username.$error, "form-success": !$v.username.$error && this.username}'
@@ -33,11 +34,12 @@
       </b-col>
 
       <b-col class='mt-2' cols='12'>
-        <b-form-group label='Email' label-for='email'>
+        <b-form-group label='Email' label-for='registrationEmail'>
           <b-form-input
             required='required'
-            id='email'
+            id='registrationEmail'
             type='text'
+            autocomplete='off'
             v-model='email'
             v-model.trim.lazy='$v.email.$model'
             :class='{ "form-error": $v.email.$error, "form-success": !$v.email.$error && this.email}'
@@ -46,11 +48,12 @@
       </b-col>
 
       <b-col class='mt-2' cols='12'>
-        <b-form-group label='Password' label-for='password'>
+        <b-form-group label='Password' label-for='registrationPassword'>
           <b-form-input
             required='required'
-            id='password'
+            id='registrationPassword'
             type='password'
+            autocomplete='off'
             v-model='password'
             v-model.trim.lazy='$v.password.$model'
             :class='{ "form-error": $v.password.$error, "form-success": !$v.password.$error && this.password}'
@@ -87,9 +90,9 @@ export default {
     return {
       showModal: false,
 
-      email: null,
-      username: null,
-      password: null
+      email: '',
+      username: '',
+      password: ''
     }
   },
   methods: {
@@ -119,9 +122,9 @@ export default {
       }
     },
     clearInputs () {
-      this.email = null
-      this.username = null
-      this.password = null
+      this.email = ''
+      this.username = ''
+      this.password = ''
     }
   },
   validations: {
@@ -153,5 +156,17 @@ export default {
 
 .form-success {
   border-color: map-get($colors, 'alchemy-green');
+}
+
+.close-button {
+  background: none;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 1.3em;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 </style>
