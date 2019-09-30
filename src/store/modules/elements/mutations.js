@@ -5,18 +5,15 @@ export default {
   LOADING_END (state) {
     state.state.isLoading = false
   },
+  SET_ERROR (state, error) {
+    state.state.error = error
+  },
 
   SET_OPENED_ELEMENTS (state, elements) {
     state.openedElements = elements
   },
-  DELETE_OPENED_ELEMENTS (state) {
-    state.openedElements = []
-  },
   ADD_OPENED_ELEMENT (state, element) {
     state.openedElements.push(element)
-  },
-  REMOVE_OPENED_ELEMENT (state, element) {
-    state.openedElements.splice(element, 1)
   },
   SET_ACTIVE_ELEMENTS (state, elements) {
     state.activeElements = elements
@@ -41,23 +38,23 @@ export default {
   DELETE_SELECTED_ELEMENT (state) {
     state.selectedElement = {}
   },
-  UPDATE_OPENED_ELEMENTS_POSITIONS (state, gameField) {
+  UPDATE_OPENED_ELEMENTS_POSITIONS (state) {
     let j = 0
-    for (let i = 0; i < state.openedElements.length; i++) {
-      state.openedElements[i].x = 0
 
-      if (state.openedElements[i].show) {
-        state.openedElements[i].y = j * 45
+    state.openedElements.forEach(openedElement => {
+      openedElement.x = 0
+      if (openedElement.show) {
+        openedElement.y = j * 45
         j++
       } else {
-        state.openedElements[i].y = 0
+        openedElement.y = 0
       }
-    }
+    })
   },
   UPDATE_OPENED_ELEMENTS_BY_CATEGORY (state, category) {
     state.openedElements.forEach(element => {
       element.show = false
-      if (category === element.category) {
+      if (category._id === element.category) {
         element.show = true
       }
     })

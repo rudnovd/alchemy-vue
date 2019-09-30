@@ -1,5 +1,4 @@
 import * as shortid from 'shortid'
-
 import { getAccountElements, addOpenedElement } from '@/js/api/account'
 
 export default {
@@ -9,21 +8,18 @@ export default {
       await getAccountElements().then(response => {
         commit('LOADING_END')
         if (response.status === 200) {
-          for (let i = 0; i < response.data.elements.length; i++) {
-            response.data.elements[i].x = 0
-            response.data.elements[i].y = 0
-            response.data.elements[i].z = 100
-            response.data.elements[i].show = false
-          }
+          response.data.elements.forEach(element => {
+            element.x = 0
+            element.y = 0
+            element.z = 100
+            element.show = false
+          })
           commit('SET_OPENED_ELEMENTS', response.data.elements)
         } else {
           commit('SET_ERROR', response)
         }
       })
     }
-  },
-  deleteOpenedElements ({ commit }) {
-    commit('DELETE_OPENED_ELEMENTS')
   },
   async addOpenedElement ({ commit, dispatch }, element) {
     commit('LOADING_START')
@@ -44,14 +40,6 @@ export default {
       }
     })
   },
-  deleteOpenedElement ({ commit, state }, element) {
-    for (let i = 0; i < state.openedElements.length; i++) {
-      if (state.openedElements[i]._id === element._id) {
-        commit('DELETE_OPENED_ELEMENT', i)
-        break
-      }
-    }
-  },
   setActiveElements ({ commit }, elements) {
     commit('SET_ACTIVE_ELEMENTS', elements)
   },
@@ -64,12 +52,11 @@ export default {
     commit('ADD_ACTIVE_ELEMENT', element)
   },
   deleteActiveElement ({ commit, state }, element) {
-    for (let i = 0; i < state.activeElements.length; i++) {
-      if (state.activeElements[i].gameId === element.gameId) {
-        commit('DELETE_ACTIVE_ELEMENT', i)
-        break
+    state.activeElements.forEach((activeElement, index) => {
+      if (activeElement.gameId === element.gameId) {
+        commit('DELETE_ACTIVE_ELEMENT', index)
       }
-    }
+    })
   },
   deleteActiveElements ({ commit }) {
     commit('DELETE_ACTIVE_ELEMENTS')
