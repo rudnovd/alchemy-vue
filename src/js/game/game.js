@@ -1,50 +1,37 @@
-import * as shortid from 'shortid'
-
-export function onDropCombine (selectedElement, combineWithElement) {
-  if (selectedElement && selectedElement.gameId !== combineWithElement.gameId) {
-    const newElement = {
-      name: parseInt(Math.random() * 100),
-      category: 'Elements',
-      gameId: shortid.generate()
-    }
-    return newElement
-  } else {
-    return null
+export function findClosestElement (element, elements) {
+  if (elements.length < 2) { // need two elements for mixing
+    return {}
   }
+
+  let closestElement = {}
+
+  // Coordinates difference for find closest element
+  let x = 50
+  let y = 25
+
+  // find closest element in elements
+  elements.forEach(singleElement => {
+    let xDifference = Math.abs(element.x - singleElement.x)
+    let yDifference = Math.abs(element.y - singleElement.y)
+
+    if (xDifference <= x && yDifference <= y) {
+      if (element.gameId !== singleElement.gameId) {
+        x = xDifference
+        y = yDifference
+        closestElement = singleElement
+      }
+    }
+  })
+
+  return closestElement
 }
 
-export function findClosest (selectedElement, activeElements) {
-  if (activeElements.length < 2) {
-    return null
+export function findRecipeOfTwoElements (firstElement, secondElement, recipes) {
+  const result = recipes.filter(recipe => {
+    return firstElement._id === recipe.recipe[0]._id && secondElement._id === recipe.recipe[1]._id
+  })
+
+  if (result.length > 0) {
+    return result[0]
   }
-
-  let closestElement = null
-  let x = 1000
-  let y = 1000
-
-  for (let i = 0; i < activeElements.length; i++) {
-    let newX = Math.abs(selectedElement.x - activeElements[i].x)
-    let newY = Math.abs(selectedElement.y - activeElements[i].y)
-
-    if (newX < x && newY < y && selectedElement.gameId !== activeElements[i].gameId) {
-      x = newX
-      y = newY
-      closestElement = activeElements[i]
-    }
-  }
-
-  if ((selectedElement.x + 50 >= closestElement.x && selectedElement.x - 50 <= closestElement.x) && (selectedElement.y + 25 >= closestElement.y && selectedElement.y - 25 <= closestElement.y)) {
-    return closestElement
-  } else {
-    return null
-  }
-}
-
-export function findRecipe (firstElement, secondElement, recipes) {
-  for (let i = 0; i < recipes.length; i++) {
-    if (firstElement._id === recipes[i].recipe[0]._id && secondElement._id === recipes[i].recipe[1]._id) {
-      return recipes[i].result
-    }
-  }
-  return null
 }
