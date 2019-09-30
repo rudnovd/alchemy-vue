@@ -169,13 +169,13 @@ export default {
   }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: map-get($grid-breakpoints, 'md'))  {
   .element {
     font-size: 1.2rem;
   }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: map-get($grid-breakpoints, 'md'))  {
   .element {
     font-size: 0.9rem;
   }
