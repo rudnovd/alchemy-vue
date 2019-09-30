@@ -1,10 +1,10 @@
 <template>
   <div class='opened-elements-list'>
-    <div class='loading' v-if='state.isLoading && !state.error'>
+    <div class='loading' v-if='openedCategories.length === 0 && state.isLoading && !state.error'>
       <b-spinner class='spinner'/>
     </div>
 
-    <div class='error' v-if='state.error && !state.isLoading'>
+    <div class='error' v-if='openedCategories.length === 0 && state.error && !state.isLoading'>
       <div class='error'>
         {{ state.error }}
       </div>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
@@ -23,15 +23,6 @@ export default {
       state: 'elements/state',
       openedCategories: 'categories/openedCategories'
     })
-  },
-  methods: {
-    ...mapActions({
-      setSelectedCategory: 'categories/setSelectedCategory',
-      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
-    }),
-    selectCategory (category) {
-      this.updateOpenedElementsByCategory(category)
-    }
   }
 }
 </script>
