@@ -1,333 +1,335 @@
 <template>
-  <b-container>
-    <Table
-      :data='elements'
-      :fields='fields'
-      :totalRows='totalRows'
-      :loading='loading.elements'
-      :error='errors.elements'
-      target='element'
-      @commonButtonClick='modals.create = true'
-      @editButtonClick='beforeEditElement'
-      @deleteButtonClick='beforeDeleteElement'
-    >
-      <slot type='button'>
-        <b-btn class='mb-3' variant='success' @click='beforeCreateCategory'>
-          Create category
-        </b-btn>
-      </slot>
-    </Table>
+  <section class='section-elements'>
+    <b-container>
+      <Table
+        :data='elements'
+        :fields='fields'
+        :totalRows='totalRows'
+        :loading='loading.elements'
+        :error='errors.elements'
+        target='element'
+        @commonButtonClick='modals.create = true'
+        @editButtonClick='beforeEditElement'
+        @deleteButtonClick='beforeDeleteElement'
+      >
+        <slot type='button'>
+          <b-btn class='mb-3' variant='success' @click='beforeCreateCategory'>
+            Create category
+          </b-btn>
+        </slot>
+      </Table>
 
-    <b-modal
-      v-model='modals.create'
-      title='Create new element'
-      size='xl'
-      hide-header-close='hide-header-close'
-      ok-title='Create'
-      ok-variant='success'
-      :ok-disabled='loading.createElement'
-      :cancel-disabled='loading.createElement'
-      cancel-variant='danger'
-      @ok='createElement'
-      @hidden='afterCreateElement'
-    >
-      <b-row>
-        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
-          <b-row>
-            <b-col cols='12'>
-              <b-form-group :label-cols='3' label='Name:' label-for='createElementName'>
-                <b-form-input
-                  id='createElementName'
-                  type='text'
-                  v-model='create.name'
-                  required='required'
-                  trim='trim'
-                  placeholder='Fire'
-                  :state='validateName(create.name, elements)'
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
+      <b-modal
+        v-model='modals.create'
+        title='Create new element'
+        size='xl'
+        hide-header-close='hide-header-close'
+        ok-title='Create'
+        ok-variant='success'
+        :ok-disabled='loading.createElement'
+        :cancel-disabled='loading.createElement'
+        cancel-variant='danger'
+        @ok='createElement'
+        @hidden='afterCreateElement'
+      >
+        <b-row>
+          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+            <b-row>
+              <b-col cols='12'>
+                <b-form-group :label-cols='3' label='Name:' label-for='createElementName'>
+                  <b-form-input
+                    id='createElementName'
+                    type='text'
+                    v-model='create.name'
+                    required='required'
+                    trim='trim'
+                    placeholder='Fire'
+                    :state='validateName(create.name, elements)'
+                  />
+                </b-form-group>
+              </b-col>
+            </b-row>
 
-          <b-row>
-            <b-col cols='12'>
-              <b-form-group :label-cols='3' label='Category:' label-for='createElementCategory'>
-                <b-form-select
-                  id='createElementCategory'
-                  v-if='!newCategory.active'
-                  type='text'
-                  v-model='create.categoryId'
-                  required='required'
-                  :state='validateNull(create.categoryId)'
-                >
-                  <option
-                    v-for='category in categories'
-                    :key='category._id'
-                    :value='category._id'
+            <b-row>
+              <b-col cols='12'>
+                <b-form-group :label-cols='3' label='Category:' label-for='createElementCategory'>
+                  <b-form-select
+                    id='createElementCategory'
+                    v-if='!newCategory.active'
+                    type='text'
+                    v-model='create.categoryId'
+                    required='required'
+                    :state='validateNull(create.categoryId)'
                   >
-                    {{ category.name }}
-                  </option>
-                </b-form-select>
+                    <option
+                      v-for='category in categories'
+                      :key='category._id'
+                      :value='category._id'
+                    >
+                      {{ category.name }}
+                    </option>
+                  </b-form-select>
 
-                <b-form-input
-                  id='createElementCategory'
-                  v-if='newCategory.active'
-                  type='text'
-                  v-model='newCategory.name'
-                  required='required'
-                  trim='trim'
-                  placeholder='Elements'
-                  :state='validateName(newCategory.name, categories)'
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row v-if='newCategory.active === false'>
-            <b-col cols='12'>
-              <b-btn
-                class='float-right'
-                variant='light'
-                size='sm'
-                @click='newCategory.active = true; create.categoryId = null'
-              >
-                <font-awesome-icon icon='plus' />New category
-              </b-btn>
-            </b-col>
-          </b-row>
-
-          <b-row v-if='newCategory.active === true'>
-            <b-col cols='12'>
-              <b-btn
-                class='float-right'
-                variant='light'
-                size='sm'
-                @click='newCategory.active = false; newCategory.name = null'
-              >
-                <font-awesome-icon icon='clipboard' />Choose category
-              </b-btn>
-            </b-col>
-          </b-row>
-        </b-col>
-
-        <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
-          <b-card no-body='no-body'>
-            <b-tabs
-              card='card'
-              pills='pills'
-              vertical='vertical'
-              small='small'
-              nav-wrapper-class='w-30'
-            >
-              <b-tab
-                v-for='category in categories'
-                :title='category.name'
-                :key='category._id'
-              >
+                  <b-form-input
+                    id='createElementCategory'
+                    v-if='newCategory.active'
+                    type='text'
+                    v-model='newCategory.name'
+                    required='required'
+                    trim='trim'
+                    placeholder='Elements'
+                    :state='validateName(newCategory.name, categories)'
+                  />
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row v-if='newCategory.active === false'>
+              <b-col cols='12'>
                 <b-btn
-                  class='mr-2 mb-2'
+                  class='float-right'
+                  variant='light'
                   size='sm'
-                  variant='outline-success'
-                  v-for='element in elements'
-                  :key='element._id'
-                  v-if='element.category === category.name'
-                  @click='create.name = element.name'
+                  @click='newCategory.active = true; create.categoryId = null'
                 >
-                  {{ element.name }}
+                  <font-awesome-icon icon='plus' />New category
                 </b-btn>
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </b-col>
+              </b-col>
+            </b-row>
 
-        <b-col cols='12' v-if='errors.createElement'>
-          <b-alert show='show' variant='danger'>
-            {{ errors.createElement }}
-          </b-alert>
-        </b-col>
-      </b-row>
-    </b-modal>
-
-    <b-modal
-      v-model='modals.edit'
-      title='Edit element'
-      size='xl'
-      hide-header-close='hide-header-close'
-      ok-title='Save'
-      ok-variant='success'
-      :ok-disabled='loading.editElement'
-      :cancel-disabled='loading.editElement'
-      cancel-variant='danger'
-      @ok='editElement'
-      @hidden='afterEditElement'
-    >
-      <b-row>
-        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
-          <b-form-group :label-cols='3' label='Name:' label-for='editElementName'>
-            <b-form-input
-              id='editElementName'
-              v-model='edit.name'
-              type='text'
-              required='required'
-              trim='trim'
-            />
-          </b-form-group>
-
-          <b-form-group :label-cols='3' label='Category:' label-for='editCategory'>
-            <b-form-select
-              id='editCategory'
-              type='text'
-              v-model='edit.categoryId'
-              required='required'
-            >
-              <option v-for='category in categories' :key='category._id' :value='category._id'>
-                {{ category.name }}
-              </option>
-            </b-form-select>
-          </b-form-group>
-
-          <b-form-group :label-cols='3' label='Description:' label-for='editDescription'>
-            <b-form-textarea
-              id='editDescription'
-              v-model='edit.description'
-              placeholder='Description'
-              rows='3'
-              required='required'
-              trim='trim'
-              no-resize='no-resize'
-            />
-          </b-form-group>
-        </b-col>
-
-        <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
-          <b-card no-body='no-body'>
-            <b-tabs
-              card='card'
-              pills='pills'
-              vertical='vertical'
-              small='small'
-              nav-wrapper-class='w-30'
-            >
-              <b-tab v-for='category in categories' :title='category.name' :key='category._id'>
+            <b-row v-if='newCategory.active === true'>
+              <b-col cols='12'>
                 <b-btn
-                  class='mr-2 mb-2'
+                  class='float-right'
+                  variant='light'
                   size='sm'
-                  variant='outline-success'
-                  v-for='element in elements'
-                  :key='element._id'
-                  v-if='element.category === category.name'
-                  @click='edit.name = element.name'
+                  @click='newCategory.active = false; newCategory.name = null'
                 >
-                  {{ element.name }}
+                  <font-awesome-icon icon='clipboard' />Choose category
                 </b-btn>
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-modal>
+              </b-col>
+            </b-row>
+          </b-col>
 
-    <b-modal
-      v-model='modals.delete'
-      size='md'
-      hide-header-close='hide-header-close'
-      ok-title='Delete'
-      ok-variant='success'
-      :ok-disabled='loading.deleteElement'
-      :cancel-disabled='loading.deleteElement'
-      cancel-variant='danger'
-      hide-header='hide-header'
-      @ok='deleteElement'
-      @hidden='afterDeleteElement'
-    >
-      <b-row class='text-center'>
-        <b-col cols='12' v-if='!errors.deleteElement'>
-          <h4>
-            Delete element
-            <strong class='text-danger'>
-              {{ this.delete.name }}
-            </strong>
-            ?
-          </h4>
-        </b-col>
-
-        <b-col cols='12' v-if='errors.deleteElement'>
-          <b-alert show='show' variant='danger'>
-            {{ errors.deleteElement }}
-          </b-alert>
-        </b-col>
-      </b-row>
-    </b-modal>
-
-    <b-modal
-      v-model='modals.createCategory'
-      title='Create new category'
-      size='xl'
-      hide-header-close='hide-header-close'
-      ok-title='Create'
-      ok-variant='success'
-      :ok-disabled='loading.createCategory'
-      :cancel-disabled='loading.createCategory'
-      cancel-variant='danger'
-      @ok='createCategory'
-      @hidden='afterCreateCategory'
-    >
-      <b-row>
-        <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
-          <b-row>
-            <b-col cols='12'>
-              <b-form-group :label-cols='3' label='Name:' label-for='createCategoryName'>
-                <b-form-input
-                  id='createCategoryName'
-                  type='text'
-                  v-model='createCategoryData.name'
-                  required='required'
-                  trim='trim'
-                  placeholder='Elements'
-                  :state='validateName(createCategoryData.name, categories)'
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-col>
-
-        <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
-          <b-card no-body='no-body'>
-            <b-tabs
-              card='card'
-              pills='pills'
-              vertical='vertical'
-              small='small'
-              nav-wrapper-class='w-30'
-            >
-              <b-tab
-                v-for='category in categories'
-                :title='category.name'
-                :key='category._id'
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <b-card no-body='no-body'>
+              <b-tabs
+                card='card'
+                pills='pills'
+                vertical='vertical'
+                small='small'
+                nav-wrapper-class='w-30'
               >
-                <b-btn
-                  class='mr-2 mb-2'
-                  size='sm'
-                  variant='outline-success'
-                  v-for='element in elements'
-                  :key='element._id'
-                  v-if='element.category === category.name'
-                  @click='create.name = element.name'
+                <b-tab
+                  v-for='category in categories'
+                  :title='category.name'
+                  :key='category._id'
                 >
-                  {{ element.name }}
-                </b-btn>
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </b-col>
+                  <b-btn
+                    class='mr-2 mb-2'
+                    size='sm'
+                    variant='outline-success'
+                    v-for='element in elements'
+                    :key='element._id'
+                    v-if='element.category === category.name'
+                    @click='create.name = element.name'
+                  >
+                    {{ element.name }}
+                  </b-btn>
+                </b-tab>
+              </b-tabs>
+            </b-card>
+          </b-col>
 
-        <b-col cols='12' v-if='errors.createCategory'>
-          <b-alert show='show' variant='danger'>
-            {{ errors.createCategory }}
-          </b-alert>
-        </b-col>
-      </b-row>
-    </b-modal>
-  </b-container>
+          <b-col cols='12' v-if='errors.createElement'>
+            <b-alert show='show' variant='danger'>
+              {{ errors.createElement }}
+            </b-alert>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        v-model='modals.edit'
+        title='Edit element'
+        size='xl'
+        hide-header-close='hide-header-close'
+        ok-title='Save'
+        ok-variant='success'
+        :ok-disabled='loading.editElement'
+        :cancel-disabled='loading.editElement'
+        cancel-variant='danger'
+        @ok='editElement'
+        @hidden='afterEditElement'
+      >
+        <b-row>
+          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+            <b-form-group :label-cols='3' label='Name:' label-for='editElementName'>
+              <b-form-input
+                id='editElementName'
+                v-model='edit.name'
+                type='text'
+                required='required'
+                trim='trim'
+              />
+            </b-form-group>
+
+            <b-form-group :label-cols='3' label='Category:' label-for='editCategory'>
+              <b-form-select
+                id='editCategory'
+                type='text'
+                v-model='edit.categoryId'
+                required='required'
+              >
+                <option v-for='category in categories' :key='category._id' :value='category._id'>
+                  {{ category.name }}
+                </option>
+              </b-form-select>
+            </b-form-group>
+
+            <b-form-group :label-cols='3' label='Description:' label-for='editDescription'>
+              <b-form-textarea
+                id='editDescription'
+                v-model='edit.description'
+                placeholder='Description'
+                rows='3'
+                required='required'
+                trim='trim'
+                no-resize='no-resize'
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
+            <b-card no-body='no-body'>
+              <b-tabs
+                card='card'
+                pills='pills'
+                vertical='vertical'
+                small='small'
+                nav-wrapper-class='w-30'
+              >
+                <b-tab v-for='category in categories' :title='category.name' :key='category._id'>
+                  <b-btn
+                    class='mr-2 mb-2'
+                    size='sm'
+                    variant='outline-success'
+                    v-for='element in elements'
+                    :key='element._id'
+                    v-if='element.category === category.name'
+                    @click='edit.name = element.name'
+                  >
+                    {{ element.name }}
+                  </b-btn>
+                </b-tab>
+              </b-tabs>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        v-model='modals.delete'
+        size='md'
+        hide-header-close='hide-header-close'
+        ok-title='Delete'
+        ok-variant='success'
+        :ok-disabled='loading.deleteElement'
+        :cancel-disabled='loading.deleteElement'
+        cancel-variant='danger'
+        hide-header='hide-header'
+        @ok='deleteElement'
+        @hidden='afterDeleteElement'
+      >
+        <b-row class='text-center'>
+          <b-col cols='12' v-if='!errors.deleteElement'>
+            <h4>
+              Delete element
+              <strong class='text-danger'>
+                {{ this.delete.name }}
+              </strong>
+              ?
+            </h4>
+          </b-col>
+
+          <b-col cols='12' v-if='errors.deleteElement'>
+            <b-alert show='show' variant='danger'>
+              {{ errors.deleteElement }}
+            </b-alert>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        v-model='modals.createCategory'
+        title='Create new category'
+        size='xl'
+        hide-header-close='hide-header-close'
+        ok-title='Create'
+        ok-variant='success'
+        :ok-disabled='loading.createCategory'
+        :cancel-disabled='loading.createCategory'
+        cancel-variant='danger'
+        @ok='createCategory'
+        @hidden='afterCreateCategory'
+      >
+        <b-row>
+          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+            <b-row>
+              <b-col cols='12'>
+                <b-form-group :label-cols='3' label='Name:' label-for='createCategoryName'>
+                  <b-form-input
+                    id='createCategoryName'
+                    type='text'
+                    v-model='createCategoryData.name'
+                    required='required'
+                    trim='trim'
+                    placeholder='Elements'
+                    :state='validateName(createCategoryData.name, categories)'
+                  />
+                </b-form-group>
+              </b-col>
+            </b-row>
+          </b-col>
+
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <b-card no-body='no-body'>
+              <b-tabs
+                card='card'
+                pills='pills'
+                vertical='vertical'
+                small='small'
+                nav-wrapper-class='w-30'
+              >
+                <b-tab
+                  v-for='category in categories'
+                  :title='category.name'
+                  :key='category._id'
+                >
+                  <b-btn
+                    class='mr-2 mb-2'
+                    size='sm'
+                    variant='outline-success'
+                    v-for='element in elements'
+                    :key='element._id'
+                    v-if='element.category === category.name'
+                    @click='create.name = element.name'
+                  >
+                    {{ element.name }}
+                  </b-btn>
+                </b-tab>
+              </b-tabs>
+            </b-card>
+          </b-col>
+
+          <b-col cols='12' v-if='errors.createCategory'>
+            <b-alert show='show' variant='danger'>
+              {{ errors.createCategory }}
+            </b-alert>
+          </b-col>
+        </b-row>
+      </b-modal>
+    </b-container>
+  </section>
 </template>
 
 <script>
@@ -610,3 +612,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.section-elements {
+  margin-top: 10px;
+}
+</style>
