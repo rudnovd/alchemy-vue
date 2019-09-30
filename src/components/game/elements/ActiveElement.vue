@@ -1,7 +1,7 @@
 <template>
   <vue-draggable-resizable
-    class-name='element'
-    class-name-active='selected-element'
+    class-name='active-element'
+    class-name-active='selected-active-element'
     :resizable='false'
     :disable-user-select='true'
     :w='75'
@@ -15,7 +15,7 @@
     @dragstop='onDragstop'
     @deactivated='onDeactivated'
   >
-    <div class='element-content'>
+    <div class='data'>
       <b-img :src='require("@/assets/images/elementExample.png")'/>
       <span>
         {{ elementData.name }}
@@ -27,13 +27,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import { addOpenedElement } from '@/js/api/account'
-
-import { getElements } from '@/js/api/elements'
-
 import * as game from '@/js/game/game'
-
-import * as shortid from 'shortid'
 
 export default {
   props: {
@@ -44,7 +38,8 @@ export default {
       activeElements: 'elements/activeElements',
       selectedElement: 'elements/selectedElement',
       openedRecipes: 'recipes/openedRecipes',
-      recipes: 'recipes/recipes'
+      recipes: 'recipes/recipes',
+      state: 'elements/state'
     })
   },
   methods: {
@@ -56,7 +51,9 @@ export default {
       deleteSelectedElement: 'elements/deleteSelectedElement',
       setOpenedElements: 'elements/setOpenedElements',
       addOpenedRecipe: 'recipes/addOpenedRecipe',
-      addHistory: 'game/addHistory'
+      addHistory: 'game/addHistory',
+      addOpenedElement: 'elements/addOpenedElement',
+      updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -86,63 +83,35 @@ export default {
       }
       this.setSelectedElementCoordinates({ x, y, z: 100 })
 
-      let combineElement = game.findClosest(this.selectedElement, this.activeElements)
-      if (combineElement) {
-        let resultOfRecipe = game.findRecipe(this.selectedElement, combineElement, this.recipes)
+      let closestElement = game.findClosestElement(this.selectedElement, this.activeElements)
+      if (closestElement.gameId) {
+        let resultRecipe = game.findRecipeOfTwoElements(this.selectedElement, closestElement, this.recipes)
+        if (Object.keys(resultRecipe).length !== 0) {
+          let filteredByOpenedRecipes = this.openedRecipes.filter(recipe => {
+            return resultRecipe.result._id === recipe._id
+          })
 
-        if (resultOfRecipe) {
-          let isOpenedRecipe = false
-
-          for (let i = 0; i < this.openedRecipes.length; i++) {
-            if (resultOfRecipe._id === this.openedRecipes[i].result._id) {
-              isOpenedRecipe = true
-            }
-          }
-
-          if (!isOpenedRecipe) {
-            let d = this.selectedElement
-            addOpenedElement(resultOfRecipe._id).then(response => {
-              if (response.status === 200) {
-                this.addOpenedRecipe({
-                  recipe: [
-                    { _id: d._id, name: d.name },
-                    { _id: combineElement._id, name: combineElement.name }
-                  ],
-                  result: {
-                    _id: resultOfRecipe._id,
-                    name: resultOfRecipe._name
-                  }
-                })
-
-                getElements().then(response => {
-                  if (response.status === 200) {
-                    for (let i = 0; i < response.data.response.length; i++) {
-                      response.data.response[i].x = null
-                      response.data.response[i].y = null
-                      response.data.response[i].z = 100
-                    }
-                    this.setOpenedElements(response.data.response)
-                  }
-                })
+          if (filteredByOpenedRecipes.length === 0) { // if recipe not opened for user then open recipe
+            this.addOpenedElement(resultRecipe.result).then(response => {
+              if (!this.state.error) {
+                this.addOpenedRecipe(resultRecipe)
               }
             })
           }
 
-          this.addActiveElement({
-            _id: resultOfRecipe._id,
-            name: resultOfRecipe.name,
+          const resultElement = {
+            ...resultRecipe.result,
             x: x,
-            y: y,
-            z: 100,
-            gameId: shortid.generate()
-          })
+            y: y
+          }
+          this.addActiveElement(resultElement)
           this.addHistory({
             firstElement: this.selectedElement.name,
-            secondElement: combineElement.name,
-            result: resultOfRecipe.name
+            secondElement: closestElement.name,
+            result: resultRecipe.result.name
           })
           this.deleteActiveElement(this.selectedElement)
-          this.deleteActiveElement(combineElement)
+          this.deleteActiveElement(closestElement)
         }
       }
       this.deleteSelectedElement()
@@ -152,21 +121,13 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.element {
+.active-element {
   user-select: none;
   font-size: 16px;
-  background-color: rgb(223, 223, 223);
+  background-color: rgb(235, 235, 235);
   border: 1px solid map-get($colors, 'alchemy-green');
   border-radius: 6px;
   transition: background-color .4s;
-
-  .element-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-  }
 
   &:hover {
     cursor: grab;
@@ -175,10 +136,20 @@ export default {
   &:active {
     cursor: grabbing;
   }
+
+  .data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+  }
 }
 
-.selected-element {
+.selected-active-element {
   background-color: map-get($colors, 'alchemy-green');
-  color: #FFFFFF;
+  color: rgb(255, 255, 255);
 }
 </style>
