@@ -7,5 +7,8 @@ export default {
   },
   selectedRecipe: state => {
     return state.selectedRecipe
+  },
+  state: state => {
+    return state.state
   }
 }
