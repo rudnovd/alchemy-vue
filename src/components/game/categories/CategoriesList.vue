@@ -14,8 +14,8 @@
       class='select-category-button'
       v-for='openedCategory in openedCategories'
       :key='openedCategory._id'
-      @click='selectCategory(openedCategory.name)'
-      :class='{ "active": openedCategory.name === selectedCategory}'
+      @click='selectCategory(openedCategory)'
+      :class='{ "active": openedCategory._id === selectedCategory._id}'
     >
       {{ openedCategory.name }}
     </button>

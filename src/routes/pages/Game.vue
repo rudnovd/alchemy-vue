@@ -15,7 +15,7 @@
 
           <b-row class='h-100 row align-items-end'>
             <b-col class='pr-0 pr-sm-0 pr-md-0' cols='9' sm='9' md='9' lg='8' xl='8' order='1'>
-              <ActiveElementsAction v-show='history.last.firstElement'/>
+              <ActiveElementsHistory v-show='history.last.firstElement'/>
             </b-col>
 
             <b-col class='ml-auto text-right' cols='3' sm='3' md='3' lg='2' xl='2' order='2'>
@@ -40,8 +40,8 @@ import ActiveElement from '@/components/game/elements/ActiveElement.vue'
 import OpenedElement from '@/components/game/elements/OpenedElement.vue'
 import ClearGameField from '@/components/game/ClearGameField.vue'
 import CategoriesList from '@/components/game/categories/CategoriesList.vue'
-import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
 import OpenedElementsList from '@/components/game/elements/OpenedElementsList.vue'
+import ActiveElementsHistory from '@/components/game/elements/ActiveElementsHistory.vue'
 
 export default {
   components: {
@@ -49,8 +49,8 @@ export default {
     OpenedElement,
     ClearGameField,
     CategoriesList,
-    ActiveElementsAction,
-    OpenedElementsList
+    OpenedElementsList,
+    ActiveElementsHistory
   },
   mounted () {
     const gameField = document.getElementsByClassName('game-board')
@@ -61,8 +61,8 @@ export default {
 
     this.getOpenedElements().then(() => {
       this.getOpenedCategories(this.openedElements).then(() => {
-        this.setSelectedCategory(this.openedCategories[0].name)
-        this.updateOpenedElementsByCategory(this.openedCategories[0]._id)
+        this.setSelectedCategory(this.openedCategories[0])
+        this.updateOpenedElementsByCategory(this.openedCategories[0])
         this.updateOpenedElementsPositions()
       })
 
