@@ -35,21 +35,13 @@
 </template>
 
 <script>
-import * as shortid from 'shortid'
-
-import ActiveElement from '@/components/game/elements/ActiveElement.vue'
-
-import OpenedElement from '@/components/game/elements/OpenedElement.vue'
-
-import ClearGameField from '@/components/game/ClearGameField.vue'
-
-import CategoriesList from '@/components/game/categories/CategoriesList.vue'
-
-import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
-
-import OpenedElementsList from '@/components/game/elements/OpenedElementsList.vue'
-
 import { mapGetters, mapActions } from 'vuex'
+import ActiveElement from '@/components/game/elements/ActiveElement.vue'
+import OpenedElement from '@/components/game/elements/OpenedElement.vue'
+import ClearGameField from '@/components/game/ClearGameField.vue'
+import CategoriesList from '@/components/game/categories/CategoriesList.vue'
+import ActiveElementsAction from '@/components/game/elements/ActiveElementsAction.vue'
+import OpenedElementsList from '@/components/game/elements/OpenedElementsList.vue'
 
 export default {
   components: {
@@ -67,30 +59,16 @@ export default {
       y: gameField[0].clientHeight
     })
 
-    const openedElementsField = document.getElementsByClassName('section-opened-elements')
-    this.setOpenedElementsFieldSize({
-      width: openedElementsField[0].clientWidth,
-      height: openedElementsField[0].clientHeight
-    })
+    this.getOpenedElements().then(() => {
+      this.getOpenedCategories(this.openedElements).then(() => {
+        this.setSelectedCategory(this.openedCategories[0].name)
+        this.updateOpenedElementsByCategory(this.openedCategories[0]._id)
+        this.updateOpenedElementsPositions()
+      })
 
-    window.addEventListener('resize', () => {
-      this.updateElementsPositions(gameField, openedElementsField)
-    })
-
-    window.addEventListener('ondeviceorientation', () => {
-      this.updateElementsPositions(gameField, openedElementsField)
-    })
-
-    this.getOpenedElements()
-
-    this.getOpenedCategories().then(() => {
-      this.setSelectedCategory(this.openedCategories[0].name)
-      this.updateOpenedElementsByCategory(this.selectedCategory)
-      this.updateOpenedElementsPositions()
-    })
-
-    this.getRecipes().then(() => {
-      this.findOpenedRecipes()
+      this.getRecipes().then(() => {
+        this.findOpenedRecipes()
+      })
     })
   },
   computed: {
@@ -123,53 +101,16 @@ export default {
       updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
       setOpenedElementsFieldSize: 'game/setOpenedElementsFieldSize'
     }),
-    generateGameId () {
-      let gameId = shortid.generate()
-
-      for (let i = 0; i < this.activeElements; i++) {
-        if (gameId === this.activeElements[i].gameId) {
-          this.generateGameId()
-          return
-        }
-      }
-
-      return gameId
-    },
     findOpenedRecipes () {
       let userRecipes = []
-      for (let i = 0; i < this.recipes.length; i++) {
-        let firstElement = this.recipes[i].recipe[0]._id
-        let secondElement = this.recipes[i].recipe[1]._id
-
-        let firstFound = false
-        let secondFound = false
-        for (let j = 0; j < this.openedElements.length; j++) {
-          if (firstElement === this.openedElements[j]._id) {
-            firstFound = true
+      this.recipes.forEach(recipe => {
+        this.openedElements.forEach(openedElement => {
+          if (recipe.recipe[0]._id === openedElement._id && recipe.recipe[1]._id === openedElement._id) {
+            userRecipes.push(recipe)
           }
-          if (secondElement === this.openedElements[j]._id) {
-            secondFound = true
-          }
-          if (firstFound && secondFound) {
-            userRecipes.push(this.recipes[i])
-            break
-          }
-        }
-        firstFound = false
-        secondFound = false
-      }
+        })
+      })
       this.setOpenedRecipes(userRecipes)
-    },
-    updateElementsPositions (gameField, openedElementsField) {
-      this.setGameFieldSize({
-        x: gameField[0].clientWidth,
-        y: gameField[0].clientHeight
-      })
-      this.setOpenedElementsFieldSize({
-        width: openedElementsField[0].clientWidth,
-        height: openedElementsField[0].clientHeight
-      })
-      this.updateOpenedElementsPositions()
     }
   }
 }
