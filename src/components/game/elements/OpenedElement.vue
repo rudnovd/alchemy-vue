@@ -22,14 +22,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-
-import * as shortid from 'shortid'
-
 import * as game from '@/js/game/game'
-
-import { addOpenedElement } from '@/js/api/account'
-
-import { getElements } from '@/js/api/elements'
 
 export default {
   props: {
@@ -44,7 +37,8 @@ export default {
       selectedElement: 'elements/selectedElement',
       recipes: 'recipes/recipes',
       openedRecipes: 'recipes/openedRecipes',
-      openedElementsFieldSize: 'game/openedElementsFieldSize'
+      openedElementsFieldSize: 'game/openedElementsFieldSize',
+      state: 'elements/state'
     }),
     openedElementWidth () {
       if (this.openedElementsFieldSize.width < 500) {
@@ -64,7 +58,8 @@ export default {
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',
       setOpenedElements: 'elements/setOpenedElements',
       addHistory: 'game/addHistory',
-      addOpenedRecipe: 'recipes/addOpenedRecipe'
+      addOpenedRecipe: 'recipes/addOpenedRecipe',
+      addOpenedElement: 'elements/addOpenedElement'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -94,59 +89,44 @@ export default {
       let addElement = false
 
       if (x < this.gameFieldSize.x) { // if element dropped on game board
+        this.setSelectedElementCoordinates({
+          x: this.gameFieldSize.x - Math.abs(this.selectedElement.x),
+          y: Math.abs(this.selectedElement.y)
+        })
         if (this.activeElements.length === 0) { // If game board without active elements then add active element
           addElement = true
         } else if (this.activeElements.length > 0) { // If game board has active elements then check elements on drop
-          let combineElement = game.findClosest(this.selectedElement, this.activeElements)
-          if (combineElement) {
-            let resultOfRecipe = game.findRecipe(this.selectedElement, combineElement, this.recipes)
-            if (resultOfRecipe) {
-              let isOpenedRecipe = false
-              for (let i = 0; i < this.openedRecipes.length; i++) {
-                if (resultOfRecipe._id === this.openedRecipes[i].result._id) {
-                  isOpenedRecipe = true
-                }
-              }
-              if (!isOpenedRecipe) {
-                let d = this.selectedElement
-                addOpenedElement(resultOfRecipe._id).then(response => {
-                  if (response.status === 200) {
-                    this.addOpenedRecipe({
-                      recipe: [
-                        { _id: d._id, name: d.name },
-                        { _id: combineElement._id, name: combineElement.name }
-                      ],
-                      result: {
-                        _id: resultOfRecipe._id,
-                        name: resultOfRecipe._name
-                      }
-                    })
+          let closestElement = game.findClosestElement(this.selectedElement, this.activeElements)
+          if (closestElement.gameId) {
+            let resultRecipe = game.findRecipeOfTwoElements(this.selectedElement, closestElement, this.recipes)
+            if (Object.keys(resultRecipe).length !== 0) {
+              let filteredByOpenedRecipes = this.openedRecipes.filter(recipe => {
+                return resultRecipe.result._id === recipe._id
+              })
 
-                    getElements().then(response => {
-                      if (response.status === 200) {
-                        for (let i = 0; i < response.data.response.length; i++) {
-                          response.data.response[i].x = 0
-                          response.data.response[i].y = 0
-                          response.data.response[i].z = 100
-                        }
-                        this.setOpenedElements(response.data.response)
-                      }
-                    })
+              if (filteredByOpenedRecipes.length === 0) { // if recipe not opened for user then open recipe
+                this.addOpenedElement(resultRecipe.result).then(response => {
+                  if (!this.state.error) {
+                    this.addOpenedRecipe(resultRecipe)
                   }
                 })
               }
+              const resultElement = {
+                ...resultRecipe.result,
+                x: this.elementData.x,
+                y: this.selectedElement.y
+              }
+              this.addActiveElement(resultElement)
+
               this.addHistory({
                 firstElement: this.selectedElement.name,
-                secondElement: combineElement.name,
-                result: resultOfRecipe.name
+                secondElement: closestElement.name,
+                result: resultRecipe.result.name
               })
-              resultOfRecipe.x = this.selectedElement.x
-              resultOfRecipe.y = this.selectedElement.y
-              resultOfRecipe.z = 100
-
               this.deleteActiveElement(this.selectedElement)
-              this.deleteActiveElement(combineElement)
-              this.addActiveElement(resultOfRecipe)
+              this.deleteActiveElement(closestElement)
+            } else {
+              addElement = true
             }
           } else {
             addElement = true
@@ -158,15 +138,7 @@ export default {
       }
 
       if (addElement) {
-        this.addActiveElement({
-          _id: this.elementData._id,
-          name: this.elementData.name,
-          category: this.elementData.name.category,
-          x: this.gameFieldSize.x - Math.abs(this.selectedElement.x),
-          y: Math.abs(this.selectedElement.y),
-          z: 100,
-          gameId: shortid.generate()
-        })
+        this.addActiveElement(this.elementData)
       }
 
       this.deleteSelectedElement()
