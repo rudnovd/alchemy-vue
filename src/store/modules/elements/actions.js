@@ -1,3 +1,5 @@
+import * as shortid from 'shortid'
+
 import { getAccountElements, addOpenedElement } from '@/js/api/account'
 
 export default {
@@ -23,12 +25,20 @@ export default {
   deleteOpenedElements ({ commit }) {
     commit('DELETE_OPENED_ELEMENTS')
   },
-  async addOpenedElement ({ commit }, element) {
+  async addOpenedElement ({ commit, dispatch }, element) {
     commit('LOADING_START')
     await addOpenedElement(element._id).then(response => {
       commit('LOADING_END')
       if (response.status === 200) {
+        element = {
+          ...element,
+          x: 0,
+          y: 0,
+          z: 100,
+          show: false
+        }
         commit('ADD_OPENED_ELEMENT', element)
+        dispatch('updateOpenedElementsPositions')
       } else {
         commit('SET_ERROR', response)
       }
@@ -46,6 +56,11 @@ export default {
     commit('SET_ACTIVE_ELEMENTS', elements)
   },
   addActiveElement ({ commit }, element) {
+    element = {
+      ...element,
+      z: 100,
+      gameId: shortid.generate()
+    }
     commit('ADD_ACTIVE_ELEMENT', element)
   },
   deleteActiveElement ({ commit, state }, element) {
