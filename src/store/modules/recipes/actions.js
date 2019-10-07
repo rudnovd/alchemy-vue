@@ -4,14 +4,16 @@ export default {
   async getRecipes ({ state, commit }) {
     if (state.recipes.length === 0) {
       commit('LOADING_START')
-      await getRecipes().then(response => {
-        commit('LOADING_END')
-        if (response.status === 200) {
+      await getRecipes()
+        .then(response => {
           commit('SET_RECIPES', response.data.response)
-        } else {
-          commit('SET_ERROR', response.data)
-        }
-      })
+        })
+        .catch(error => {
+          commit('SET_ERROR', error.data)
+        })
+        .finally(() => {
+          commit('LOADING_END')
+        })
     }
   },
   setOpenedRecipes ({ commit }, recipes) {
