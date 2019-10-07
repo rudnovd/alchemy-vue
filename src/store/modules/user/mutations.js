@@ -16,12 +16,12 @@ export default {
     state.isLoggedIn = true
   },
   DELETE_USER (state) {
-    state.role = null
-    state.isDisabled = null
-    state.id = null
-    state.email = null
-    state.username = null
-    state.created = null
+    state.role = ''
+    state.isDisabled = ''
+    state.id = ''
+    state.email = ''
+    state.username = ''
+    state.created = ''
     state.isLoggedIn = false
   }
 }

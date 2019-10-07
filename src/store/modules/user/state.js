@@ -3,11 +3,11 @@ export default {
     isLoading: false,
     error: ''
   },
-  role: null,
-  isDisabled: null,
-  id: null,
-  email: null,
-  username: null,
-  created: null,
+  role: '',
+  isDisabled: '',
+  id: '',
+  email: '',
+  username: '',
+  created: '',
   isLoggedIn: false
 }

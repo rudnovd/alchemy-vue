@@ -4,22 +4,32 @@ export default {
   async getLogin ({ state, commit }) {
     if (!state.isLoggedIn) {
       commit('LOADING_START')
-      await getLogin().then(response => {
-        commit('LOADING_END')
-        if (response.data.user) {
-          commit('SET_USER', response.data.user)
-        }
-      })
+      await getLogin()
+        .then(response => {
+          if (response.data.user) {
+            commit('SET_USER', response.data.user)
+          }
+        })
+        .catch(error => {
+          commit('SET_ERROR', error.data)
+        })
+        .finally(() => {
+          commit('LOADING_END')
+        })
     }
   },
   async getLogout ({ commit }) {
     commit('LOADING_START')
-    await getLogout().then(response => {
-      commit('LOADING_END')
-      if (response.status === 200 || response.status === 304) {
+    await getLogout()
+      .then(() => {
         commit('DELETE_USER')
-      }
-    })
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
   },
   setUser ({ commit }, user) {
     commit('SET_USER', user)
