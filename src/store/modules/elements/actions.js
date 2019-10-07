@@ -5,9 +5,8 @@ export default {
   async getOpenedElements ({ state, commit }) {
     if (state.openedElements.length === 0) {
       commit('LOADING_START')
-      await getAccountElements().then(response => {
-        commit('LOADING_END')
-        if (response.status === 200) {
+      await getAccountElements()
+        .then(response => {
           response.data.elements.forEach(element => {
             element.x = 0
             element.y = 0
@@ -15,17 +14,19 @@ export default {
             element.show = false
           })
           commit('SET_OPENED_ELEMENTS', response.data.elements)
-        } else {
-          commit('SET_ERROR', response)
-        }
-      })
+        })
+        .catch(error => {
+          commit('SET_ERROR', error.data)
+        })
+        .finally(() => {
+          commit('LOADING_END')
+        })
     }
   },
-  async addOpenedElement ({ commit, dispatch }, element) {
+  async addOpenedElement ({ commit, rootState, dispatch }, element) {
     commit('LOADING_START')
-    await addOpenedElement(element._id).then(response => {
-      commit('LOADING_END')
-      if (response.status === 200) {
+    await addOpenedElement(element._id)
+      .then(response => {
         element = {
           ...element,
           x: 0,
@@ -34,11 +35,22 @@ export default {
           show: false
         }
         commit('ADD_OPENED_ELEMENT', element)
+
+        const filteredByOpenedCategory = rootState.categories.openedCategories.filter(openedCategory => {
+          return openedCategory._id === element.category
+        })
+        if (filteredByOpenedCategory.length === 0) {
+          dispatch('addOpenedCategory', element.category)
+        }
+        dispatch('updateOpenedElementsByCategory', rootState.categories.selectedCategory)
         dispatch('updateOpenedElementsPositions')
-      } else {
-        commit('SET_ERROR', response)
-      }
-    })
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
   },
   setActiveElements ({ commit }, elements) {
     commit('SET_ACTIVE_ELEMENTS', elements)
