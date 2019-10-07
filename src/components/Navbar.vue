@@ -92,11 +92,8 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import LoginModal from '@/components/navbar/LoginModal.vue'
-
 import RegistrationModal from '@/components/navbar/RegistrationModal.vue'
-
 import ResetPasswordModal from '@/components/navbar/ResetPasswordModal.vue'
-
 import OpenedRecipesModal from '@/components/game/recipes/OpenedRecipesModal.vue'
 
 export default {
@@ -105,11 +102,6 @@ export default {
     RegistrationModal,
     ResetPasswordModal,
     OpenedRecipesModal
-  },
-  created () {
-    if (!this.user.isLoggedIn) {
-      this.getLogin()
-    }
   },
   data () {
     return {
