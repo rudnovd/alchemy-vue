@@ -8,6 +8,6 @@ export async function getUsers () {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }

@@ -5,7 +5,7 @@ export async function getElements () {
     const response = await axios.get('/api/elements')
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -21,7 +21,7 @@ export async function postElement (name, category) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -39,7 +39,7 @@ export async function putElement (elementId, name, description, category) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -54,6 +54,6 @@ export async function deleteElement (elementId) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }

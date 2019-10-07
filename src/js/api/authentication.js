@@ -8,7 +8,7 @@ export async function getLogin () {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -25,7 +25,7 @@ export async function postLogin (email, password, remember) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -37,6 +37,6 @@ export async function getLogout () {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }

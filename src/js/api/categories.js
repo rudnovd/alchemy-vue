@@ -5,7 +5,7 @@ export async function getCategories () {
     const response = await axios.get('/api/categories')
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -20,7 +20,7 @@ export async function postCategory (name) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -36,7 +36,7 @@ export async function putCategory (name, categoryId) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
 
@@ -51,6 +51,6 @@ export async function deleteCategory (categoryId) {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }

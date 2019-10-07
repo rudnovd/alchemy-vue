@@ -8,6 +8,6 @@ export async function getStats () {
     })
     return response
   } catch (error) {
-    return error.response
+    throw error.response
   }
 }
