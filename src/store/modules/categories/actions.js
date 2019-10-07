@@ -3,9 +3,8 @@ import { getCategories } from '@/js/api/categories'
 export default {
   async getOpenedCategories ({ commit }, openedElements) {
     commit('LOADING_START')
-    await getCategories().then(response => {
-      commit('LOADING_END')
-      if (response.status === 200) {
+    await getCategories()
+      .then(response => {
         let openedCategories = []
         openedElements.forEach(openedElement => {
           let filteredByCategory = openedCategories.filter(openedCategory => {
@@ -24,10 +23,13 @@ export default {
           }
         })
         commit('SET_OPENED_CATEGORIES', openedCategories)
-      } else {
-        commit('SET_ERROR', response)
-      }
-    })
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
   },
   addOpenedCategory ({ commit }, category) {
     commit('ADD_OPENED_CATEGORY', category)
