@@ -80,52 +80,26 @@ const router = new Router({
   ]
 })
 
-// Do before load router
 router.beforeEach((to, from, next) => {
-  // Set page title
-  document.title = to.meta.title
-
-  next()
-})
-
-router.beforeResolve((to, from, next) => {
-  if (requireAuthPassed(to) === true) {
-    next()
-  } else {
-    next({ path: '/' })
-  }
-
-  if (requireAdminRolePassed(to) === true) {
-    next()
-  } else {
-    next({ path: '/' })
-  }
-})
-
-function requireAuthPassed (to) {
-  // If route need auth, check logged in
-  if (to.matched.some(record => record.meta.authRequired)) {
-    if (store.getters['user/user'].isLoggedIn) {
-      return true
-    } else {
-      return false
+  store.dispatch('user/getLogin').then(() => {
+    const isAuth = store.getters['user/user'].isLoggedIn
+    if (to.matched.some(record => record.meta.authRequired)) {
+      if (!isAuth) {
+        next({ path: '/' })
+      }
     }
-  } else {
-    return true
-  }
-}
 
-function requireAdminRolePassed (to) {
-  // If route need admin role, check role
-  if (to.matched.some(record => record.meta.adminRoleRequired)) {
-    if (store.getters['user/user'].role === 'Admin') {
-      return true
-    } else {
-      return false
+    const userRole = store.getters['user/user'].role
+    if (to.matched.some(record => record.meta.adminRoleRequired)) {
+      if (userRole !== 'Admin') {
+        next({ path: '/' })
+      }
     }
-  } else {
-    return true
-  }
-}
+
+    document.title = to.meta.title
+
+    next()
+  })
+})
 
 export default router
