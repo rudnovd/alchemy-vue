@@ -40,12 +40,12 @@
           />
         </div>
 
-        <b-alert class='text-center' v-if='error' show='show' variant='danger'>
-          {{ error }}
+        <b-alert class='error' v-if='error' show='show' variant='danger' @click='closeError'>
+          {{ error.data.error }}
         </b-alert>
 
         <b-table
-          v-if='!loading && !error'
+          v-if='!loading'
           show-empty='show-empty'
           responsive='responsive'
           hover='hover'
@@ -56,6 +56,8 @@
           :per-page='pagination.perPage'
           :filter='search'
         >
+          <template v-slot:cell></template>
+
           <template v-slot:cell(action)='row'>
             <b-button-group size='sm'>
               <b-btn
@@ -141,7 +143,7 @@ export default {
   },
   data () {
     return {
-      search: null,
+      search: '',
       pagination: {
         perPage: 10,
         currentPage: 1,
@@ -162,3 +164,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.error {
+  text-align: center;
+  transition: opacity .3s;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+</style>
