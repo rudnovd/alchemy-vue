@@ -30,6 +30,14 @@ export default {
       error: ''
     },
     data: []
+  },
+  stats: {
+    state: {
+      isLoading: false,
+      method: '',
+      error: ''
+    },
+    data: []
   }
 
 }

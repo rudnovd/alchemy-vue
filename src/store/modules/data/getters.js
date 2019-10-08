@@ -7,5 +7,8 @@ export default {
   },
   recipes: state => {
     return state.recipes
+  },
+  stats: state => {
+    return state.stats
   }
 }

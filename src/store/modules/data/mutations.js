@@ -40,12 +40,18 @@ export default {
     state.elements.data = elements
   },
   ADD_ELEMENT (state, element) {
-    state.elements.data.push(element)
+    state.elements.data.push({
+      _id: element._id,
+      name: element.name,
+      category: element.category.name
+    })
   },
   EDIT_ELEMENT (state, element) {
-    state.elements.data.forEach(singleElement => {
+    state.elements.data.forEach((singleElement, index) => {
       if (singleElement._id === element._id) {
-        singleElement = element
+        state.elements.data[index]._id = element._id
+        state.elements.data[index].category = element.category.name
+        state.elements.data[index].name = element.name
       }
     })
   },
@@ -60,7 +66,14 @@ export default {
   SET_CATEGORIES (state, categories) {
     state.categories.data = categories
   },
+  ADD_CATEGORY (state, category) {
+    state.categories.data.push(category)
+  },
   SET_RECIPES (state, recipes) {
     state.recipes.data = recipes
+  },
+
+  SET_STATS (state, stats) {
+    state.stats.data = stats
   }
 }

@@ -1,6 +1,7 @@
 import { getElements, postElement, putElement, deleteElement } from '@/js/api/elements'
 import { getCategories, postCategory, putCategory, deleteCategory } from '@/js/api/categories'
 import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
+import { getStats } from '@/js/api/stats'
 
 export default {
   async getElements ({ commit }) {
@@ -23,7 +24,7 @@ export default {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'POST' })
     console.log(element)
-    await postElement(element.name, element.category)
+    await postElement(element.name, element.category._id)
       .then(() => {
         commit('ADD_ELEMENT', element)
       })
@@ -38,7 +39,7 @@ export default {
   async putElement ({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'PUT' })
-    await putElement(element._id, element.name, element.description, element.category)
+    await putElement(element._id, element.name, element.description, element.category._id)
       .then(() => {
         commit('EDIT_ELEMENT', element)
       })
@@ -85,9 +86,12 @@ export default {
   async postCategory ({ commit }, category) {
     commit('LOADING_START', 'categories')
     commit('SET_METHOD', { object: 'categories', method: 'POST' })
-    await postCategory(category)
-      .then(() => {
-        commit('ADD_CATEGORY', category)
+    await postCategory(category.name)
+      .then((response) => {
+        commit('ADD_CATEGORY', {
+          _id: response.data.response._id,
+          name: response.data.response.name
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'categories', error: error.data })
@@ -186,6 +190,22 @@ export default {
       .finally(() => {
         commit('SET_METHOD', { object: 'recipes', method: '' })
         commit('LOADING_END', 'recipes')
+      })
+  },
+
+  async getStats ({ commit }) {
+    commit('LOADING_START', 'stats')
+    commit('SET_METHOD', { object: 'stats', method: 'GET' })
+    await getStats()
+      .then(response => {
+        commit('SET_STATS', response.data)
+      })
+      .catch(error => {
+        commit('SET_ERROR', { object: 'stats', error: error.data })
+      })
+      .finally(() => {
+        commit('SET_METHOD', { object: 'stats', method: '' })
+        commit('LOADING_END', 'stats')
       })
   }
 }
