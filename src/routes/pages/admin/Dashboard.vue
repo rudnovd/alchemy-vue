@@ -1,7 +1,7 @@
 <template>
   <section class='section-dashboard'>
     <b-container>
-      <template v-if='isLoading'>
+      <template v-if='stats.state.isLoading'>
         <b-row>
           <b-col cols='12'>
             <div class='text-center'>
@@ -15,7 +15,7 @@
         </b-row>
       </template>
 
-      <template v-if='!error && !isLoading'>
+      <template v-if='!stats.state.error && !stats.state.isLoading'>
         <b-row class='border-bottom'>
           <b-col class='text-center border-bottom mb-2' cols='12'>
             <h3>
@@ -36,7 +36,7 @@
                   </h4>
 
                   <h4>
-                    {{ stats.usersCount }}
+                    {{ stats.data.usersCount }}
                   </h4>
                 </b-col>
               </b-row>
@@ -55,7 +55,7 @@
                   </h4>
 
                   <h4>
-                    {{ stats.activeUsersCount }}
+                    {{ stats.data.activeUsersCount }}
                   </h4>
                 </b-col>
               </b-row>
@@ -75,7 +75,7 @@
                   </h4>
 
                   <h4>
-                    {{ stats.bannedUsersCount }}
+                    {{ stats.data.bannedUsersCount }}
                   </h4>
                 </b-col>
               </b-row>
@@ -103,7 +103,7 @@
                   </h4>
 
                   <h4>
-                    {{ stats.elementsCount }}
+                    {{ stats.data.elementsCount }}
                   </h4>
                 </b-col>
               </b-row>
@@ -122,7 +122,7 @@
                   </h4>
 
                   <h4>
-                    {{ stats.undiscoveredElementsCount }}
+                    {{ stats.data.undiscoveredElementsCount }}
                   </h4>
                 </b-col>
               </b-row>
@@ -131,9 +131,9 @@
         </b-row>
       </template>
 
-      <template v-if='error'>
+      <template v-if='stats.state.error'>
         <h5>
-          {{ error }}
+          {{ stats.state.error.data }}
         </h5>
       </template>
     </b-container>
@@ -141,26 +141,21 @@
 </template>
 
 <script>
-import { getStats } from '@/js/api/stats'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   mounted () {
-    this.isLoading = true
-    getStats().then(response => {
-      this.isLoading = false
-      if (response.status === 200) {
-        this.stats = response.data
-      } else {
-        this.error = response
-      }
+    this.getStats()
+  },
+  computed: {
+    ...mapGetters({
+      stats: 'data/stats'
     })
   },
-  data () {
-    return {
-      isLoading: false,
-      error: '',
-      stats: {}
-    }
+  methods: {
+    ...mapActions({
+      getStats: 'data/getStats'
+    })
   }
 }
 </script>
