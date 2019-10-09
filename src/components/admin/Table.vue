@@ -40,8 +40,8 @@
           />
         </div>
 
-        <b-alert class='error' v-if='error' show='show' variant='danger' @click='closeError'>
-          {{ error.data.error }}
+        <b-alert class='error' v-if='error' show='show' variant='danger'>
+          {{ error }}
         </b-alert>
 
         <b-table
@@ -79,14 +79,14 @@
               </b-btn>
             </b-button-group>
           </template>
-
-          <b-pagination
-            align='center'
-            :total-rows='totalRows'
-            v-model='pagination.currentPage'
-            :per-page='pagination.perPage'
-          />
         </b-table>
+
+        <b-pagination
+          v-model='pagination.currentPage'
+          align='center'
+          :total-rows='totalRows'
+          :per-page='pagination.perPage'
+        />
       </b-col>
     </b-row>
   </div>
@@ -145,8 +145,8 @@ export default {
     return {
       search: '',
       pagination: {
-        perPage: 10,
         currentPage: 1,
+        perPage: 10,
         pageOptions: [5, 10, 25, 50]
       }
     }
