@@ -2,11 +2,11 @@
   <section class='section-recipes'>
     <b-container>
       <Table
-        :data='recipes'
+        :data='recipes.data'
         :fields='fields'
         :totalRows='totalRows'
-        :loading='loading.recipes'
-        :error='errors.recipes'
+        :loading='recipes.state.isLoading && recipes.state.method === "GET"'
+        :error='recipes.state.error.error'
         target='recipe'
         @commonButtonClick='beforeCreateRecipe'
         @editButtonClick='beforeEditRecipe'
@@ -20,10 +20,10 @@
         hide-header-close='hide-header-close'
         ok-title='Create'
         ok-variant='success'
-        :ok-disabled='loading.createRecipe'
-        :cancel-disabled='loading.createRecipe'
         cancel-variant='danger'
-        @ok='createRecipe'
+        :ok-disabled='recipes.state.isLoading'
+        :cancel-disabled='recipes.state.isLoading'
+        @ok='recipeCreateAction'
         @hidden='afterCreateRecipe'
       >
         <b-row>
@@ -32,11 +32,11 @@
               <b-col cols='12'>
                 <b-form-group label='Result element:'>
                   <multiselect
-                    v-model='create.resultElement'
+                    v-model='create.result'
                     placeholder='Result element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -54,7 +54,7 @@
                     placeholder='First element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -72,7 +72,7 @@
                     placeholder='Second element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -83,43 +83,14 @@
             </b-row>
           </b-col>
 
-          <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
-            <b-card no-body='no-body'>
-              <b-tabs
-                card='card'
-                pills='pills'
-                vertical='vertical'
-                small='small'
-                nav-wrapper-class='w-30'
-              >
-                <b-tab
-                  v-for='category in categories'
-                  :title='category.name'
-                  :key='category._id'
-                >
-                  <b-btn
-                    class='mr-2 mb-2'
-                    size='sm'
-                    variant='outline-success'
-                    v-for='element in elements'
-                    :key='element._id'
-                    v-if='element.category === category.name'
-                    @click='pushElement(element)'
-                  >
-                    {{ element.name }}
-                  </b-btn>
-                </b-tab>
-              </b-tabs>
-            </b-card>
-          </b-col>
-
-          <b-col cols='12' v-if='errors.createRecipe'>
-            <b-alert show='show' variant='danger'>
-              {{ errors.createRecipe }}
-            </b-alert>
-          </b-col>
+          <ElementsList
+            :elements='elements.data'
+            :categories='categories.data'
+            @elementClick='pushElement'
+          />
         </b-row>
       </b-modal>
+
       <b-modal
         v-model='modals.edit'
         title='Edit recipe'
@@ -127,23 +98,23 @@
         hide-header-close='hide-header-close'
         ok-title='Save'
         ok-variant='success'
-        :ok-disabled='loading.editRecipe'
-        :cancel-disabled='loading.editRecipe'
         cancel-variant='danger'
-        @ok='editRecipe'
+        :ok-disabled='recipes.state.isLoading && recipes.state.method === "PUT"'
+        :cancel-disabled='recipes.state.isLoading && recipes.state.method === "PUT"'
+        @ok='recipeEditAction'
         @hidden='afterEditRecipe'
       >
         <b-row>
-          <b-col cols='4'>
+          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
             <b-row>
               <b-col cols='12'>
                 <b-form-group label='Result element:'>
                   <multiselect
-                    v-model='edit.resultElement'
+                    v-model='edit.result'
                     placeholder='Result element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -161,7 +132,7 @@
                     placeholder='First element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -179,7 +150,7 @@
                     placeholder='Second element'
                     label='name'
                     deselectLabel
-                    :options='elements'
+                    :options='elements.data'
                     :searchable='true'
                     :allow-empty='false'
                     :clear-on-select='false'
@@ -190,77 +161,36 @@
             </b-row>
           </b-col>
 
-          <b-col cols='12' sm='12' md='12' lg='8' xl='8'>
-            <b-card no-body='no-body'>
-              <b-tabs
-                card='card'
-                pills='pills'
-                vertical='vertical'
-                small='small'
-                nav-wrapper-class='w-30'
-              >
-                <b-tab
-                  v-for='category in categories'
-                  :title='category.name'
-                  :key='category._id'
-                  @click='showRecipe = []'
-                >
-                  <b-btn
-                    class='mr-2 mb-2'
-                    size='sm'
-                    variant='outline-success'
-                    v-for='element in elements'
-                    :key='element._id'
-                    v-if='element.category === category.name'
-                    @click='showElementRecipe(element)'
-                  >
-                    {{ element.name }}
-                  </b-btn>
-                </b-tab>
-
-                <b-col cols='12' v-if='showRecipe.length > 0'>
-                  <p class='text-muted'>
-                    Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
-                  </p>
-                </b-col>
-              </b-tabs>
-            </b-card>
-
-            <b-col cols='12' v-if='errors.createRecipe'>
-              <b-alert show='show' variant='danger'>
-                {{ errors.createRecipe }}
-              </b-alert>
-            </b-col>
-          </b-col>
+          <ElementsList
+            :elements='elements.data'
+            :categories='categories.data'
+            @elementClick='showElementRecipe'
+          >
+            <div>
+              <span class='text-muted' v-if='showRecipe.length > 0'>
+                Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
+              </span>
+            </div>
+          </ElementsList>
         </b-row>
       </b-modal>
+
       <b-modal
         v-model='modals.delete'
         size='md'
         hide-header-close='hide-header-close'
         ok-title='Delete'
         ok-variant='success'
-        :ok-disabled='loading.deleteRecipe'
-        :cancel-disabled='loading.deleteRecipe'
         cancel-variant='danger'
         hide-header='hide-header'
-        @ok='deleteRecipe'
+        :ok-disabled='recipes.state.isLoading && recipes.state.method === "DELETE"'
+        :cancel-disabled='recipes.state.isLoading && recipes.state.method === "DELETE"'
+        @ok='recipeDeleteAction'
         @hidden='afterDeleteRecipe'
       >
         <b-row class='text-center'>
-          <b-col cols='12' v-if='!errors.deleteElement'>
-            <h4>
-              Delete recipe of
-              <strong class='text-danger'>
-                {{ this.delete.name }}
-              </strong>
-              ?
-            </h4>
-          </b-col>
-          <b-col cols='12' v-if='errors.deleteElement'>
-            <b-alert show='show' variant='danger'>
-              {{ errors.deleteElement }}
-            </b-alert>
+          <b-col cols='12'>
+            <h4>Delete recipe of <strong class='text-danger'>{{ this.delete.name }}</strong>?</h4>
           </b-col>
         </b-row>
       </b-modal>
@@ -269,37 +199,33 @@
 </template>
 
 <script>
-import { getElements } from '@/js/api/elements'
-
-import { getCategories } from '@/js/api/categories'
-
-import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
+import { mapActions, mapGetters } from 'vuex'
 
 import Table from '@/components/admin/Table'
+import ElementsList from '@/components/admin/ElementsList'
 
 export default {
   components: {
-    Table
+    Table,
+    ElementsList
   },
   created () {
-    this.getElements()
+    this.getElement()
     this.getCategories()
     this.getRecipes()
   },
-  watch: {
-    // call again the method if the route changes
-    $route: 'getRecipes'
-  },
   computed: {
-
+    ...mapGetters({
+      elements: 'data/elements',
+      categories: 'data/categories',
+      recipes: 'data/recipes'
+    }),
+    totalRows () {
+      return this.recipes.data.length
+    }
   },
   data () {
     return {
-      elements: [],
-      categories: [],
-      recipes: [],
-
-      totalRows: 0,
       fields: [
         {
           key: 'result.name',
@@ -326,27 +252,6 @@ export default {
           sortable: false
         }
       ],
-
-      loading: {
-        elements: false,
-        categories: false,
-        recipes: false,
-
-        createRecipe: false,
-        editRecipe: false,
-        deleteRecipe: false
-      },
-
-      errors: {
-        elements: null,
-        categories: null,
-        recipes: null,
-
-        createRecipe: null,
-        editRecipe: null,
-        deleteRecipe: null
-      },
-
       modals: {
         create: false,
         edit: false,
@@ -354,146 +259,105 @@ export default {
       },
 
       create: {
-        resultElement: null,
-        firstElement: null,
-        secondElement: null
+        result: '',
+        firstElement: '',
+        secondElement: ''
       },
 
       delete: {
-        recipeId: null,
-        name: null
+        _id: '',
+        name: ''
       },
 
       edit: {
-        firstElement: null,
-        secondElement: null,
-        resultElement: null,
-        recipeId: null
+        firstElement: '',
+        secondElement: '',
+        result: '',
+        _id: ''
       },
 
       showRecipe: []
     }
   },
   methods: {
-    getElements () {
-      this.errors.elements = null
-      this.loading.elements = true
-      getElements().then(response => {
-        this.loading.elements = false
-        if (response.status === 200) {
-          this.elements = response.data.response
-        } else {
-          this.data.table.error = response.data
-        }
-      })
-    },
-    getCategories () {
-      this.errors.categories = null
-      this.loading.categories = true
-      getCategories().then(response => {
-        this.loading.categories = false
-        if (response.status === 200) {
-          this.categories = response.data.response
-        } else {
-          this.errors.categories = response.data
-        }
-      })
-    },
-    getRecipes () {
-      this.errors.recipes = null
-      this.loading.recipes = true
-      getRecipes().then(response => {
-        this.loading.recipes = false
-        if (response.status === 200) {
-          this.recipes = response.data.response
-          this.totalRows = response.data.response.length // Total rows for pagination
-        } else {
-          this.errors.recipes = response.data
-        }
-      })
-    },
+    ...mapActions({
+      getElement: 'data/getElements',
 
+      getCategories: 'data/getCategories',
+      postCategory: 'data/postCategory',
+      putCategory: 'data/putCategory',
+      deleteCategory: 'data/deleteCategory',
+
+      getRecipes: 'data/getRecipes',
+      postRecipe: 'data/postRecipe',
+      putRecipe: 'data/putRecipe',
+      deleteRecipe: 'data/deleteRecipe'
+    }),
     beforeCreateRecipe () {
       this.modals.create = true
     },
-    createRecipe (event) {
-      event.preventDefault()
-      if (!this.create.resultElement || !this.create.firstElement || !this.create.secondElement) {
+    recipeCreateAction (event) {
+      if (event) {
+        event.preventDefault()
+      }
+      if (!this.create.result._id || !this.create.firstElement._id || !this.create.secondElement._id) {
         return
       }
-      this.loading.createRecipe = true
-      postRecipe([this.create.firstElement._id, this.create.secondElement._id], this.create.resultElement._id).then(response => {
-        this.loading.createRecipe = false
-        if (response.status === 201) {
-          this.modals.create = false
-          this.getRecipes()
-        } else {
-          this.errors.createRecipe = response.data
-        }
+
+      this.postRecipe(this.create).then(() => {
+        this.modals.create = false
       })
     },
     afterCreateRecipe () {
-      this.modals.create = false
-      this.create.resultElement = null
-      this.create.firstElement = null
-      this.create.secondElement = null
+      this.create.result = ''
+      this.create.firstElement = ''
+      this.create.secondElement = ''
     },
 
     beforeEditRecipe (row) {
       this.modals.edit = true
       this.edit.firstElement = row.item.recipe[0]
       this.edit.secondElement = row.item.recipe[1]
-      this.edit.resultElement = row.item.result
-      this.edit.recipeId = row.item.result._id
+      this.edit.result = row.item.result
+      this.edit._id = row.item._id
     },
-    editRecipe (event) {
-      event.preventDefault()
-      this.loading.editRecipe = true
-      putRecipe([this.edit.firstElement._id, this.edit.secondElement._id], this.edit.resultElement._id, this.edit.recipeId).then(response => {
-        this.loading.editRecipe = false
-        if (response.status === 200) {
-          this.modals.edit = null
-          this.getRecipes()
-        } else {
-          this.errors.editRecipe = response.data
-        }
+    recipeEditAction (event) {
+      if (event) {
+        event.preventDefault()
+      }
+
+      this.putRecipe(this.edit).then(() => {
+        this.modals.edit = false
       })
     },
     afterEditRecipe () {
-      this.modals.edit = false
-      this.edit.firstElement = null
-      this.edit.secondElement = null
-      this.edit.resultElement = null
-      this.edit.recipeId = null
+      this.edit.firstElement = ''
+      this.edit.secondElement = ''
+      this.edit.result = ''
+      this.edit._id = ''
     },
 
     beforeDeleteRecipe (row) {
       this.modals.delete = true
-      this.delete.recipeId = row.item.result._id
+      this.delete._id = row.item._id
       this.delete.name = row.item.result.name
     },
-    deleteRecipe (event) {
-      event.preventDefault()
-      this.loading.deleteRecipe = true
-      deleteRecipe(this.delete.recipeId).then(response => {
-        this.loading.deleteRecipe = false
-        if (response.status === 200) {
-          this.modals.delete = false
-          this.getRecipes()
-        } else {
-          this.errors.deleteRecipe = response.data
-        }
+    recipeDeleteAction (event) {
+      if (event) {
+        event.preventDefault()
+      }
+
+      this.deleteRecipe(this.delete).then(() => {
+        this.modals.delete = false
       })
     },
     afterDeleteRecipe () {
-      this.modals.delete = false
-      this.errors.deleteRecipe = null
-      this.delete.recipeId = null
+      this.delete._id = ''
     },
 
     pushElement (element) {
-      if (!this.create.resultElement) {
-        this.create.resultElement = element
+      if (!this.create.result) {
+        this.create.result = element
       } else if (!this.create.firstElement) {
         this.create.firstElement = element
       } else if (!this.create.secondElement) {
@@ -502,14 +366,13 @@ export default {
     },
     showElementRecipe (element) {
       this.showRecipe = []
-      for (let i = 0; i < this.recipes.length; i++) {
-        if (element._id === this.recipes[i].result._id) {
+      this.recipes.data.forEach(recipe => {
+        if (recipe.result._id === element._id) {
           this.showRecipe[0] = element
-          this.showRecipe[1] = this.recipes[i].recipe[0]
-          this.showRecipe[2] = this.recipes[i].recipe[1]
-          break
+          this.showRecipe[1] = recipe.recipe[0]
+          this.showRecipe[2] = recipe.recipe[1]
         }
-      }
+      })
     }
   }
 }
