@@ -14,6 +14,8 @@
           :key='category._id'
           @click='selectedCategory = category'
         >
+          <slot></slot>
+
           <b-btn
             class='element'
             size='sm'
