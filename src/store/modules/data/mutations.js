@@ -6,6 +6,8 @@ export default {
       state.categories.state.isLoading = true
     } else if (object === 'recipes') {
       state.recipes.state.isLoading = true
+    } else if (object === 'stats') {
+      state.stats.state.isLoading = true
     }
   },
   LOADING_END (state, object) {
@@ -15,6 +17,8 @@ export default {
       state.categories.state.isLoading = false
     } else if (object === 'recipes') {
       state.recipes.state.isLoading = false
+    } else if (object === 'stats') {
+      state.stats.state.isLoading = false
     }
   },
   SET_METHOD (state, { object, method }) {
@@ -24,6 +28,8 @@ export default {
       state.categories.state.method = method
     } else if (object === 'recipes') {
       state.recipes.state.method = method
+    } else if (object === 'stats') {
+      state.stats.state.method = method
     }
   },
   SET_ERROR (state, { object, error }) {
@@ -33,6 +39,8 @@ export default {
       state.categories.state.error = error
     } else if (object === 'recipes') {
       state.recipes.state.error = error
+    } else if (object === 'stats') {
+      state.stats.state.error = error
     }
   },
 
@@ -40,27 +48,15 @@ export default {
     state.elements.data = elements
   },
   ADD_ELEMENT (state, element) {
-    state.elements.data.push({
-      _id: element._id,
-      name: element.name,
-      category: element.category.name
-    })
+    state.elements.data.push(element)
   },
   EDIT_ELEMENT (state, element) {
-    state.elements.data.forEach((singleElement, index) => {
-      if (singleElement._id === element._id) {
-        state.elements.data[index]._id = element._id
-        state.elements.data[index].category = element.category.name
-        state.elements.data[index].name = element.name
-      }
-    })
+    const elementIndex = state.elements.data.findIndex(singleElement => singleElement._id === element._id)
+    state.elements.data.splice(elementIndex, 1, element)
   },
   DELETE_ELEMENT (state, element) {
-    state.elements.data.forEach((singleElement, index) => {
-      if (singleElement._id === element._id) {
-        state.elements.data.splice(index, 1)
-      }
-    })
+    const elementIndex = state.elements.data.findIndex(singleElement => singleElement._id === element._id)
+    state.elements.data.splice(elementIndex, 1)
   },
 
   SET_CATEGORIES (state, categories) {
@@ -69,8 +65,28 @@ export default {
   ADD_CATEGORY (state, category) {
     state.categories.data.push(category)
   },
+  EDIT_CATEGORY (state, category) {
+    const categoryIndex = state.categories.data.findIndex(singleCategory => singleCategory._id === category._id)
+    state.elements.data.splice(categoryIndex, 1, category)
+  },
+  DELETE_CATEGORY (state, category) {
+    const categoryIndex = state.categories.data.findIndex(singleCategory => singleCategory._id === category._id)
+    state.categories.data.splice(categoryIndex, 1)
+  },
+
   SET_RECIPES (state, recipes) {
     state.recipes.data = recipes
+  },
+  ADD_RECIPE (state, recipe) {
+    state.recipes.data.push(recipe)
+  },
+  EDIT_RECIPE (state, recipe) {
+    const recipeIndex = state.recipes.data.findIndex(singleRecipe => singleRecipe._id === recipe._id)
+    state.recipes.data.splice(recipeIndex, 1, recipe)
+  },
+  DELETE_RECIPE (state, recipe) {
+    const recipeIndex = state.recipes.data.findIndex(singleRecipe => singleRecipe._id === recipe._id)
+    state.recipes.data.splice(recipeIndex, 1)
   },
 
   SET_STATS (state, stats) {

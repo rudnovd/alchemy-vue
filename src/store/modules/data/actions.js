@@ -23,10 +23,13 @@ export default {
   async postElement ({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'POST' })
-    console.log(element)
     await postElement(element.name, element.category._id)
       .then(() => {
-        commit('ADD_ELEMENT', element)
+        commit('ADD_ELEMENT', {
+          _id: element._id,
+          name: element.name,
+          category: element.category.name
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'elemenets', error: error.data })
@@ -41,7 +44,11 @@ export default {
     commit('SET_METHOD', { object: 'elements', method: 'PUT' })
     await putElement(element._id, element.name, element.description, element.category._id)
       .then(() => {
-        commit('EDIT_ELEMENT', element)
+        commit('EDIT_ELEMENT', {
+          _id: element._id,
+          category: element.category.name,
+          name: element.name
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'elemenets', error: error.data })
@@ -90,7 +97,7 @@ export default {
       .then((response) => {
         commit('ADD_CATEGORY', {
           _id: response.data.response._id,
-          name: response.data.response.name
+          name: category.name
         })
       })
       .catch(error => {
@@ -106,7 +113,11 @@ export default {
     commit('SET_METHOD', { object: 'categories', method: 'PUT' })
     await putCategory(category.name, category._id)
       .then(() => {
-        commit('EDIT_CATEGORY', category)
+        commit('EDIT_CATEGORY', {
+          _id: category._id,
+          elements: category.elements,
+          name: category.name
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'categories', error: error.data })
@@ -150,9 +161,13 @@ export default {
   async postRecipe ({ commit }, recipe) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'POST' })
-    await postRecipe(recipe.recipe, recipe.result)
-      .then(() => {
-        commit('ADD_RECIPE', recipe)
+    await postRecipe([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id)
+      .then(response => {
+        commit('ADD_RECIPE', {
+          _id: response.data.response._id,
+          recipe: [recipe.firstElement, recipe.secondElement],
+          result: recipe.result
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'recipes', error: error.data })
@@ -165,9 +180,13 @@ export default {
   async putRecipe ({ commit }, recipe) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'PUT' })
-    await putRecipe(recipe.newRecipe, recipe.newResult, recipe._id)
+    await putRecipe([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id, recipe._id)
       .then(() => {
-        commit('EDIT_RECIPE', recipe)
+        commit('EDIT_RECIPE', {
+          _id: recipe._id,
+          recipe: [recipe.firstElement, recipe.secondElement],
+          result: recipe.result
+        })
       })
       .catch(error => {
         commit('SET_ERROR', { object: 'recipes', error: error.data })
