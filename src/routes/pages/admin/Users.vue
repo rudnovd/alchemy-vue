@@ -2,15 +2,15 @@
   <section class='section-users'>
     <b-container>
       <Table
-        :data='users'
+        target='user'
+        :data='users.data'
         :fields='fields'
         :totalRows='totalRows'
-        :loading='loading.users'
-        :error='errors.users'
-        target='user'
+        :loading='users.state.isLoading'
+        :error='users.state.error'
         :commonButton='false'
         :deleteButton='false'
-        @editButtonClick='beforeSaveUser'
+        @editButtonClick='beforeEditUser'
       />
 
       <b-modal
@@ -20,14 +20,14 @@
         hide-header-close='hide-header-close'
         ok-title='Save'
         ok-variant='success'
-        :ok-disabled='loading.blockUser'
-        :cancel-disabled='loading.blockUser'
         cancel-variant='danger'
-        @ok='saveUser'
-        @hidden='afterSaveUser'
+        :ok-disabled='users.state.isLoading && users.state.method === "GET"'
+        :cancel-disabled='users.state.isLoading && users.state.method === "GET"'
+        @ok='userEditAction'
+        @hidden='afterEditUser'
       >
         <b-row>
-          <b-col cols='5'>
+          <b-col cols='12' sm='12' md='12' lg='5' xl='5'>
             <b-row>
               <b-col cols='9'>
                 <b-form-group :label-cols='4' label='Username:'>
@@ -60,44 +60,27 @@
               </b-col>
 
               <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Disabled:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.isDisabled'/>
+                <b-form-group :label-cols='4' label='Role:'>
+                  <b-button-group>
+                    <b-button variant='outline-success' :class='{ "active": user.role === "User" }' @click='user.role = "User"'>User</b-button>
+                    <b-button variant='outline-success' :class='{ "active": user.role === "Admin" }' @click='user.role = "Admin"'>Admin</b-button>
+                  </b-button-group>
                 </b-form-group>
-              </b-col>
-
-              <b-col class='pl-0' cols='3'>
-                <b-btn v-if='!user.isDisabled' variant='success' @click='user.isDisabled = true'>
-                  <font-awesome-icon icon='user'/>
-                </b-btn>
-
-                <b-btn v-if='user.isDisabled' variant='danger' @click='user.isDisabled = false'>
-                  <font-awesome-icon icon='user-slash'/>
-                </b-btn>
               </b-col>
 
               <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Role:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.role'/>
-                </b-form-group>
-              </b-col>
-
-              <b-col class='pl-0' cols='3'>
-                <b-btn
-                  v-if='user.role != "Admin"'
-                  variant='success'
-                  @click='user.role="Admin"'
+                <b-form-checkbox
+                  v-model="user.isDisabled"
+                  :value='true'
+                  :unchecked-value='!user.isDisabled'
                 >
-                  <font-awesome-icon icon='arrow-up'/>
-                </b-btn>
-
-                <b-btn v-if='user.role == "User"' variant='danger' @click='user.role="User"'>
-                  <font-awesome-icon icon='arrow-down'/>
-                </b-btn>
+                  Disabled
+                </b-form-checkbox>
               </b-col>
             </b-row>
           </b-col>
 
-          <b-col cols='7'>
+          <b-col cols='12' sm='12' md='12' lg='7' xl='7'>
             <b-row>
               <b-col cols='12'>
                 <h5>
@@ -106,9 +89,16 @@
 
                 <b-progress
                   class='mb-3'
-                  :value='userElements.length'
-                  :max='maxElements'
+                  :value='user.elements.length'
+                  :max='elements.data.length'
                   show-value='show-value'
+                />
+              </b-col>
+
+              <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12'>
+                <ElementsList
+                  :elements='user.elements'
+                  :categories='categories.data'
                 />
               </b-col>
             </b-row>
@@ -120,71 +110,52 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
+import { getAccountElements } from '@/js/api/account'
+
 import Table from '@/components/admin/Table'
-
-import { getUsers } from '@/js/api/users'
-
-import { getAccountElements, putResetPassword } from '@/js/api/account'
-
-import { getElements } from '@/js/api/elements'
+import ElementsList from '@/components/admin/ElementsList'
 
 export default {
   components: {
-    Table
+    Table,
+    ElementsList
   },
   mounted () {
-    this.loading.users = true
-    getUsers().then(response => {
-      this.loading.users = false
-      if (response.status === 200) {
-        this.users = response.data.response
-        this.totalRows = response.data.response.length
-        this.transformDate()
-      } else {
-        this.errors.users = response.data
-      }
+    this.getUsers().then(() => {
+      this.totalRows = this.users.data.length
     })
-
-    getElements().then(response => {
-      if (response.status === 200) {
-        this.maxElements = response.data.response.length
-      }
+    this.getElements()
+    this.getCategories()
+  },
+  computed: {
+    ...mapGetters({
+      elements: 'data/elements',
+      categories: 'data/categories',
+      users: 'data/users'
     })
   },
   data () {
     return {
-      users: [],
       user: {
-        username: null,
-        email: null,
-        created: null,
-        lastEntered: null,
-        isDisabled: null,
-        role: null
+        _id: '',
+        username: '',
+        email: '',
+        created: '',
+        lastEntered: '',
+        isDisabled: false,
+        role: '',
+        elements: []
       },
-      userElements: [],
-      maxElements: 0,
+
+      loading: {
+        userElements: false
+      },
 
       modals: {
         edit: false
       },
-
-      loading: {
-        users: false,
-        userElements: false,
-        blockUser: false,
-        resetPassword: false,
-        changeRole: false
-      },
-
-      errors: {
-        users: null,
-        userElements: null,
-        blockUser: null,
-        resetPassword: null,
-        changeRole: null
-      },
-
       resetPassword: false,
 
       totalRows: 0,
@@ -223,98 +194,57 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      getUsers: 'data/getUsers',
+      getElements: 'data/getElements',
+      getCategories: 'data/getCategories'
+    }),
     getUserElements () {
       this.loading.userElements = true
-      getAccountElements(this.user._id).then(response => {
-        this.loading.userElements = false
-        if (response.status === 200) {
-          this.userElements = response.data.elements
-        } else {
-          this.errors.userElements = response.data
-        }
-      })
+      getAccountElements(this.user._id)
+        .then(response => {
+          this.user.elements = response.data.elements
+        })
+        .finally(() => {
+          this.loading.userElements = false
+        })
     },
 
-    transformDate () {
-      for (let i = 0; i < this.users.length; i++) {
-        const createdDate = new Date(this.users[i].created)
-        const lastEntered = new Date(this.users[i].lastEntered)
-
-        let day = createdDate.getDate()
-        let month = createdDate.getMonth() + 1
-        let hours = createdDate.getHours()
-        let minutes = createdDate.getMinutes()
-
-        if (day < 10) {
-          day = `0${day}`
-        }
-        if (month < 10) {
-          month = `0${month}`
-        }
-        if (hours < 10) {
-          hours = `0${hours}`
-        }
-        if (minutes < 10) {
-          minutes = `0${minutes}`
-        }
-
-        this.users[i].created = `${day}.${month}.${createdDate.getFullYear()} ${hours}:${minutes}`
-
-        day = lastEntered.getDate()
-        month = lastEntered.getMonth() + 1
-        hours = lastEntered.getHours()
-        minutes = lastEntered.getMinutes()
-
-        if (day < 10) {
-          day = `0${day}`
-        }
-        if (month < 10) {
-          month = `0${month}`
-        }
-        if (hours < 10) {
-          hours = `0${hours}`
-        }
-        if (minutes < 10) {
-          minutes = `0${minutes}`
-        }
-
-        this.users[i].lastEntered = `${day}.${month}.${lastEntered.getFullYear()} ${hours}:${minutes}`
-      }
-    },
-
-    beforeBlockUser () {
-      this.user.isDisabled = true
-    },
-    blockUser () {
-
-    },
-    afterBlockUser () {
-
-    },
-
-    beforeSaveUser (row) {
+    beforeEditUser (row) {
       this.modals.edit = true
-      this.user = row.item
+      this.user._id = row.item._id
+      this.user.username = row.item.username
+      this.user.email = row.item.email
+      this.user.created = row.item.created
+      this.user.lastEntered = row.item.lastEntered
+      this.user.isDisabled = row.item.isDisabled
+      this.user.role = row.item.role
       this.getUserElements()
     },
-    saveUser () {
+    userEditAction () {
+      this.putUser(this.user).then(() => {
+        this.modals.edit = false
+      })
       if (this.resetPassword) {
-        putResetPassword(this.user.email).then(response => {
-          if (response.status === 200) {
-          }
-        })
+        // putResetPassword(this.user.email).then(response => {
+        // })
       }
     },
-    afterSaveUser () {
-      this.modals.edit = false
-      this.user = {}
+    afterEditUser () {
+      this.user._id = ''
+      this.user.username = ''
+      this.user.email = ''
+      this.user.created = ''
+      this.user.lastEntered = ''
+      this.user.isDisabled = false
+      this.user.role = ''
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.section-recipes {
+.section-users {
   margin-top: 10px;
 }
 </style>
