@@ -1,5 +1,5 @@
 <template>
-  <b-col class='elements-list mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+  <div class='elements-list'>
     <b-card no-body='no-body'>
       <b-tabs
         card='card'
@@ -29,7 +29,7 @@
         </b-tab>
       </b-tabs>
     </b-card>
-  </b-col>
+  </div>
 </template>
 
 <script>

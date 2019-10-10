@@ -101,11 +101,14 @@
             </b-row>
           </b-col>
 
-          <ElementsList
-            :elements='elements.data'
-            :categories='categories.data'
-            @elementClick='createElementClick'
-          />
+           <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+              <ElementsList
+                :elements='elements.data'
+                :categories='categories.data'
+                @elementClick='createElementClick'
+              />
+            </b-col>
+
         </b-row>
       </b-modal>
 
@@ -160,10 +163,12 @@
             </b-form-group>
           </b-col>
 
-          <ElementsList
-            :elements='elements.data'
-            :categories='categories.data'
-          />
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <ElementsList
+              :elements='elements.data'
+              :categories='categories.data'
+            />
+          </b-col>
         </b-row>
       </b-modal>
 
@@ -219,10 +224,12 @@
             </b-row>
           </b-col>
 
-          <ElementsList
-            :categories='categories.data'
-            :elements='elements.data'
-          />
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <ElementsList
+              :categories='categories.data'
+              :elements='elements.data'
+            />
+          </b-col>
         </b-row>
       </b-modal>
     </b-container>

@@ -83,11 +83,13 @@
             </b-row>
           </b-col>
 
-          <ElementsList
-            :elements='elements.data'
-            :categories='categories.data'
-            @elementClick='pushElement'
-          />
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <ElementsList
+              :elements='elements.data'
+              :categories='categories.data'
+              @elementClick='pushElement'
+            />
+          </b-col>
         </b-row>
       </b-modal>
 
@@ -161,17 +163,19 @@
             </b-row>
           </b-col>
 
-          <ElementsList
-            :elements='elements.data'
-            :categories='categories.data'
-            @elementClick='showElementRecipe'
-          >
-            <div>
-              <span class='text-muted' v-if='showRecipe.length > 0'>
-                Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
-              </span>
-            </div>
-          </ElementsList>
+          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
+            <ElementsList
+              :elements='elements.data'
+              :categories='categories.data'
+              @elementClick='showElementRecipe'
+            >
+              <div>
+                <span class='text-muted' v-if='showRecipe.length > 0'>
+                  Recipe of {{ showRecipe[0].name }}: {{ showRecipe[1].name }} + {{ showRecipe[2].name }}
+                </span>
+              </div>
+            </ElementsList>
+          </b-col>
         </b-row>
       </b-modal>
 
