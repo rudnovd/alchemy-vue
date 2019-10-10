@@ -6,6 +6,8 @@ export default {
       state.categories.state.isLoading = true
     } else if (object === 'recipes') {
       state.recipes.state.isLoading = true
+    } else if (object === 'users') {
+      state.users.state.isLoading = true
     } else if (object === 'stats') {
       state.stats.state.isLoading = true
     }
@@ -17,6 +19,8 @@ export default {
       state.categories.state.isLoading = false
     } else if (object === 'recipes') {
       state.recipes.state.isLoading = false
+    } else if (object === 'users') {
+      state.users.state.isLoading = false
     } else if (object === 'stats') {
       state.stats.state.isLoading = false
     }
@@ -28,6 +32,8 @@ export default {
       state.categories.state.method = method
     } else if (object === 'recipes') {
       state.recipes.state.method = method
+    } else if (object === 'users') {
+      state.users.state.method = method
     } else if (object === 'stats') {
       state.stats.state.method = method
     }
@@ -38,6 +44,8 @@ export default {
     } else if (object === 'categories') {
       state.categories.state.error = error
     } else if (object === 'recipes') {
+      state.recipes.state.error = error
+    } else if (object === 'users') {
       state.recipes.state.error = error
     } else if (object === 'stats') {
       state.stats.state.error = error
@@ -87,6 +95,14 @@ export default {
   DELETE_RECIPE (state, recipe) {
     const recipeIndex = state.recipes.data.findIndex(singleRecipe => singleRecipe._id === recipe._id)
     state.recipes.data.splice(recipeIndex, 1)
+  },
+
+  SET_USERS (state, users) {
+    state.users.data = users
+  },
+  EDIT_USER (state, user) {
+    const userIndex = state.users.data.findIndex(singleUser => singleUser._id === user._id)
+    state.users.data.splice(userIndex, 1, user)
   },
 
   SET_STATS (state, stats) {

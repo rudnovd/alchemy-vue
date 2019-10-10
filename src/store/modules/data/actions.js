@@ -1,6 +1,8 @@
 import { getElements, postElement, putElement, deleteElement } from '@/js/api/elements'
 import { getCategories, postCategory, putCategory, deleteCategory } from '@/js/api/categories'
 import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
+import { updateAccount } from '@/js/api/account'
+import { getUsers } from '@/js/api/users'
 import { getStats } from '@/js/api/stats'
 
 export default {
@@ -209,6 +211,42 @@ export default {
       .finally(() => {
         commit('SET_METHOD', { object: 'recipes', method: '' })
         commit('LOADING_END', 'recipes')
+      })
+  },
+
+  async getUsers ({ commit }) {
+    commit('LOADING_START', 'users')
+    commit('SET_METHOD', { object: 'users', method: 'GET' })
+    await getUsers()
+      .then(response => {
+        commit('SET_USERS', response.data.response)
+      })
+      .catch(error => {
+        commit('SET_ERROR', { object: 'users', error: error.data })
+      })
+      .finally(() => {
+        commit('SET_METHOD', { object: 'users', method: '' })
+        commit('LOADING_END', 'users')
+      })
+  },
+  async putUser ({ commit }, user) {
+    commit('LOADING_START', 'users')
+    commit('SET_METHOD', { object: 'users', method: 'PUT' })
+    await updateAccount(user._id, user.password, user.username, user.role)
+      .then(() => {
+        commit('EDIT_USER', {
+          _id: user._id,
+          password: user.password,
+          username: user.username,
+          role: user.role
+        })
+      })
+      .catch(error => {
+        commit('SET_ERROR', { object: 'users', error: error.data })
+      })
+      .finally(() => {
+        commit('SET_METHOD', { object: 'users', method: '' })
+        commit('LOADING_END', 'users')
       })
   },
 
