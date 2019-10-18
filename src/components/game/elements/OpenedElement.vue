@@ -7,7 +7,7 @@
     :resizable='false'
     :minHeight='40'
     :maxHeight='40'
-    :w='280'
+    :w='width'
     :h='40'
     :x='elementData.x'
     :y='elementData.y'
@@ -31,21 +31,23 @@ export default {
   computed: {
     ...mapGetters({
       gameFieldSize: 'game/gameFieldSize',
-      elementsListFieldSize: 'game/elementsListFieldSize',
       openedElements: 'elements/openedElements',
       activeElements: 'elements/activeElements',
       selectedElement: 'elements/selectedElement',
       recipes: 'recipes/recipes',
       openedRecipes: 'recipes/openedRecipes',
-      openedElementsFieldSize: 'game/openedElementsFieldSize',
       state: 'elements/state'
-    }),
-    openedElementWidth () {
-      if (this.openedElementsFieldSize.width < 500) {
-        return this.openedElementsFieldSize.width * 0.3
-      } else {
-        return this.openedElementsFieldSize.width * 0.2
-      }
+    })
+  },
+  mounted () {
+    this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
+    window.addEventListener('resize', event => {
+      this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
+    })
+  },
+  data () {
+    return {
+      width: 100
     }
   },
   methods: {
@@ -84,14 +86,28 @@ export default {
 
     // Called whenever the component stops getting dragged
     onDragstop (x, y) {
-      this.setSelectedElementCoordinates({ x, y })
+      this.setSelectedElementCoordinates({ x, y, z: 100 })
 
       let addElement = false
 
-      if (x < this.gameFieldSize.x) { // if element dropped on game board
+      if (x < 0) { // if element dropped on game board
+        let newX = this.gameFieldSize.x - Math.abs(this.selectedElement.x)
+        let newY = this.selectedElement.y
+
+        if (newX < 0) {
+          newX = 0
+        }
+
+        if (newY < 0) {
+          newY = 0
+        } else if (newY > this.gameFieldSize.y) {
+          newY = this.gameFieldSize.y
+        }
+
         this.setSelectedElementCoordinates({
-          x: this.gameFieldSize.x - Math.abs(this.selectedElement.x),
-          y: Math.abs(this.selectedElement.y)
+          x: newX,
+          y: newY,
+          z: 100
         })
         if (this.activeElements.length === 0) { // If game board without active elements then add active element
           addElement = true
@@ -99,7 +115,7 @@ export default {
           let closestElement = game.findClosestElement(this.selectedElement, this.activeElements)
           if (closestElement.gameId) {
             let resultRecipe = game.findRecipeOfTwoElements(this.selectedElement, closestElement, this.recipes)
-            if (Object.keys(resultRecipe).length !== 0) {
+            if (resultRecipe) {
               let filteredByOpenedRecipes = this.openedRecipes.filter(recipe => {
                 return resultRecipe.result._id === recipe._id
               })
@@ -113,7 +129,7 @@ export default {
               }
               const resultElement = {
                 ...resultRecipe.result,
-                x: this.elementData.x,
+                x: this.selectedElement.x,
                 y: this.selectedElement.y
               }
               this.addActiveElement(resultElement)
@@ -133,7 +149,12 @@ export default {
           }
         }
       } else if (x === 0) { // If click on element
-        this.setSelectedElementCoordinates({ x: 400, y: 400 })
+        this.setSelectedElementCoordinates({
+          x: Math.round(this.gameFieldSize.x / 2),
+          y: Math.round(this.gameFieldSize.y / 2),
+          z: 100
+        })
+
         addElement = true
       }
 
