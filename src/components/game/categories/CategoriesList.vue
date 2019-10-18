@@ -36,11 +36,16 @@ export default {
   methods: {
     ...mapActions({
       setSelectedCategory: 'categories/setSelectedCategory',
-      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
+      updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions'
     }),
     selectCategory (category) {
       this.setSelectedCategory(category)
       this.updateOpenedElementsByCategory(category)
+
+      this.$nextTick(() => {
+        this.updateOpenedElementsPositions()
+      })
     }
   }
 }
