@@ -14,9 +14,9 @@
       </b-col>
 
       <b-col class='ml-auto text-right' cols='2'>
-        <b-button class='close-button' size='sm' variant='link' @click='showModal = false'>
-          <font-awesome-icon class='c-pointer fa-2x' icon='times' />
-        </b-button>
+        <button class='close-button' @click='showModal = false'>
+          <font-awesome-icon icon='times'/>
+        </button>
       </b-col>
 
       <b-col class='mt-2 opened-recipes-categories' cols='4'>
@@ -24,8 +24,8 @@
           block='block'
           v-for='category in openedCategories'
           :key='category._id'
-          :class='{ "btn-success": category.name === selectedCategory}'
-          @click='selectedCategory = category.name'
+          :class='{ "btn-success": category._id === selectedCategory._id }'
+          @click='selectCategory(category)'
         >
           {{ category.name }}
         </b-btn>
@@ -34,9 +34,8 @@
       <b-col class='mt-2 opened-recipes-list' cols='7'>
         <b-row
           class='opened-recipes-list-item'
-          v-for='recipe in openedRecipes'
+          v-for='recipe in filteredByCategoryRecipes'
           :key='recipe._id'
-          v-if='recipe.result.category === selectedCategory'
         >
           <b-col class='mb-1' cols='12'>
             <OpenedRecipe :recipe='recipe' />
@@ -59,7 +58,7 @@ export default {
   data () {
     return {
       showModal: false,
-      selectedCategory: 'Elements'
+      selectedCategory: {}
     }
   },
   mounted () {
@@ -71,12 +70,17 @@ export default {
     ...mapGetters({
       openedCategories: 'categories/openedCategories',
       openedRecipes: 'recipes/openedRecipes'
-    })
+    }),
+    filteredByCategoryRecipes () {
+      return this.openedRecipes.filter(openedRecipe => {
+        return openedRecipe.result.category === this.selectedCategory._id
+      })
+    }
   },
   methods: {
-    ...mapActions({
-      setUser: 'user/setUser'
-    })
+    selectCategory (category) {
+      this.selectedCategory = category
+    }
   }
 }
 </script>
@@ -98,5 +102,17 @@ export default {
   border: 1px solid black;
   border-radius: 5px;
   margin-bottom: 20px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 1.3em;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 </style>
