@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import OpenedRecipe from '@/components/game/recipes/OpenedRecipe.vue'
 
