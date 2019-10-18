@@ -29,13 +29,12 @@ export default {
 
 <style lang='scss' scoped>
 .opened-elements-list {
-  overflow-y: auto;
-  overflow-x: hidden;
   position: relative;
-  border: 1px solid black;
+  height: 100%;
+  width: 100%;
 
   &:active {
-    position: unset;
+    position: absolute;
   }
 
   .loading, .error {
@@ -54,24 +53,7 @@ export default {
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .opened-elements-list {
-    height: 100%;
-    width: 300px;
 
-    &::-webkit-scrollbar {
-      width: 7px;
-      background-color: #F5F5F5;
-    }
-
-    &::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: darkgrey;
-      outline: 1px solid slategrey;
-    }
-  }
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
