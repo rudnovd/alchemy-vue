@@ -1,27 +1,30 @@
 <template>
-  <vue-draggable-resizable
-    class-name='active-element'
-    class-name-active='selected-active-element'
-    :resizable='false'
-    :disable-user-select='true'
-    :w='75'
-    :h='75'
-    :x='elementData.x'
-    :y='elementData.y'
-    :z='elementData.z'
-    :parent='true'
-    :onDragStart='onDragStart'
-    @activated='onActivated'
-    @dragstop='onDragstop'
-    @deactivated='onDeactivated'
-  >
-    <div class='data'>
-      <b-img :src='require("@/assets/images/elementExample.png")'/>
-      <span>
-        {{ elementData.name }}
-      </span>
-    </div>
-  </vue-draggable-resizable>
+  <transition name='fade'>
+    <vue-draggable-resizable
+      class-name='active-element'
+      class-name-active='selected-active-element'
+      :resizable='false'
+      :disable-user-select='true'
+      :w='75'
+      :h='75'
+      :x='elementData.x'
+      :y='elementData.y'
+      :z='elementData.z'
+      :parent='true'
+      :onDragStart='onDragStart'
+      @activated='onActivated'
+      @dragstop='onDragstop'
+      @deactivated='onDeactivated'
+      :class='{ "fail-combine": elementDropped }'
+    >
+      <div class='data'>
+        <b-img :src='require("@/assets/images/elementExample.png")'/>
+        <span>
+          {{ elementData.name }}
+        </span>
+      </div>
+    </vue-draggable-resizable>
+  </transition>
 </template>
 
 <script>
@@ -41,6 +44,11 @@ export default {
       recipes: 'recipes/recipes',
       state: 'elements/state'
     })
+  },
+  data () {
+    return {
+      elementDropped: false
+    }
   },
   methods: {
     ...mapActions({
@@ -63,7 +71,13 @@ export default {
 
     // Called whenever the user clicks anywhere outside the component, in order to deactivate it
     onDeactivated () {
+      this.setSelectedElementCoordinates({
+        x: this.elementData.x,
+        y: this.elementData.y,
+        z: 100
+      })
       this.deleteSelectedElement()
+      this.elementDropped = false
     },
 
     // Called when dragging starts (element is clicked or touched)
@@ -81,17 +95,17 @@ export default {
       if (!this.selectedElement) {
         return
       }
-      this.setSelectedElementCoordinates({ x, y, z: 100 })
+      this.setSelectedElementCoordinates({ x, y, z: 101 })
 
       let closestElement = game.findClosestElement(this.selectedElement, this.activeElements)
       if (closestElement.gameId) {
         let resultRecipe = game.findRecipeOfTwoElements(this.selectedElement, closestElement, this.recipes)
-        if (Object.keys(resultRecipe).length !== 0) {
-          let filteredByOpenedRecipes = this.openedRecipes.filter(recipe => {
-            return resultRecipe.result._id === recipe._id
+        if (resultRecipe) {
+          let filteredByOpenedRecipes = this.openedRecipes.filter(openedRecipe => {
+            return resultRecipe._id === openedRecipe._id
           })
 
-          if (filteredByOpenedRecipes.length === 0) { // if recipe not opened for user then open recipe
+          if (filteredByOpenedRecipes.length === 0) { // if recipe not opened for user, then open recipe
             this.addOpenedElement(resultRecipe.result).then(response => {
               if (!this.state.error) {
                 this.addOpenedRecipe(resultRecipe)
@@ -112,9 +126,10 @@ export default {
           })
           this.deleteActiveElement(this.selectedElement)
           this.deleteActiveElement(closestElement)
+        } else {
+          this.elementDropped = true
         }
       }
-      this.deleteSelectedElement()
     }
   }
 }
@@ -151,5 +166,38 @@ export default {
 .selected-active-element {
   background-color: map-get($colors, 'alchemy-green');
   color: rgb(255, 255, 255);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+  animation: shake 1.5s;
+}
+
+.fail-combine {
+  background-color: red;
+  border-color: red;
+  animation: shake 1s;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 </style>
