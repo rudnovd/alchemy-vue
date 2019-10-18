@@ -68,7 +68,6 @@ export default {
         commit('DELETE_ELEMENT', element)
       })
       .catch(error => {
-        console.log('error', error)
         commit('SET_ERROR', { object: 'elements', error: error })
       })
       .finally(() => {
