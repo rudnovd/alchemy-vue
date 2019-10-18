@@ -29,6 +29,7 @@ export default {
       .then(response => {
         element = {
           ...element,
+          category: response.data.element.category,
           x: 0,
           y: 0,
           z: 100,
@@ -40,7 +41,7 @@ export default {
           return openedCategory._id === element.category
         })
         if (filteredByOpenedCategory.length === 0) {
-          dispatch('addOpenedCategory', element.category)
+          dispatch('categories/addOpenedCategory', { _id: element.category, name: element.category }, { root: true })
         }
         dispatch('updateOpenedElementsByCategory', rootState.categories.selectedCategory)
         dispatch('updateOpenedElementsPositions')
@@ -56,19 +57,17 @@ export default {
     commit('SET_ACTIVE_ELEMENTS', elements)
   },
   addActiveElement ({ commit }, element) {
-    element = {
-      ...element,
+    commit('ADD_ACTIVE_ELEMENT', {
+      _id: element._id,
+      name: element.name,
+      x: element.x,
+      y: element.y,
       z: 100,
       gameId: shortid.generate()
-    }
-    commit('ADD_ACTIVE_ELEMENT', element)
-  },
-  deleteActiveElement ({ commit, state }, element) {
-    state.activeElements.forEach((activeElement, index) => {
-      if (activeElement.gameId === element.gameId) {
-        commit('DELETE_ACTIVE_ELEMENT', index)
-      }
     })
+  },
+  deleteActiveElement ({ commit }, element) {
+    commit('DELETE_ACTIVE_ELEMENT', element)
   },
   deleteActiveElements ({ commit }) {
     commit('DELETE_ACTIVE_ELEMENTS')
@@ -88,5 +87,8 @@ export default {
   },
   updateOpenedElementsByCategory ({ commit }, category) {
     commit('UPDATE_OPENED_ELEMENTS_BY_CATEGORY', category)
+  },
+  updateActiveElementsPositions ({ commit, rootState }) {
+    commit('UPDATE_ACTIVE_ELEMENTS_POSITIONS', rootState.game.gameFieldSize)
   }
 }
