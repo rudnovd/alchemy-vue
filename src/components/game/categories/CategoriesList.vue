@@ -134,16 +134,32 @@ export default {
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .categories-list {
-    display: inline-block;
-    float: none;
-    height: 50px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height: 100%;
 
     .select-category-button {
       height: 50px;
-      width: 31%;
+      width: 30%;
       font-size: 1rem;
       margin-right: 5px;
       margin-bottom: 5px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      background-color: rgb(245, 245, 245);
+    }
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
     }
   }
 
