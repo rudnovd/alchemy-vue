@@ -5,29 +5,19 @@
     </section>
 
     <section class='section-game-board'>
-      <b-container>
-        <div class='game-board'>
-          <ActiveElement
-            v-for='element in activeElements'
-            :key='element.gameId'
-            :elementData='element'
-          />
-
-          <b-row class='h-100 row align-items-end'>
-            <b-col class='pr-0 pr-sm-0 pr-md-0' cols='9' sm='9' md='9' lg='8' xl='8' order='1'>
-              <ActiveElementsHistory v-show='history.last.firstElement'/>
-            </b-col>
-
-            <b-col class='ml-auto text-right' cols='3' sm='3' md='3' lg='2' xl='2' order='2'>
-              <ClearGameField />
-            </b-col>
-          </b-row>
-        </div>
-      </b-container>
+      <ActiveElement
+        v-for='element in activeElements'
+        :key='element.gameId'
+        :elementData='element'
+      />
+      <div class='control-panel'>
+        <ActiveElementsHistory v-show='history.last.firstElement'/>
+        <ClearGameField />
+      </div>
     </section>
 
     <section class='section-opened-elements'>
-      <OpenedElementsList ref='openedElements'>
+      <OpenedElementsList>
         <OpenedElement :elementData='element' v-for='element in filteredOpenedElements' :key='element._id'/>
       </OpenedElementsList>
     </section>
@@ -47,16 +37,21 @@ export default {
   components: {
     ActiveElement,
     OpenedElement,
-    ClearGameField,
     CategoriesList,
     OpenedElementsList,
+    ClearGameField,
     ActiveElementsHistory
   },
   mounted () {
-    const gameField = document.getElementsByClassName('game-board')
-    this.setGameFieldSize({
-      x: gameField[0].clientWidth,
-      y: gameField[0].clientHeight
+    const gameField = document.getElementsByClassName('section-game-board')
+    this.setGameFieldSize(gameField)
+
+    window.addEventListener('resize', event => {
+      this.setGameFieldSize(gameField)
+
+      // this.$nextTick(() => {
+      //   this.updateActiveElementsPositions()
+      // })
     })
 
     this.getOpenedElements().then(() => {
@@ -99,16 +94,24 @@ export default {
       setOpenedRecipes: 'recipes/setOpenedRecipes',
       getRecipes: 'recipes/getRecipes',
       updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
-      setOpenedElementsFieldSize: 'game/setOpenedElementsFieldSize'
+      updateActiveElementsPositions: 'elements/updateActiveElementsPositions'
     }),
     findOpenedRecipes () {
       let userRecipes = []
       this.recipes.forEach(recipe => {
-        this.openedElements.forEach(openedElement => {
-          if (recipe.recipe[0]._id === openedElement._id && recipe.recipe[1]._id === openedElement._id) {
-            userRecipes.push(recipe)
-          }
+        const firstElement = this.openedElements.filter(openedElement => {
+          return recipe.recipe[0]._id === openedElement._id
         })
+        const secondElement = this.openedElements.filter(openedElement => {
+          return recipe.recipe[1]._id === openedElement._id
+        })
+        const resultElement = this.openedElements.filter(openedElement => {
+          return recipe.result._id === openedElement._id
+        })
+
+        if (firstElement.length > 0 && secondElement.length > 0 && resultElement.length > 0) {
+          userRecipes.push(recipe)
+        }
       })
       this.setOpenedRecipes(userRecipes)
     }
@@ -118,60 +121,92 @@ export default {
 
 <style lang='scss' scoped>
 .section-game {
+  display: flex;
+  flex: 1;
   padding-top: 10px;
   height: 90vh;
-}
 
-.section-opened-elements {
-  position: absolute;
-  right: 0;
-  top: 66px;
-  max-width: 300px;
-  width: 100%;
-  height: 90vh
-}
-
-.section-game-board {
-  height: 90vh;
-
-  .container {
-    height: 100%;
+  .section-categories {
+    display: flex;
+    flex: 1 0 0;
+    order: 1;
   }
 
-  .game-board {
+  .section-game-board {
     position: relative;
+    flex: 3 0 0;
+    order: 2;
+    height: 100%;
     border: 1px solid black;
+    padding: 5px;
+
+    .control-panel {
+      display: flex;
+      height: 100%;
+      align-items: flex-end;
+
+      .clear-game-field-button {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .section-opened-elements {
+    display: flex;
+    flex: 1 0 0;
+    order: 3;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 300px;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      background-color: rgb(245, 245, 245);
+    }
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+    }
   }
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .game-board {
-    height: 100%;
+  .section-game-board {
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .section-categories {
-    position: absolute;
-    left: 0;
+    height: 100%;
     max-width: 300px;
-    width: 100%;
-    height: 90vh
   }
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
-  .game-board {
-    height: 80%;
-  }
+  .section-game {
+    flex-wrap: wrap;
 
-  .section-categories {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 200px;
-  }
+    .section-categories {
+      flex: 100% 0 0;
+      height: 110px;
+    }
 
-  .game-board {
-    top: 200px;
+    .section-game-board {
+      height: 80vh;
+    }
+
+    .section-opened-elements {
+      height: 80vh;
+    }
   }
 }
 </style>
