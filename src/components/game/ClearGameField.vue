@@ -59,8 +59,6 @@ export default {
 .clear-game-field-button {
   cursor: pointer;
   color: black;
-  order: 0;
-  margin-left: auto;
   width: 30px;
   height: 30px;
   padding: 0;

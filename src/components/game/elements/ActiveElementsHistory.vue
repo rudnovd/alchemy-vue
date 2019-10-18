@@ -38,8 +38,6 @@ export default {
 
 <style lang='scss' scoped>
 .active-elements-history {
-  order: 1;
-  margin-top: auto;
   opacity: 0.5;
 
   &:hover {
