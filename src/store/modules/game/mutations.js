@@ -1,7 +1,7 @@
 export default {
-  SET_GAME_FIELD_SIZE (state, { x, y }) {
-    state.gameFieldSize.x = x
-    state.gameFieldSize.y = y
+  SET_GAME_FIELD_SIZE (state, gameField) {
+    state.gameFieldSize.x = gameField.x
+    state.gameFieldSize.y = gameField.y
   },
   ADD_HISTORY (state, action) {
     state.history.last.firstElement = action.firstElement
