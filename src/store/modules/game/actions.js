@@ -5,7 +5,11 @@ export default {
       y: gameField[0].clientHeight
     })
   },
-  addHistory ({ commit }, action) {
-    commit('ADD_HISTORY', action)
+  addHistory ({ commit }, history) {
+    commit('ADD_HISTORY', {
+      firstElement: history.firstElement,
+      secondElement: history.secondElement,
+      result: history.result
+    })
   }
 }

@@ -1,12 +1,7 @@
 <template>
   <div class='active-elements-history' @click='showHistory'>
-    <span v-show='history.last.firstElement && history.last.secondElement'>
-      {{ history.last.firstElement }} + {{ history.last.secondElement }}
-    </span>
-
-    <span v-show='history.last.result'>
-      = {{ history.last.result }}
-    </span>
+    <span v-show='history.last.firstElement && history.last.secondElement'>{{ history.last.firstElement }} + {{ history.last.secondElement }}</span>
+    <span v-show='history.last.result'> = {{ history.last.result }}</span>
   </div>
 </template>
 
