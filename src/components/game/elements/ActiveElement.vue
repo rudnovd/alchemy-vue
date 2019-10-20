@@ -2,11 +2,10 @@
   <transition name='fade'>
     <vue-draggable-resizable
       class-name='active-element'
-      class-name-active='selected-active-element'
       :resizable='false'
       :disable-user-select='true'
-      :w='75'
-      :h='75'
+      :w='100'
+      :h='100'
       :x='elementData.x'
       :y='elementData.y'
       :z='elementData.z'
@@ -18,10 +17,8 @@
       :class='{ "fail-combine": elementDropped }'
     >
       <div class='data'>
-        <b-img :src='require("@/assets/images/elementExample.png")'/>
-        <span>
-          {{ elementData.name }}
-        </span>
+        <b-img :src='elementIcon' @error='setBaseIcon' width='45' height='45' :alt='elementData.name'/>
+        <span>{{ elementData.name }}</span>
       </div>
     </vue-draggable-resizable>
   </transition>
@@ -43,7 +40,10 @@ export default {
       openedRecipes: 'recipes/openedRecipes',
       recipes: 'recipes/recipes',
       state: 'elements/state'
-    })
+    }),
+    elementIcon () {
+      return `/images/elements/${this.elementData.name}.png`
+    }
   },
   data () {
     return {
@@ -57,11 +57,9 @@ export default {
       setSelectedElement: 'elements/setSelectedElement',
       setSelectedElementCoordinates: 'elements/setSelectedElementCoordinates',
       deleteSelectedElement: 'elements/deleteSelectedElement',
-      setOpenedElements: 'elements/setOpenedElements',
       addOpenedRecipe: 'recipes/addOpenedRecipe',
       addHistory: 'game/addHistory',
-      addOpenedElement: 'elements/addOpenedElement',
-      updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions'
+      addOpenedElement: 'elements/addOpenedElement'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -82,6 +80,9 @@ export default {
 
     // Called when dragging starts (element is clicked or touched)
     onDragStart () {
+      if (this.elementDropped) {
+        this.elementDropped = false
+      }
       this.setSelectedElement(this.elementData)
       this.setSelectedElementCoordinates({
         x: this.elementData.x,
@@ -128,8 +129,17 @@ export default {
           this.deleteActiveElement(closestElement)
         } else {
           this.elementDropped = true
+          this.addHistory({
+            firstElement: this.selectedElement.name,
+            secondElement: closestElement.name,
+            result: ''
+          })
         }
       }
+    },
+
+    setBaseIcon (event) {
+      event.target.src = '/images/elements/Base.png'
     }
   }
 }
@@ -137,19 +147,23 @@ export default {
 
 <style lang='scss' scoped>
 .active-element {
-  user-select: none;
   font-size: 16px;
   background-color: rgb(235, 235, 235);
   border: 1px solid map-get($colors, 'alchemy-green');
   border-radius: 6px;
-  transition: background-color .4s;
+  transition: box-shadow .6s;
 
   &:hover {
     cursor: grab;
+    box-shadow: 0 0 7px 0 black;
+    transition: background-color .6s;
   }
 
   &:active {
     cursor: grabbing;
+    background-color: map-get($colors, 'alchemy-green');
+    color: rgb(255, 255, 255);
+    transition: background-color .6s;
   }
 
   .data {
@@ -160,12 +174,11 @@ export default {
     text-align: center;
     height: 100%;
     width: 100%;
-  }
-}
 
-.selected-active-element {
-  background-color: map-get($colors, 'alchemy-green');
-  color: rgb(255, 255, 255);
+    span {
+      margin-top: 5px;
+    }
+  }
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -180,7 +193,7 @@ export default {
 .fail-combine {
   background-color: red;
   border-color: red;
-  animation: shake 1s;
+  animation: shake .7s;
 }
 
 @keyframes shake {
