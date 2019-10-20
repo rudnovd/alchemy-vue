@@ -47,7 +47,7 @@ export default {
     state.openedElements.forEach(openedElement => {
       openedElement.x = 0
       if (openedElement.show) {
-        openedElement.y = j * 45
+        openedElement.y = j * 70
         j++
       } else {
         openedElement.y = 0
