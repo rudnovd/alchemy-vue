@@ -6,41 +6,37 @@
     hide-footer='hide-footer'
     centered='centered'
   >
-    <b-row class='ml-3 mr-3'>
-      <b-col cols='8'>
-        <h4>
-          Opened recipes
-        </h4>
+    <b-row class='ml-1 mr-1'>
+      <b-col cols='9'>
+        <h4>Opened recipes</h4>
       </b-col>
 
-      <b-col class='ml-auto text-right' cols='2'>
+      <b-col class='ml-auto text-right' cols='3'>
         <button class='close-button' @click='showModal = false'>
           <font-awesome-icon icon='times'/>
         </button>
       </b-col>
+    </b-row>
 
-      <b-col class='mt-2 opened-recipes-categories' cols='4'>
-        <b-btn
-          block='block'
+    <b-row class='recipes-row'>
+      <b-col class='mt-2 opened-recipes-categories' cols='12' sm='12' md='12' lg='4' xl='4'>
+        <button
+          class='category'
           v-for='category in openedCategories'
           :key='category._id'
-          :class='{ "btn-success": category._id === selectedCategory._id }'
+          :class='{ "active": category._id === selectedCategory._id }'
           @click='selectCategory(category)'
         >
           {{ category.name }}
-        </b-btn>
+        </button>
       </b-col>
 
-      <b-col class='mt-2 opened-recipes-list' cols='7'>
-        <b-row
-          class='opened-recipes-list-item'
+      <b-col class='mt-2 recipes-list' cols='12' sm='12' md='12' lg='8' xl='8'>
+        <OpenedRecipe
           v-for='recipe in filteredByCategoryRecipes'
           :key='recipe._id'
-        >
-          <b-col class='mb-1' cols='12'>
-            <OpenedRecipe :recipe='recipe' />
-          </b-col>
-        </b-row>
+          :recipe='recipe'
+        />
       </b-col>
     </b-row>
   </b-modal>
@@ -86,22 +82,59 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+
+@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
+  .opened-recipes-categories {
+    max-height: 80vh;
+  }
+}
+
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
+  .opened-recipes-categories {
+    max-height: 200px;
+  }
+}
+
+.recipes-row {
+  min-height: 50vh;
+}
+
+.category {
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  opacity: 0.5;
+  word-break: break-word;
+  vertical-align: middle;
+  color: black;
+  background: rgb(240, 240, 240);
+  border: 1px solid map-get($colors, 'alchemy-light-green');
+  border-radius: 6px;
+  transition: background-color .4s;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+
+  &.active {
+    font-weight: bold;
+    opacity: 1;
+    color: #FFFFFF;
+    background-color: map-get($colors, 'alchemy-green');
+    border: 1px solid map-get($colors, 'alchemy-light-green');
+  }
+}
+
 .opened-recipes-categories {
-  max-height: 80vh;
   overflow-y: auto;
+  direction: rtl;
+  @extend %scrollbar;
 }
 
-.opened-recipes-list {
-  max-height: 80vh;
+.recipes-list {
   overflow-y: auto;
-  margin-bottom: 20px;
-}
+  min-height: 30vh;
 
-.opened-recipes-list-item {
-  background-color: rgb(250, 250, 250);
-  border: 1px solid black;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  @extend %scrollbar;
 }
 
 .close-button {

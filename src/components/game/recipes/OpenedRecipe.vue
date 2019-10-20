@@ -1,34 +1,31 @@
 <template>
-  <div class='opened-recipe'>
-    <b-row class='row align-items-center'>
-      <b-col cols='5'>
-        <b-row>
-          <b-col cols='12'>
-            {{ recipe.result.name }}
-          </b-col>
+  <div class='opened-recipe' :class='{"active": showRecipe}'>
+    <div class='base-info'>
+      <div class='title'>
+        <b-img
+          :src='elementIcon'
+          @error='setBaseIcon'
+          :alt='recipe.result.name'
+          width='45px'
+          height="45px"
+        />
+        <strong>{{ recipe.result.name }}</strong>
+      </div>
 
-          <b-col cols='12'>
-            descrption
-          </b-col>
-        </b-row>
-      </b-col>
+      <div class='buttons'>
+        <b-btn variant='success' v-if='!showRecipe' @click='showRecipe = true'>Show recipe</b-btn>
+        <b-btn variant='success' v-if='showRecipe' @click='showRecipe = false'>Hide recipe</b-btn>
+      </div>
+    </div>
 
-      <b-col class='text-right pr-0' cols='3'>
-        <strong>
-          {{ recipe.recipe[0].name }}
-        </strong>
-      </b-col>
+    <div class='recipe' v-if='showRecipe'>
+      <span>Recipe: {{ recipe.recipe[0].name }} + {{ recipe.recipe[1].name }}</span>
+    </div>
 
-      <b-col class='text-center pl-0 pr-0' cols='1'>
-        +
-      </b-col>
+    <div class='description' v-if='showRecipe'>
+      <span>Description</span>
+    </div>
 
-      <b-col class='text-left pl-0' cols='3'>
-        <strong>
-          {{ recipe.recipe[1].name }}
-        </strong>
-      </b-col>
-    </b-row>
   </div>
 </template>
 
@@ -37,14 +34,74 @@ export default {
   props: {
     recipe: Object
   },
+  computed: {
+    elementIcon () {
+      return `/images/elements/${this.recipe.result.name}.png`
+    }
+  },
   data () {
     return {
-      showPopover: false
+      showRecipe: false
+    }
+  },
+  methods: {
+    setBaseIcon (event) {
+      event.target.src = '/images/elements/Base.png'
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
+.opened-recipe {
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: 60px;
+  transition: height .2s;
+  background-color: rgb(253, 253, 253);
+  border: 1px solid black;
+  box-shadow: 0 0 5px 0 rgb(150, 150, 150);
+  margin-bottom: 20px;
 
+  &.active {
+    height: 200px;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+
+  .base-info {
+    display: flex;
+    flex: 0 0 100%;
+    align-items: center;
+
+    .title {
+      flex: 0 0 70%;
+
+      strong {
+        margin-left: 10px;
+        font-size: 1.4em;
+      }
+    }
+
+    .buttons {
+      text-align: right;
+      flex: 0 0 30%;
+    }
+  }
+
+  .recipe {
+    flex: 0 0 100%;
+    margin-top: 20px;
+  }
+
+  .description {
+    flex: 0 0 100%;
+    margin-top: 10px;
+  }
+
+}
 </style>
