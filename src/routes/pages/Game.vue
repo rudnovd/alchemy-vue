@@ -125,6 +125,7 @@ export default {
   flex: 1;
   padding-top: 10px;
   height: 90vh;
+  user-select: none;
 
   .section-categories {
     display: flex;
@@ -134,7 +135,7 @@ export default {
 
   .section-game-board {
     position: relative;
-    flex: 3 0 0;
+    flex: 2 0 0;
     order: 2;
     height: 100%;
     border: 1px solid black;

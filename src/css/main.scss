@@ -2,22 +2,15 @@ $body-bg: rgb(236, 240, 241);
 $body-color: #333333;
 
 @import './normalize';
-
 @import './fonts';
 
 @import '~bootstrap/scss/bootstrap';
-
 @import '~bootstrap-vue/src/index.scss';
 
 html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  user-select: none;
-}
-
-main {
-  height: 100%;
 }
 
 [v-cloak] {
