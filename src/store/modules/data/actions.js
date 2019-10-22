@@ -49,7 +49,8 @@ export default {
         commit('EDIT_ELEMENT', {
           _id: element._id,
           category: element.category.name,
-          name: element.name
+          name: element.name,
+          description: element.description
         })
       })
       .catch(error => {
