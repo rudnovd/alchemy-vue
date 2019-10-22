@@ -22,10 +22,10 @@ export default {
         history.push(`${historyValue.firstElement} + ${historyValue.secondElement} = ${historyValue.result}`)
       })
 
-      console.log('history:')
-      history.forEach(value => {
-        console.log(value)
-      })
+      // console.log('history:')
+      // history.forEach(value => {
+      // console.log(value)
+      // })
     }
   }
 }

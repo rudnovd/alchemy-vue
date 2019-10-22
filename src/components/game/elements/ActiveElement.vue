@@ -6,6 +6,10 @@
       :disable-user-select='true'
       :w='100'
       :h='100'
+      :min-width='100'
+      :min-height='100'
+      :max-height='100'
+      :max-width='100'
       :x='elementData.x'
       :y='elementData.y'
       :z='elementData.z'
@@ -31,7 +35,11 @@ import * as game from '@/js/game/game'
 
 export default {
   props: {
-    elementData: Object
+    elementData: {
+      value: Object,
+      required: true,
+      default: {}
+    }
   },
   computed: {
     ...mapGetters({
