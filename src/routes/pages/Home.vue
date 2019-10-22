@@ -13,6 +13,8 @@
               more complex substances. No one will say exactly how to combine the resulting things right! Use your logic and ingenuity to make progress, but if you fail to discover something new, you can always rely on luck. We dare not hold you
               any longer, go ahead!
             </p>
+
+            <h4><router-link to='/game'>Play</router-link></h4>
           </div>
         </b-col>
       </b-row>
