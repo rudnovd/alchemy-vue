@@ -12,20 +12,16 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: () => import(/* webpackChunkName: 'Home' */ '@/routes/pages/Home'),
+      component: () => import(/* webpackPrefetch: true, webpackChunkName: 'Home' */ '@/routes/pages/Home'),
       meta: {
-        title: 'Alchemy',
-        authRequired: false,
-        adminRoleRequired: false
+        title: 'Alchemy'
       }
     },
     {
       path: '/game',
       component: () => import(/* webpackChunkName: 'Game' */ '@/routes/pages/Game'),
       meta: {
-        title: 'Game | Alchemy',
-        authRequired: false,
-        adminRoleRequired: false
+        title: 'Game | Alchemy'
       }
     },
 
@@ -35,7 +31,6 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
         title: 'Dashboard | Alchemy',
-        authRequired: true,
         adminRoleRequired: true
       }
     },
@@ -44,7 +39,6 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Elements' */ '@/routes/pages/admin/Elements'),
       meta: {
         title: 'Elements | Alchemy',
-        authRequired: true,
         adminRoleRequired: true
       }
     },
@@ -53,7 +47,6 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Recipes' */ '@/routes/pages/admin/Recipes'),
       meta: {
         title: 'Recipes | Alchemy',
-        authRequired: true,
         adminRoleRequired: true
       }
     },
@@ -62,7 +55,6 @@ const router = new Router({
       component: () => import(/* webpackChunkName: 'Users' */ '@/routes/pages/admin/Users'),
       meta: {
         title: 'Users | Alchemy',
-        authRequired: true,
         adminRoleRequired: true
       }
     },
@@ -72,34 +64,40 @@ const router = new Router({
       path: '*',
       component: () => import(/* webpackChunkName: 'Errors' */ '@/routes/pages/Errors.vue'),
       meta: {
-        title: 'Error | Alchemy',
-        authRequired: false,
-        adminRoleRequired: false
+        title: 'Error | Alchemy'
       }
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
+  const authRequired = to.matched.some(record => record.meta.authRequired)
+  const adminRoleRequired = to.matched.some(record => record.meta.adminRoleRequired)
+
   store.dispatch('user/getLogin').then(() => {
-    const isAuth = store.getters['user/user'].isLoggedIn
-    if (to.matched.some(record => record.meta.authRequired)) {
+    if (authRequired || adminRoleRequired) {
+      const isAuth = store.getters['user/user'].isLoggedIn
+      const userRole = store.getters['user/user'].role
+
       if (!isAuth) {
         next({ path: '/' })
       }
-    }
 
-    const userRole = store.getters['user/user'].role
-    if (to.matched.some(record => record.meta.adminRoleRequired)) {
-      if (userRole !== 'Admin') {
-        next({ path: '/' })
+      if (adminRoleRequired) {
+        if (userRole !== 'Admin') {
+          next({ path: '*' })
+        }
       }
+
+      next()
+    } else {
+      next()
     }
-
-    document.title = to.meta.title
-
-    next()
   })
+})
+
+router.afterEach((to, from) => {
+  document.title = to.meta.title
 })
 
 export default router
