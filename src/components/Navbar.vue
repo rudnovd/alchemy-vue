@@ -1,7 +1,7 @@
 <template>
   <b-container>
-    <b-navbar-brand to='/'>
-      <img src='@/assets/logo.svg' heigth='50px' width='50px'/>Home
+    <b-navbar-brand class='navbar-brand' to='/'>
+      <object type='image/svg+xml' data='/images/logo.svg' height='100%'/>
     </b-navbar-brand>
 
     <div class='navbar-icons ml-auto'>
@@ -33,7 +33,7 @@
     <b-navbar-nav>
       <b-btn
         class='text-white'
-        v-if='!user.isLoggedIn && !user.state.isLoading'
+        v-if='!user.isLoggedIn'
         variant='link'
         @click='loginModalShow'
       >
@@ -42,49 +42,28 @@
 
       <b-btn
         class='text-white'
-        v-if='!user.isLoggedIn && !user.state.isLoading'
+        v-if='!user.isLoggedIn'
         variant='link'
         @click='registrationModalShow'
       >
         Sign up
       </b-btn>
 
-      <b-nav-item-dropdown v-if='user.isLoggedIn && !user.state.isLoading' :text='user.username' left='left'>
-        <b-dropdown-item to='/game'>
-          Game
-        </b-dropdown-item>
-
-        <template v-if='user.isLoggedIn && user.role === "Admin"'>
-          <b-dropdown-divider/>
-
-          <b-dropdown-item to='/admin/dashboard'>
-            Dashboard
-          </b-dropdown-item>
-
-          <b-dropdown-item to='/admin/elements'>
-            Elements
-          </b-dropdown-item>
-
-          <b-dropdown-item to='/admin/recipes'>
-            Recipes
-          </b-dropdown-item>
-
-          <b-dropdown-item to='/admin/users'>
-            Users
-          </b-dropdown-item>
-        </template>
-
+      <b-nav-item-dropdown v-if='user.isLoggedIn' :text='user.username' left='left'>
+        <b-dropdown-item to='/game'>Game</b-dropdown-item>
+        <b-dropdown-divider v-if='user.isLoggedIn && user.role === "Admin"'/>
+        <b-dropdown-item to='/admin/dashboard' v-if='user.isLoggedIn && user.role === "Admin"'>Dashboard</b-dropdown-item>
+        <b-dropdown-item to='/admin/elements' v-if='user.isLoggedIn && user.role === "Admin"'>Elements</b-dropdown-item>
+        <b-dropdown-item to='/admin/recipes' v-if='user.isLoggedIn && user.role === "Admin"'>Recipes</b-dropdown-item>
+        <b-dropdown-item to='/admin/users' v-if='user.isLoggedIn && user.role === "Admin"'>Users</b-dropdown-item>
         <b-dropdown-divider />
-
-        <b-dropdown-item v-if='user.isLoggedIn' @click='logout()'>
-          Logout
-        </b-dropdown-item>
+        <b-dropdown-item v-if='user.isLoggedIn' @click='logout()'>Logout</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <LoginModal />
-    <RegistrationModal />
-    <ResetPasswordModal />
-    <OpenedRecipesModal />
+    <LoginModal/>
+    <RegistrationModal/>
+    <ResetPasswordModal/>
+    <OpenedRecipesModal/>
   </b-container>
 </template>
 
@@ -115,8 +94,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getLogout: 'user/getLogout',
-      getLogin: 'user/getLogin'
+      getLogout: 'user/getLogout'
     }),
     logout () {
       this.getLogout().then(() => {
@@ -133,27 +111,11 @@ export default {
       this.$root.$emit('openedRecipesModalShow')
     },
     enableFullscreen () {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen()
-      } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
-        document.documentElement.mozRequestFullScreen()
-      } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-        document.documentElement.webkitRequestFullscreen()
-      } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
-        document.documentElement.msRequestFullscreen()
-      }
+      document.documentElement.requestFullscreen()
       this.fullscreenEnabled = true
     },
     disableFullScreen () {
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
-      }
+      document.exitFullscreen()
       this.fullscreenEnabled = false
     }
   }
@@ -161,12 +123,6 @@ export default {
 </script>
 
 <style lang='scss'>
-@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
-  .navbar {
-    height: 30px !important;
-  }
-}
-
 .navbar {
   height: 56px;
   background: rgb(33, 33, 33);
@@ -201,6 +157,55 @@ export default {
     padding: 0;
     margin-right: 10px;
   }
+
+  .logo {
+    cursor: pointer;
+  }
+
+  .navbar-brand {
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  }
 }
 
+@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
+  .navbar-brand {
+    height: 50px;
+
+    &::after {
+      height: 50px;
+    }
+
+    object {
+      width: 200px;
+    }
+  }
+}
+
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
+  .navbar {
+    height: 30px !important;
+  }
+
+  .navbar-brand {
+    height: 30px;
+
+    &::after {
+      height: 30px;
+    }
+
+    object {
+      width: 100px;
+    }
+  }
+}
 </style>
