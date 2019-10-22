@@ -2,7 +2,7 @@
   <section class='section-elements'>
     <b-container>
       <Table
-        :data='elements.data'
+        :data='elementsData'
         :fields='fields'
         :totalRows='totalRows'
         :loading='elements.state.isLoading && elements.state.method === "GET"'
@@ -27,7 +27,7 @@
         ok-title='Create'
         ok-variant='success'
         cancel-variant='danger'
-        :ok-disabled='elements.state.isLoading && elements.state.method === "POST"'
+        :ok-disabled='(elements.state.isLoading && elements.state.method === "POST")'
         :cancel-disabled='elements.state.isLoading && elements.state.method === "POST"'
         @ok='elementCreateAction'
         @hidden='afterCreateElement'
@@ -44,7 +44,7 @@
                     required='required'
                     trim='trim'
                     placeholder='Fire'
-                    :state='validateName(create.name, elements.data)'
+                    :state='isUniqueName(create.name, elements.data)'
                   />
                 </b-form-group>
               </b-col>
@@ -59,7 +59,7 @@
                     type='text'
                     v-model='create.category'
                     required='required'
-                    :state='validateNull(create.category._id)'
+                    :state='!isNull(create.category._id)'
                   >
                     <option v-for='category in categories.data' :key='category._id' :value='category'>
                       {{ category.name }}
@@ -74,7 +74,7 @@
                     required='required'
                     trim='trim'
                     placeholder='Elements'
-                    :state='validateName(newCategory.name, categories.data)'
+                    :state='isUniqueName(newCategory.name, categories.data)'
                   />
                 </b-form-group>
               </b-col>
@@ -95,7 +95,7 @@
             <b-row v-if='newCategory.active === true'>
               <b-col cols='12'>
                 <b-btn class='float-right' variant='light' size='sm' @click='newCategory.active = false; newCategory.name = null'>
-                  <font-awesome-icon icon='clipboard' />Choose category
+                  <font-awesome-icon icon='clipboard' /> Choose category
                 </b-btn>
               </b-col>
             </b-row>
@@ -217,7 +217,7 @@
                     required='required'
                     trim='trim'
                     placeholder='Elements'
-                    :state='validateName(createCategoryData.name, categories.data)'
+                    :state='isUniqueName(createCategoryData.name, categories.data)'
                   />
                 </b-form-group>
               </b-col>
@@ -260,6 +260,9 @@ export default {
     }),
     totalRows () {
       return this.elements.data.length
+    },
+    elementsData () {
+      return this.findRecipes()
     }
   },
   data () {
@@ -276,13 +279,13 @@ export default {
           sortable: true
         },
         {
-          key: 'recipe',
+          key: 'recipe.firstElement.name',
           label: 'First element of recipe',
           class: 'align-middle text-center',
           sortable: false
         },
         {
-          key: 'recipe',
+          key: 'recipe.secondElement.name',
           label: 'Second element of recipe',
           class: 'align-middle text-center',
           sortable: false
@@ -347,13 +350,8 @@ export default {
 
       getCategories: 'data/getCategories',
       postCategory: 'data/postCategory',
-      putCategory: 'data/putCategory',
-      deleteCategory: 'data/deleteCategory',
 
-      getRecipes: 'data/getRecipes',
-      postRecipe: 'data/postRecipe',
-      putRecipe: 'data/putRecipe',
-      deleteRecipe: 'data/deleteRecipe'
+      getRecipes: 'data/getRecipes'
     }),
 
     beforeCreateElement () {
@@ -364,7 +362,7 @@ export default {
         event.preventDefault()
       }
 
-      if (this.validateName(this.create.name, this.elements.data) === false) {
+      if (!this.isUniqueName(this.create.name, this.elements.data) || !this.create.category._id) {
         return
       }
 
@@ -454,27 +452,60 @@ export default {
       this.createCategoryData.name = ''
     },
 
-    validateName (name, object) {
+    isUniqueName (name, object) {
       if (!name || !object) {
         return false
       }
-      for (let i in object) {
-        if (name === object[i].name || name === object[i].name.toLowerCase()) {
-          return false
-        }
-      }
-      return true
-    },
-    validateNull (object) {
-      if (object) {
-        return true
-      } else {
+
+      const filteredByName = object.filter(singleObject => {
+        return name === singleObject.name || name === singleObject.name.toLowerCase()
+      })
+      console.log(filteredByName)
+
+      if (filteredByName.length > 0) {
         return false
+      } else {
+        return true
+      }
+    },
+    isNull (object) {
+      if (object) {
+        return false
+      } else {
+        return true
       }
     },
 
     createElementClick (element) {
       this.create.name = element.name
+    },
+
+    findRecipes () {
+      const foundRecipe = this.elements.data.map(element => {
+        const recipe = this.recipes.data.filter(recipe => {
+          return recipe.result._id === element._id
+        })
+
+        if (recipe.length > 0) {
+          return {
+            ...element,
+            recipe: {
+              firstElement: { ...recipe[0].recipe[0] },
+              secondElement: { ...recipe[0].recipe[1] }
+            }
+          }
+        } else {
+          return {
+            ...element,
+            recipe: {
+              firstElement: '',
+              secondElement: ''
+            }
+          }
+        }
+      })
+
+      return foundRecipe
     }
   }
 }
