@@ -17,7 +17,7 @@
     @dragstop='onDragstop'
   >
     <div class='data'>
-      <b-img class='element-image' :src='elementIcon' @error='setBaseIcon' width='64' height='64' :alt='elementData.name'/>
+      <b-img class='element-image' :src='elementIcon' @error='setBaseIcon' :alt='elementData.name'/>
       <span :class='{ "hidden": isDragging }'>{{ elementData.name }}</span>
     </div>
   </vue-draggable-resizable>
@@ -146,10 +146,10 @@ export default {
     height: 100%;
     width: 100%;
 
-    img {
-      flex: 0 0 64px;
+    .element-image {
       transition: box-shadow .8s;
       transition: border-radius .4s;
+      margin-left: 5px;
 
       &:hover {
         cursor: grab;
@@ -167,7 +167,7 @@ export default {
     span {
       text-align: left;
       padding-left: 5px;
-      flex: 0 0 80%;
+      flex: 1 0 0;
     }
   }
 }
@@ -178,13 +178,25 @@ export default {
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md'))  {
   .element {
-    font-size: 1.2rem;
+    font-size: 1.2rem0;
+  }
+
+  .element-image {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
   }
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md'))  {
   .element {
     font-size: 0.9rem;
+  }
+
+  .element-image {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
   }
 }
 </style>
