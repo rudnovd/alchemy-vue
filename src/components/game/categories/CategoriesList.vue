@@ -17,7 +17,8 @@
       @click='selectCategory(openedCategory)'
       :class='{ "active": openedCategory._id === selectedCategory._id}'
     >
-      {{ openedCategory.name }}
+      <b-img :src='`/images/categories/${openedCategory.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='openedCategory.name'/>
+      <span>{{ openedCategory.name }}</span>
     </button>
   </div>
 </template>
@@ -46,6 +47,9 @@ export default {
       this.$nextTick(() => {
         this.updateOpenedElementsPositions()
       })
+    },
+    setBaseIcon (event) {
+      event.target.src = '/images/categories/Base.png'
     }
   }
 }
@@ -53,11 +57,14 @@ export default {
 
 <style lang='scss' scoped>
 .categories-list {
+  display: flex;
+  justify-content: flex-start;
+  flex: 1 0 0;
   overflow-y: auto;
   overflow-x: hidden;
-  width: 100%;
+  max-height: 90vh;
 
-  border: 1px solid black;
+  @extend %scrollbar;
 
   .loading, .error {
     display: flex;
@@ -68,19 +75,20 @@ export default {
 
     .spinner {
       color: map-get($colors, "alchemy-green");
-      width: 3rem;
-      height: 3rem;
+      width: 3em;
+      height: 3em;
     }
   }
 
   .select-category-button {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
-    line-height: 20px;
     text-align: center;
     opacity: 0.5;
     word-break: break-word;
-    vertical-align: middle;
-    color: black;
     background: rgb(240, 240, 240);
     border: 1px solid map-get($colors, 'alchemy-light-green');
     border-radius: 6px;
@@ -89,44 +97,41 @@ export default {
     &.active {
       font-weight: bold;
       opacity: 1;
-      color: #FFFFFF;
+      color: rgb(255, 255, 255);
       background-color: map-get($colors, 'alchemy-green');
       border: 1px solid map-get($colors, 'alchemy-light-green');
+    }
+
+    img {
+      margin-right: 5px;
     }
   }
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
   .categories-list {
-    position: relative;
-    height: 100%;
-    max-width: 300px;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
     direction: rtl;
     padding-left: 10px;
-
-    &::-webkit-scrollbar {
-      width: 7px;
-      background-color: #F5F5F5;
-    }
-
-    &::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: darkgrey;
-      outline: 1px solid slategrey;
-    }
+    padding-right: 10px;
 
     .select-category-button {
       height: 70px;
       width: 100%;
-      font-size: 1.2rem;
-      margin-bottom: 8px;
+      font-size: 1.2em;
+      margin-bottom: 12px;
 
       &:hover {
         opacity: 0.8;
         border: 1px solid  map-get($colors, 'alchemy-dark-green');
+      }
+
+      img {
+        height: 45px;
+        width: 45px;
+        order: 1;
       }
     }
   }
@@ -134,33 +139,23 @@ export default {
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .categories-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
     height: 100%;
+    padding: 5px;
+    flex-wrap: wrap;
 
     .select-category-button {
+      flex: 0 0 32%;
       height: 50px;
-      width: 30%;
-      font-size: 1rem;
+      font-size: 1em;
       margin-right: 5px;
       margin-bottom: 5px;
+
+      img {
+        height: 25px;
+        width: 25px;
+      }
     }
 
-    &::-webkit-scrollbar {
-      width: 7px;
-      background-color: rgb(245, 245, 245);
-    }
-
-    &::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: darkgrey;
-      outline: 1px solid slategrey;
-    }
   }
 
 }
