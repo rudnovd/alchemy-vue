@@ -123,7 +123,7 @@ export default {
 }
 
 .section-dashboard {
-  height: 100%;
+  height: 95vh;
 }
 
 .loading-section {
