@@ -99,7 +99,7 @@ export default {
       .then((response) => {
         commit('ADD_CATEGORY', {
           _id: response.data.response._id,
-          name: category.name
+          name: response.data.response.name
         })
       })
       .catch(error => {

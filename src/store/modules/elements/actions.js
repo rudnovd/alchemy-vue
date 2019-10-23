@@ -2,26 +2,24 @@ import * as shortid from 'shortid'
 import { getAccountElements, addOpenedElement } from '@/js/api/account'
 
 export default {
-  async getOpenedElements ({ state, commit }) {
-    if (state.openedElements.length === 0) {
-      commit('LOADING_START')
-      await getAccountElements()
-        .then(response => {
-          response.data.elements.forEach(element => {
-            element.x = 0
-            element.y = 0
-            element.z = 100
-            element.show = false
-          })
-          commit('SET_OPENED_ELEMENTS', response.data.elements)
+  async getOpenedElements ({ commit }) {
+    commit('LOADING_START')
+    await getAccountElements()
+      .then(response => {
+        response.data.elements.forEach(element => {
+          element.x = 0
+          element.y = 0
+          element.z = 100
+          element.show = false
         })
-        .catch(error => {
-          commit('SET_ERROR', error.data)
-        })
-        .finally(() => {
-          commit('LOADING_END')
-        })
-    }
+        commit('SET_OPENED_ELEMENTS', response.data.elements)
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
   },
   async addOpenedElement ({ commit, rootState, dispatch }, element) {
     commit('LOADING_START')

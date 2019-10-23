@@ -48,23 +48,21 @@ export default {
 
     window.addEventListener('resize', event => {
       this.setGameFieldSize(gameField)
-
-      // this.$nextTick(() => {
-      //   this.updateActiveElementsPositions()
-      // })
     })
 
-    this.getOpenedElements().then(() => {
-      this.getOpenedCategories(this.openedElements).then(() => {
-        this.setSelectedCategory(this.openedCategories[0])
-        this.updateOpenedElementsByCategory(this.openedCategories[0])
-        this.updateOpenedElementsPositions()
+    if (this.openedElements.length === 0) {
+      this.getOpenedElements().then(() => {
+        this.getOpenedCategories(this.openedElements).then(() => {
+          this.setSelectedCategory(this.openedCategories[0])
+          this.updateOpenedElementsByCategory(this.openedCategories[0])
+          this.updateOpenedElementsPositions()
+        })
       })
-
+    } else {
       this.getRecipes().then(() => {
         this.findOpenedRecipes()
       })
-    })
+    }
   },
   computed: {
     ...mapGetters({
@@ -138,8 +136,8 @@ export default {
     flex: 2 0 0;
     order: 2;
     height: 100%;
-    border: 1px solid black;
     padding: 5px;
+    box-shadow: 0 0 5px 0 rgb(170, 170, 170);
 
     .control-panel {
       display: flex;
@@ -162,7 +160,8 @@ export default {
     max-width: 300px;
     width: 100%;
     height: 100%;
-    border: 1px solid black;
+    box-shadow: 0 0 5px 0 rgb(170, 170, 170);
+    margin-right: 5px;
 
     @extend %scrollbar;
   }

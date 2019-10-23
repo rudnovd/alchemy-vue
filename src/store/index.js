@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 import user from './modules/user'
 import game from './modules/game'
@@ -19,5 +20,11 @@ export default new Vuex.Store({
     recipes,
     data
   },
+  plugins: [
+    createPersistedState({
+      key: 'game',
+      paths: ['elements.activeElements', 'elements.openedElements', 'categories.openedCategories', 'categories.selectedCategory']
+    })
+  ],
   strict: process.env.NODE_ENV === 'development'
 })
