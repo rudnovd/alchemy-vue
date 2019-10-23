@@ -1,7 +1,8 @@
 <template>
   <b-container>
     <b-navbar-brand class='navbar-brand' to='/'>
-      <object type='image/svg+xml' data='/images/logo.svg' height='100%'/>
+      <b-img src='/images/logo.png'/>
+      <span>ALCHEMY</span>
     </b-navbar-brand>
 
     <div class='navbar-icons ml-auto'>
@@ -158,54 +159,38 @@ export default {
     margin-right: 10px;
   }
 
-  .logo {
-    cursor: pointer;
-  }
-
   .navbar-brand {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
 
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+    &:hover {
+      span {
+        filter: contrast(200%);
+      }
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    span {
+      letter-spacing: 1px;
+      font-weight: 800;
+      font-size: 1.2em;
+      color: map-get($colors, 'alchemy-green');
     }
   }
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .navbar-brand {
-    height: 50px;
 
-    &::after {
-      height: 50px;
-    }
-
-    object {
-      width: 200px;
-    }
-  }
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .navbar {
     height: 30px !important;
-  }
-
-  .navbar-brand {
-    height: 30px;
-
-    &::after {
-      height: 30px;
-    }
-
-    object {
-      width: 100px;
-    }
   }
 }
 </style>
