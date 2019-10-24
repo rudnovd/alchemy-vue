@@ -5,11 +5,14 @@ export default {
   LOADING_END (state) {
     state.state.isLoading = false
   },
+  SET_ERROR (state, error) {
+    state.state.error = error
+  },
 
   SET_USER (state, user) {
     state.role = user.role
     state.isDisabled = user.isDisabled
-    state.id = user.id
+    state._id = user._id
     state.email = user.email
     state.username = user.username
     state.created = user.created
@@ -18,7 +21,7 @@ export default {
   DELETE_USER (state) {
     state.role = ''
     state.isDisabled = ''
-    state.id = ''
+    state._id = ''
     state.email = ''
     state.username = ''
     state.created = ''
