@@ -5,8 +5,8 @@
       <span>ALCHEMY</span>
     </b-navbar-brand>
 
-    <div class='navbar-icons ml-auto'>
-      <button class='icon opened-recipes-button' v-if='user.isLoggedIn && $route.path === "/game"'>
+    <div class='navbar-icons' v-if='user.isLoggedIn'>
+      <button class='icon' v-if='$route.path === "/game"'>
         <font-awesome-icon
           id='opened-recipes-button'
           title='Recipes'
@@ -15,7 +15,7 @@
         />
       </button>
 
-      <button class='icon' v-if='user.isLoggedIn && $route.path === "/game"'>
+      <button class='icon' v-if='$route.path === "/game"'>
         <font-awesome-icon
           v-if='!fullscreenEnabled'
           title='Enable fullscreen'
@@ -52,19 +52,19 @@
 
       <b-nav-item-dropdown v-if='user.isLoggedIn' :text='user.username' left='left'>
         <b-dropdown-item to='/game'>Game</b-dropdown-item>
-        <b-dropdown-divider v-if='user.isLoggedIn && user.role === "Admin"'/>
-        <b-dropdown-item to='/admin/dashboard' v-if='user.isLoggedIn && user.role === "Admin"'>Dashboard</b-dropdown-item>
-        <b-dropdown-item to='/admin/elements' v-if='user.isLoggedIn && user.role === "Admin"'>Elements</b-dropdown-item>
-        <b-dropdown-item to='/admin/recipes' v-if='user.isLoggedIn && user.role === "Admin"'>Recipes</b-dropdown-item>
-        <b-dropdown-item to='/admin/users' v-if='user.isLoggedIn && user.role === "Admin"'>Users</b-dropdown-item>
+        <b-dropdown-divider v-if='user.role === "Admin"'/>
+        <b-dropdown-item to='/admin/dashboard' v-if='user.role === "Admin"'>Dashboard</b-dropdown-item>
+        <b-dropdown-item to='/admin/elements' v-if='user.role === "Admin"'>Elements</b-dropdown-item>
+        <b-dropdown-item to='/admin/recipes' v-if='user.role === "Admin"'>Recipes</b-dropdown-item>
+        <b-dropdown-item to='/admin/users' v-if='user.role === "Admin"'>Users</b-dropdown-item>
         <b-dropdown-divider />
-        <b-dropdown-item v-if='user.isLoggedIn' @click='logout()'>Logout</b-dropdown-item>
+        <b-dropdown-item @click='logout()'>Logout</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <LoginModal/>
-    <RegistrationModal/>
-    <ResetPasswordModal/>
-    <OpenedRecipesModal/>
+    <LoginModal v-if='!user.isLoggedIn'/>
+    <RegistrationModal v-if='!user.isLoggedIn'/>
+    <ResetPasswordModal v-if='!user.isLoggedIn'/>
+    <OpenedRecipesModal v-if='user.isLoggedIn'/>
   </b-container>
 </template>
 
@@ -148,15 +148,24 @@ export default {
     }
   }
 
-  .icon {
-    color: white;
-    width: 50px;
-    height: 40px;
-    background: none;
-    border: none;
-    outline: none;
-    padding: 0;
+  .navbar-icons {
+    margin-left: auto;
     margin-right: 10px;
+
+    .icon {
+      color: white;
+      width: 30px;
+      height: 30px;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 0;
+      margin-right: 5px;
+
+      &:hover {
+        color: map-get($colors, 'alchemy-light-green');
+      }
+    }
   }
 
   .navbar-brand {
@@ -191,6 +200,14 @@ export default {
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .navbar {
     height: 30px !important;
+  }
+}
+
+@media screen and (max-width: map-get($grid-breakpoints, 'sm')) {
+  .navbar-brand {
+    span {
+      display: none;
+    }
   }
 }
 </style>
