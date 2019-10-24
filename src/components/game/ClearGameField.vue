@@ -2,7 +2,7 @@
   <div class='clear-game-field-button'>
     <font-awesome-icon
       id='clear-game-field-button'
-      class='clear-game-field-button'
+      class='icon'
       icon='trash'
       @click='onClick'
     />
@@ -57,10 +57,16 @@ export default {
 
 <style lang='scss' scoped>
 .clear-game-field-button {
-  cursor: pointer;
-  color: black;
-  width: 30px;
-  height: 30px;
-  padding: 0;
+  .icon {
+    cursor: pointer;
+    color: black;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+
+    &:hover {
+      color: map-get($colors, 'alchemy-green')
+    }
+  }
 }
 </style>
