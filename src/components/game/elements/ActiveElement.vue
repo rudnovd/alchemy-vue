@@ -21,7 +21,7 @@
       :class='{ "fail-combine": elementDropped }'
     >
       <div class='data'>
-        <b-img :src='elementIcon' @error='setBaseIcon' width='45' height='45' :alt='elementData.name'/>
+        <b-img :src='`/images/elements/${this.elementData.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='elementData.name'/>
         <span>{{ elementData.name }}</span>
       </div>
     </vue-draggable-resizable>
@@ -48,10 +48,7 @@ export default {
       openedRecipes: 'recipes/openedRecipes',
       recipes: 'recipes/recipes',
       state: 'elements/state'
-    }),
-    elementIcon () {
-      return `/images/elements/${this.elementData.name}.png`
-    }
+    })
   },
   data () {
     return {

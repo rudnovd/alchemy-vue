@@ -18,7 +18,7 @@
 
     <section class='section-opened-elements'>
       <OpenedElementsList>
-        <OpenedElement :elementData='element' v-for='element in filteredOpenedElements' :key='element._id'/>
+        <OpenedElement :elementData='element' v-for='element in filteredByOpenedElements' :key='element._id'/>
       </OpenedElementsList>
     </section>
   </section>
@@ -44,10 +44,14 @@ export default {
   },
   mounted () {
     const gameField = document.getElementsByClassName('section-game-board')
-    this.setGameFieldSize(gameField)
+    const gameFieldSizeListener = this.setGameFieldSize(gameField)
 
-    window.addEventListener('resize', event => {
-      this.setGameFieldSize(gameField)
+    window.addEventListener('resize', () => {
+      if (gameField.length > 0) {
+        this.setGameFieldSize(gameField)
+      } else {
+        window.removeEventListener('resize', gameFieldSizeListener)
+      }
     })
 
     if (this.openedElements.length === 0) {
@@ -56,6 +60,10 @@ export default {
           this.setSelectedCategory(this.openedCategories[0])
           this.updateOpenedElementsByCategory(this.openedCategories[0])
           this.updateOpenedElementsPositions()
+
+          this.getRecipes().then(() => {
+            this.findOpenedRecipes()
+          })
         })
       })
     } else {
@@ -73,11 +81,9 @@ export default {
       selectedCategory: 'categories/selectedCategory',
       history: 'game/history'
     }),
-    filteredOpenedElements () {
+    filteredByOpenedElements () {
       return this.openedElements.filter(openedElement => {
-        if (openedElement.show) {
-          return openedElement
-        }
+        return openedElement.show === true
       })
     }
   },
@@ -85,7 +91,6 @@ export default {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
       getOpenedElements: 'elements/getOpenedElements',
-      setActiveElements: 'elements/setActiveElements',
       getOpenedCategories: 'categories/getOpenedCategories',
       setSelectedCategory: 'categories/setSelectedCategory',
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',

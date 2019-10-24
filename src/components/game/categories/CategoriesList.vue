@@ -10,16 +10,18 @@
       </div>
     </div>
 
-    <button
-      class='select-category-button'
-      v-for='openedCategory in openedCategories'
-      :key='openedCategory._id'
-      @click='selectCategory(openedCategory)'
-      :class='{ "active": openedCategory._id === selectedCategory._id}'
-    >
-      <b-img :src='`/images/categories/${openedCategory.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='openedCategory.name'/>
-      <span>{{ openedCategory.name }}</span>
-    </button>
+    <template v-if='!state.isLoading && !state.error'>
+      <button
+        class='select-category-button'
+        v-for='openedCategory in openedCategories'
+        :key='openedCategory._id'
+        @click='selectCategory(openedCategory)'
+        :class='{ "active": openedCategory._id === selectedCategory._id}'
+      >
+        <b-img :src='`/images/categories/${openedCategory.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='openedCategory.name'/>
+        <span>{{ openedCategory.name }}</span>
+      </button>
+    </template>
   </div>
 </template>
 
