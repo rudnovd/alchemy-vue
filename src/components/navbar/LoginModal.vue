@@ -27,6 +27,7 @@
             type='text'
             v-model='usernameOrEmail'
             :autocomplete='autocomplete'
+            @keyup.enter='login'
           />
         </b-form-group>
       </b-col>
@@ -39,6 +40,7 @@
             type='password'
             v-model='password'
             :autocomplete='autocomplete'
+            @keyup.enter='login'
           />
         </b-form-group>
       </b-col>
@@ -81,10 +83,10 @@ export default {
   data () {
     return {
       showModal: false,
-      error: null,
+      error: '',
 
-      usernameOrEmail: null,
-      password: null,
+      usernameOrEmail: '',
+      password: '',
       rememberLogin: false
     }
   },
@@ -131,8 +133,8 @@ export default {
       }
     },
     clearInputs () {
-      this.usernameOrEmail = null
-      this.password = null
+      this.usernameOrEmail = ''
+      this.password = ''
       this.rememberLogin = false
     },
     resetPasswordModalShow () {
