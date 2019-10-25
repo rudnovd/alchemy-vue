@@ -17,7 +17,7 @@
     @dragstop='onDragstop'
   >
     <div class='data'>
-      <b-img class='element-image' :src='elementIcon' @error='setBaseIcon' :alt='elementData.name'/>
+      <b-img class='element-image' :src='`/images/elements/${this.elementData.name}.png`' @error='setBaseIcon' :alt='elementData.name'/>
       <span :class='{ "hidden": isDragging }'>{{ elementData.name }}</span>
     </div>
   </vue-draggable-resizable>
@@ -39,15 +39,16 @@ export default {
       gameFieldSize: 'game/gameFieldSize',
       selectedElement: 'elements/selectedElement',
       activeElements: 'elements/activeElements'
-    }),
-    elementIcon () {
-      return `/images/elements/${this.elementData.name}.png`
-    }
+    })
   },
   mounted () {
-    this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
-    window.addEventListener('resize', event => {
-      this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
+    const elementsList = document.getElementsByClassName('opened-elements-list')[0].clientWidth
+    this.width = elementsList
+    window.addEventListener('resize', () => {
+      const elementsList = document.getElementsByClassName('opened-elements-list')
+      if (elementsList.length > 0) {
+        this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
+      }
     })
   },
   data () {
@@ -89,20 +90,23 @@ export default {
     // Called whenever the component stops getting dragged
     onDragstop (x, y) {
       this.isDragging = false
-      this.setSelectedElementCoordinates({ x, y, z: 100 })
 
       if (x < -100) { // if element dropped on game board
-        let newX = this.gameFieldSize.x - Math.abs(this.selectedElement.x)
-        let newY = this.selectedElement.y
+        let newX = 0
+        let newY = 0
 
-        if (newX < 0) {
+        if (this.gameFieldSize.x + x < 0) {
           newX = 0
+        } else {
+          newX = this.gameFieldSize.x + x
         }
 
-        if (newY < 0) {
+        if (y < 0) {
           newY = 0
-        } else if (newY > this.gameFieldSize.y - 100) {
+        } else if (y > this.gameFieldSize.y - 100) {
           newY = this.gameFieldSize.y - 100
+        } else {
+          newY = y
         }
 
         this.setSelectedElementCoordinates({
@@ -117,9 +121,20 @@ export default {
           lastElement.dispatchEvent(new Event('mousedown'))
           lastElement.dispatchEvent(new Event('mouseup'))
         })
+      } else if (x === 0) {
+        this.setSelectedElementCoordinates({
+          x: this.gameFieldSize.x / 2,
+          y: this.gameFieldSize.y / 2,
+          z: 100
+        })
+        this.addActiveElement(this.selectedElement)
       }
 
-      this.deleteSelectedElement()
+      this.setSelectedElementCoordinates({
+        x: x,
+        y: y,
+        z: 100
+      })
 
       this.$nextTick(() => {
         this.updateOpenedElementsPositions()
@@ -178,7 +193,7 @@ export default {
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md'))  {
   .element {
-    font-size: 1.2rem0;
+    font-size: 1.2em;
   }
 
   .element-image {
