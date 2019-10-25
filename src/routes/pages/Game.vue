@@ -122,7 +122,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 .section-game {
   display: flex;
   flex: 1;
