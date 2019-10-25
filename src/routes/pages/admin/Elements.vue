@@ -42,7 +42,6 @@
                     type='text'
                     v-model='create.name'
                     required='required'
-                    trim='trim'
                     placeholder='Fire'
                     :state='isUniqueName(create.name, elements.data)'
                   />
@@ -55,15 +54,16 @@
                 <b-form-group :label-cols='3' label='Category:' label-for='createElementCategory'>
                   <b-form-select
                     id='createElementCategory'
-                    v-if='!newCategory.active'
                     type='text'
-                    v-model='create.category'
                     required='required'
+                    v-if='!newCategory.active'
+                    v-model='create.category._id'
+                    :options='categories.data'
+                    value-field='_id'
+                    text-field='name'
                     :state='!isNull(create.category._id)'
+                    @change='create.category.name = categories.data.filter(category => { return category._id === create.category._id })[0].name'
                   >
-                    <option v-for='category in categories.data' :key='category._id' :value='category'>
-                      {{ category.name }}
-                    </option>
                   </b-form-select>
 
                   <b-form-input
@@ -72,30 +72,20 @@
                     type='text'
                     v-model='newCategory.name'
                     required='required'
-                    trim='trim'
                     placeholder='Elements'
                     :state='isUniqueName(newCategory.name, categories.data)'
                   />
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-row v-if='newCategory.active === false'>
+            <b-row>
               <b-col cols='12'>
-                <b-btn
-                  class='float-right'
-                  variant='light'
-                  size='sm'
-                  @click='newCategory.active = true; create.category.name = ""; create.category._id = ""'
-                >
-                  <font-awesome-icon icon='plus' /> New category
+                <b-btn class='float-right' v-if='!newCategory.active' variant='light' size='sm' @click='newCategory.active = true; newCategory.name = ""'>
+                  <font-awesome-icon icon='plus'/> New category
                 </b-btn>
-              </b-col>
-            </b-row>
 
-            <b-row v-if='newCategory.active === true'>
-              <b-col cols='12'>
-                <b-btn class='float-right' variant='light' size='sm' @click='newCategory.active = false; newCategory.name = null'>
-                  <font-awesome-icon icon='clipboard' /> Choose category
+                <b-btn class='float-right' v-if='newCategory.active' variant='light' size='sm' @click='newCategory.active = false; newCategory.name = ""'>
+                  <font-awesome-icon icon='clipboard'/> Choose category
                 </b-btn>
               </b-col>
             </b-row>
@@ -133,7 +123,6 @@
                 v-model='edit.name'
                 type='text'
                 required='required'
-                trim='trim'
               />
             </b-form-group>
 
@@ -157,7 +146,6 @@
                 placeholder='Description'
                 rows='3'
                 required='required'
-                trim='trim'
                 no-resize='no-resize'
               />
             </b-form-group>
@@ -215,7 +203,6 @@
                     type='text'
                     v-model='createCategoryData.name'
                     required='required'
-                    trim='trim'
                     placeholder='Elements'
                     :state='isUniqueName(createCategoryData.name, categories.data)'
                   />
@@ -386,8 +373,8 @@ export default {
     },
     afterCreateElement () {
       this.create.name = ''
-      this.create.category = ''
-      this.create.categoryName = ''
+      this.create.category.name = ''
+      this.create.category._id = ''
       this.newCategory.name = ''
     },
 
@@ -460,7 +447,6 @@ export default {
       const filteredByName = object.filter(singleObject => {
         return name === singleObject.name || name === singleObject.name.toLowerCase()
       })
-      console.log(filteredByName)
 
       if (filteredByName.length > 0) {
         return false
