@@ -98,6 +98,14 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to, from) => {
   document.title = to.meta.title
+
+  if (to.path === '/game') {
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.documentElement.style.overflow = 'auto'
+    document.body.style.overflow = 'auto'
+  }
 })
 
 export default router

@@ -187,12 +187,12 @@ export default {
 }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 1.5s;
+  transition: opacity .7s;
 }
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
-  animation: shake 1.5s;
+  animation: shake .7s;
 }
 
 .fail-combine {
