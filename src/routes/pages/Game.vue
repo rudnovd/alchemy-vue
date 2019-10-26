@@ -21,6 +21,8 @@
         <OpenedElement :elementData='element' v-for='element in filteredByOpenedElements' :key='element._id'/>
       </OpenedElementsList>
     </section>
+
+    <NewElementModal/>
   </section>
 </template>
 
@@ -32,6 +34,7 @@ import ClearGameField from '@/components/game/ClearGameField.vue'
 import CategoriesList from '@/components/game/categories/CategoriesList.vue'
 import OpenedElementsList from '@/components/game/elements/OpenedElementsList.vue'
 import ActiveElementsHistory from '@/components/game/elements/ActiveElementsHistory.vue'
+import NewElementModal from '@/components/game/elements/NewElementModal.vue'
 
 export default {
   components: {
@@ -40,7 +43,8 @@ export default {
     CategoriesList,
     OpenedElementsList,
     ClearGameField,
-    ActiveElementsHistory
+    ActiveElementsHistory,
+    NewElementModal
   },
   mounted () {
     const gameField = document.getElementsByClassName('section-game-board')
