@@ -163,8 +163,14 @@ export default {
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'min')) {
-  .select-category-button {
-    font-size: 0.8rem;
+  .categories-list {
+    .select-category-button {
+      font-size: 0.8rem;
+
+      img {
+        display: none;
+      }
+    }
   }
 }
 </style>
