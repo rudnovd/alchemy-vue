@@ -4,5 +4,8 @@ export default {
   },
   history: state => {
     return state.history
+  },
+  lastOpenedElement: state => {
+    return state.lastOpenedElement
   }
 }

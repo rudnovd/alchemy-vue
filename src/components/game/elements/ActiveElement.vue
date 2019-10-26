@@ -64,7 +64,8 @@ export default {
       deleteSelectedElement: 'elements/deleteSelectedElement',
       addOpenedRecipe: 'recipes/addOpenedRecipe',
       addHistory: 'game/addHistory',
-      addOpenedElement: 'elements/addOpenedElement'
+      addOpenedElement: 'elements/addOpenedElement',
+      setLastOpenedElement: 'game/setLastOpenedElement'
     }),
 
     // Called whenever the component gets clicked, in order to show handles
@@ -115,6 +116,8 @@ export default {
             this.addOpenedElement(resultRecipe.result).then(response => {
               if (!this.state.error) {
                 this.addOpenedRecipe(resultRecipe)
+                this.setLastOpenedElement(resultRecipe.result)
+                this.$root.$emit('newElementModalShow')
               }
             })
           }

@@ -7,6 +7,7 @@ export default {
     },
     past: []
   },
+  lastOpenedElement: {},
 
   gameFieldSize: {
     x: 0,

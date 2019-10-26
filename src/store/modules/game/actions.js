@@ -11,5 +11,8 @@ export default {
       secondElement: history.secondElement,
       result: history.result
     })
+  },
+  setLastOpenedElement ({ commit }, element) {
+    commit('SET_LAST_OPENED_ELEMENT', element)
   }
 }
