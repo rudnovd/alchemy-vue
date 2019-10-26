@@ -23,7 +23,7 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       key: 'game',
-      paths: ['elements.activeElements', 'elements.openedElements', 'categories.openedCategories', 'categories.selectedCategory']
+      paths: ['elements.activeElements', 'elements.openedElements', 'categories.openedCategories', 'categories.selectedCategory', 'game.history']
     })
   ],
   strict: process.env.NODE_ENV === 'development'

@@ -1,7 +1,16 @@
 <template>
-  <div class='active-elements-history' @click='showHistory'>
+  <div id='active-elements-history' class='active-elements-history' @click='onClick'>
     <span v-show='history.last.firstElement && history.last.secondElement'>{{ history.last.firstElement }} + {{ history.last.secondElement }}</span>
     <span v-show='history.last.result'> = {{ history.last.result }}</span>
+
+    <b-popover
+      target='active-elements-history' placement='bottom' :show='showPopover' @shown='onShown'>
+      <template v-slot:default>
+        <div class='active-elements-history-popover'>
+          <span v-for='text in historyText' :key='text'>{{ text }}</span>
+        </div>
+      </template>
+    </b-popover>
   </div>
 </template>
 
@@ -14,18 +23,43 @@ export default {
       history: 'game/history'
     })
   },
+  data () {
+    return {
+      showPopover: false,
+      isTimeout: false,
+      historyText: []
+    }
+  },
   methods: {
+    onClick () {
+      if (!this.showPopover && !this.isTimeout) {
+        this.showPopover = true
+        this.showHistory()
+      } else if (this.showPopover && this.isTimeout) {
+        setTimeout(() => {
+          this.isTimeout = false
+          this.showPopover = false
+        }, 0)
+      }
+    },
+    onShown () {
+      if (!this.isTimeout) {
+        this.isTimeout = true
+        setTimeout(() => {
+          this.isTimeout = false
+          this.showPopover = false
+        }, 5000)
+      }
+    },
     showHistory () {
-      let history = []
-
+      this.historyText = []
       this.history.past.forEach(historyValue => {
-        history.push(`${historyValue.firstElement} + ${historyValue.secondElement} = ${historyValue.result}`)
+        if (historyValue.result) {
+          this.historyText.push(`${historyValue.firstElement} + ${historyValue.secondElement} = ${historyValue.result}`)
+        } else {
+          this.historyText.push(`${historyValue.firstElement} + ${historyValue.secondElement}`)
+        }
       })
-
-      // console.log('history:')
-      // history.forEach(value => {
-      // console.log(value)
-      // })
     }
   }
 }
@@ -37,6 +71,17 @@ export default {
 
   &:hover {
     cursor: pointer;
+    opacity: 1;
+    color: map-get($colors, 'alchemy-green');
+  }
+}
+
+.active-elements-history-popover {
+  display: flex;
+  flex-direction: column;
+
+  span {
+    margin-bottom: 5px;
   }
 }
 </style>
