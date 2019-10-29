@@ -23,29 +23,30 @@ export default {
   },
   async addOpenedElement ({ commit, rootState, dispatch }, element) {
     commit('LOADING_START')
+    console.log('element', element)
     await addOpenedElement(element._id)
-      .then(response => {
-        element = {
+      .then(() => {
+        const newElement = {
           ...element,
-          category: response.data.element.category,
+          category: element.category[0]._id,
           x: 0,
           y: 0,
           z: 100,
           show: false
         }
-        commit('ADD_OPENED_ELEMENT', element)
+        commit('ADD_OPENED_ELEMENT', newElement)
 
         const filteredByOpenedCategory = rootState.categories.openedCategories.filter(openedCategory => {
-          return openedCategory._id === element.category
+          return openedCategory._id === newElement.category
         })
         if (filteredByOpenedCategory.length === 0) {
-          dispatch('categories/addOpenedCategory', { _id: element.category, name: element.category }, { root: true })
+          dispatch('categories/addOpenedCategory', { _id: element.category[0]._id, name: element.category[0].name }, { root: true })
         }
         dispatch('updateOpenedElementsByCategory', rootState.categories.selectedCategory)
         dispatch('updateOpenedElementsPositions')
       })
       .catch(error => {
-        commit('SET_ERROR', error.data)
+        commit('SET_ERROR', error)
       })
       .finally(() => {
         commit('LOADING_END')
