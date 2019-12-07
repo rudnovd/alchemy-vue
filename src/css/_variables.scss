@@ -5,10 +5,12 @@ $colors: (
 );
 
 $grid-breakpoints: (
-  "first": 0px,
-  "min": 320px,
-  "sm": 576px,
-  "md": 768px,
+  "xs": 0,
+  "sm": 320px,
+  "md": 640px,
   "lg": 992px,
-  "xl": 1200px
-)
+  "xl": 1300px,
+  "max": 2000px
+);
+
+
