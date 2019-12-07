@@ -1,15 +1,15 @@
 export default {
-  LOADING_START (state) {
+  LOADING_START(state) {
     state.state.isLoading = true
   },
-  LOADING_END (state) {
+  LOADING_END(state) {
     state.state.isLoading = false
   },
-  SET_ERROR (state, error) {
+  SET_ERROR(state, error) {
     state.state.error = error
   },
 
-  SET_USER (state, user) {
+  SET_USER(state, user) {
     state.role = user.role
     state.isDisabled = user.isDisabled
     state._id = user._id
@@ -18,7 +18,7 @@ export default {
     state.created = user.created
     state.isLoggedIn = true
   },
-  DELETE_USER (state) {
+  DELETE_USER(state) {
     state.role = ''
     state.isDisabled = ''
     state._id = ''

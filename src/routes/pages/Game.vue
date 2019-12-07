@@ -1,28 +1,24 @@
 <template>
-  <section class='section-game'>
-    <section class='section-categories'>
-      <CategoriesList/>
+  <section class="section-game">
+    <section class="section-categories">
+      <CategoriesList />
     </section>
 
-    <section class='section-game-board'>
-      <ActiveElement
-        v-for='element in activeElements'
-        :key='element.gameId'
-        :elementData='element'
-      />
-      <div class='control-panel'>
-        <ActiveElementsHistory v-show='history.last.firstElement'/>
+    <section class="section-game-board">
+      <ActiveElement v-for="element in activeElements" :key="element.gameId" :element-data="element" />
+      <div class="control-panel">
+        <ActiveElementsHistory v-show="history.last.firstElement" />
         <ClearGameField />
       </div>
     </section>
 
-    <section class='section-opened-elements'>
+    <section class="section-opened-elements">
       <OpenedElementsList>
-        <OpenedElement :elementData='element' v-for='element in filteredByOpenedElements' :key='element._id'/>
+        <OpenedElement v-for="element in filteredByOpenedElements" :key="element._id" :element-data="element" />
       </OpenedElementsList>
     </section>
 
-    <NewElementModal/>
+    <NewElementModal />
   </section>
 </template>
 
@@ -46,7 +42,22 @@ export default {
     ActiveElementsHistory,
     NewElementModal
   },
-  mounted () {
+  computed: {
+    ...mapGetters({
+      openedElements: 'elements/openedElements',
+      activeElements: 'elements/activeElements',
+      openedCategories: 'categories/openedCategories',
+      recipes: 'recipes/recipes',
+      selectedCategory: 'categories/selectedCategory',
+      history: 'game/history'
+    }),
+    filteredByOpenedElements() {
+      return this.openedElements.filter(openedElement => {
+        return openedElement.show === true
+      })
+    }
+  },
+  mounted() {
     const gameField = document.getElementsByClassName('section-game-board')
     const gameFieldSizeListener = this.setGameFieldSize(gameField)
 
@@ -76,21 +87,6 @@ export default {
       })
     }
   },
-  computed: {
-    ...mapGetters({
-      openedElements: 'elements/openedElements',
-      activeElements: 'elements/activeElements',
-      openedCategories: 'categories/openedCategories',
-      recipes: 'recipes/recipes',
-      selectedCategory: 'categories/selectedCategory',
-      history: 'game/history'
-    }),
-    filteredByOpenedElements () {
-      return this.openedElements.filter(openedElement => {
-        return openedElement.show === true
-      })
-    }
-  },
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
@@ -103,7 +99,7 @@ export default {
       updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
       updateActiveElementsPositions: 'elements/updateActiveElementsPositions'
     }),
-    findOpenedRecipes () {
+    findOpenedRecipes() {
       let userRecipes = []
       this.recipes.forEach(recipe => {
         const firstElement = this.openedElements.filter(openedElement => {
@@ -126,7 +122,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .section-game {
   display: flex;
   flex: 1;

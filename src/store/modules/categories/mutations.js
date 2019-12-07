@@ -1,24 +1,24 @@
 export default {
-  LOADING_START (state) {
+  LOADING_START(state) {
     state.state.isLoading = true
   },
-  LOADING_END (state) {
+  LOADING_END(state) {
     state.state.isLoading = false
   },
-  SET_ERROR (state, error) {
+  SET_ERROR(state, error) {
     state.state.error = error
   },
 
-  SET_OPENED_CATEGORIES (state, categories) {
+  SET_OPENED_CATEGORIES(state, categories) {
     state.openedCategories = categories
   },
-  ADD_OPENED_CATEGORY (state, category) {
+  ADD_OPENED_CATEGORY(state, category) {
     state.openedCategories.push(category)
   },
-  SET_SELECTED_CATEGORY (state, category) {
+  SET_SELECTED_CATEGORY(state, category) {
     state.selectedCategory = category
   },
-  DELETE_SELECTED_CATEGORY (state) {
+  DELETE_SELECTED_CATEGORY(state) {
     state.selectedCategory = {}
   }
 }

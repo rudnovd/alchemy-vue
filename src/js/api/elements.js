@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function getElements () {
+export async function getElements() {
   try {
     const response = await axios.get('/api/elements')
     return response
@@ -9,7 +9,7 @@ export async function getElements () {
   }
 }
 
-export async function postElement (name, category) {
+export async function postElement(name, category) {
   try {
     const response = await axios({
       method: 'post',
@@ -25,7 +25,7 @@ export async function postElement (name, category) {
   }
 }
 
-export async function putElement (elementId, name, description, category) {
+export async function putElement(elementId, name, description, category) {
   try {
     const response = await axios({
       method: 'put',
@@ -43,7 +43,7 @@ export async function putElement (elementId, name, description, category) {
   }
 }
 
-export async function deleteElement (elementId) {
+export async function deleteElement(elementId) {
   try {
     const response = await axios({
       method: 'delete',

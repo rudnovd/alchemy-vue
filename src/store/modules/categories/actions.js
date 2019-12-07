@@ -1,7 +1,7 @@
 import { getCategories } from '@/js/api/categories'
 
 export default {
-  async getOpenedCategories ({ commit }, openedElements) {
+  async getOpenedCategories({ commit }, openedElements) {
     commit('LOADING_START')
     await getCategories()
       .then(response => {
@@ -31,13 +31,13 @@ export default {
         commit('LOADING_END')
       })
   },
-  addOpenedCategory ({ commit }, category) {
+  addOpenedCategory({ commit }, category) {
     commit('ADD_OPENED_CATEGORY', category)
   },
-  setSelectedCategory ({ commit }, category) {
+  setSelectedCategory({ commit }, category) {
     commit('SET_SELECTED_CATEGORY', category)
   },
-  deleteSelectedCategory ({ commit }) {
+  deleteSelectedCategory({ commit }) {
     commit('DELETE_SELECTED_CATEGORY')
   }
 }

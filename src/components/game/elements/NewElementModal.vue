@@ -1,26 +1,26 @@
 <template>
-  <b-modal
-    v-model='showModal'
-    size='md'
-    title='New element opened'
-    hide-footer='hide-footer'
-    centered='centered'
-  >
-    <b-row class='new-element'>
-      <b-col cols='12' class='image'>
-        <b-img :src='`/images/elements/${this.lastOpenedElement.name}.png`' @error='setBaseIcon' width='64' height='64' :alt='lastOpenedElement.name'/>
+  <b-modal v-model="showModal" size="md" title="New element opened" hide-footer="hide-footer" centered="centered">
+    <b-row class="new-element">
+      <b-col cols="12" class="image">
+        <b-img
+          :src="`/images/elements/${lastOpenedElement.name}.png`"
+          width="64"
+          height="64"
+          :alt="lastOpenedElement.name"
+          @error="setBaseIcon"
+        />
       </b-col>
 
-      <b-col cols='12' class='name'>
+      <b-col cols="12" class="name">
         <h3>{{ lastOpenedElement.name }}</h3>
       </b-col>
 
-      <b-col cols='12' class='description' v-if='lastOpenedElement.description'>
+      <b-col v-if="lastOpenedElement.description" cols="12" class="description">
         <span>{{ lastOpenedElement.description }}</span>
       </b-col>
 
-      <b-col cols='12' class='button'>
-        <b-btn variant='success' @click='closeModal'>Continue</b-btn>
+      <b-col cols="12" class="button">
+        <b-btn variant="success" @click="closeModal">Continue</b-btn>
       </b-col>
     </b-row>
   </b-modal>
@@ -30,7 +30,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  data () {
+  data() {
     return {
       showModal: false
     }
@@ -40,7 +40,7 @@ export default {
       lastOpenedElement: 'game/lastOpenedElement'
     })
   },
-  mounted () {
+  mounted() {
     this.$root.$on('newElementModalShow', () => {
       this.showModal = true
     })
@@ -49,11 +49,11 @@ export default {
     ...mapActions({
       setLastOpenedElement: 'game/setLastOpenedElement'
     }),
-    closeModal () {
+    closeModal() {
       this.setLastOpenedElement({})
       this.showModal = false
     },
-    setBaseIcon (event) {
+    setBaseIcon(event) {
       event.target.src = '/images/elements/Base.png'
     }
   }

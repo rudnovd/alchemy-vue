@@ -1,27 +1,33 @@
 <template>
-  <transition name='fade'>
+  <transition name="fade">
     <vue-draggable-resizable
-      class-name='active-element'
-      :resizable='false'
-      :disable-user-select='true'
-      :w='100'
-      :h='100'
-      :min-width='100'
-      :min-height='100'
-      :max-height='100'
-      :max-width='100'
-      :x='elementData.x'
-      :y='elementData.y'
-      :z='elementData.z'
-      :parent='true'
-      :onDragStart='onDragStart'
-      @activated='onActivated'
-      @dragstop='onDragstop'
-      @deactivated='onDeactivated'
-      :class='{ "fail-combine": elementDropped }'
+      class-name="active-element"
+      :resizable="false"
+      :disable-user-select="true"
+      :w="100"
+      :h="100"
+      :min-width="100"
+      :min-height="100"
+      :max-height="100"
+      :max-width="100"
+      :x="elementData.x"
+      :y="elementData.y"
+      :z="elementData.z"
+      :parent="true"
+      :on-drag-start="onDragStart"
+      :class="{ 'fail-combine': elementDropped }"
+      @activated="onActivated"
+      @dragstop="onDragstop"
+      @deactivated="onDeactivated"
     >
-      <div class='data'>
-        <b-img :src='`/images/elements/${this.elementData.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='elementData.name'/>
+      <div class="data">
+        <b-img
+          :src="`/images/elements/${elementData.name}.png`"
+          width="45"
+          height="45"
+          :alt="elementData.name"
+          @error="setBaseIcon"
+        />
         <span>{{ elementData.name }}</span>
       </div>
     </vue-draggable-resizable>
@@ -30,15 +36,21 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-
 import * as game from '@/js/game/game'
 
 export default {
   props: {
     elementData: {
-      value: Object,
-      required: true,
-      default: {}
+      type: Object,
+      default: function() {
+        return {}
+      },
+      required: true
+    }
+  },
+  data() {
+    return {
+      elementDropped: false
     }
   },
   computed: {
@@ -49,11 +61,6 @@ export default {
       recipes: 'recipes/recipes',
       state: 'elements/state'
     })
-  },
-  data () {
-    return {
-      elementDropped: false
-    }
   },
   methods: {
     ...mapActions({
@@ -69,12 +76,12 @@ export default {
     }),
 
     // Called whenever the component gets clicked, in order to show handles
-    onActivated () {
+    onActivated() {
       this.setSelectedElement(this.elementData)
     },
 
     // Called whenever the user clicks anywhere outside the component, in order to deactivate it
-    onDeactivated () {
+    onDeactivated() {
       this.setSelectedElementCoordinates({
         x: this.elementData.x,
         y: this.elementData.y,
@@ -85,7 +92,7 @@ export default {
     },
 
     // Called when dragging starts (element is clicked or touched)
-    onDragStart () {
+    onDragStart() {
       if (this.elementDropped) {
         this.elementDropped = false
       }
@@ -98,7 +105,7 @@ export default {
     },
 
     // Called whenever the component stops getting dragged
-    onDragstop (x, y) {
+    onDragstop(x, y) {
       if (!this.selectedElement) {
         return
       }
@@ -112,7 +119,8 @@ export default {
             return resultRecipe._id === openedRecipe._id
           })
 
-          if (filteredByOpenedRecipes.length === 0) { // if recipe not opened for user, then open recipe
+          if (filteredByOpenedRecipes.length === 0) {
+            // if recipe not opened for user, then open recipe
             this.addOpenedElement(resultRecipe.result).then(response => {
               if (!this.state.error) {
                 this.addOpenedRecipe(resultRecipe)
@@ -146,32 +154,32 @@ export default {
       }
     },
 
-    setBaseIcon (event) {
+    setBaseIcon(event) {
       event.target.src = '/images/elements/Base.png'
     }
   }
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .active-element {
   font-size: 16px;
   background-color: rgb(235, 235, 235);
   border: 1px solid map-get($colors, 'alchemy-green');
   border-radius: 6px;
-  transition: box-shadow .6s;
+  transition: box-shadow 0.6s;
 
   &:hover {
     cursor: grab;
     box-shadow: 0 0 7px 0 black;
-    transition: background-color .6s;
+    transition: background-color 0.6s;
   }
 
   &:active {
     cursor: grabbing;
     background-color: map-get($colors, 'alchemy-green');
     color: rgb(255, 255, 255);
-    transition: background-color .6s;
+    transition: background-color 0.6s;
   }
 
   .data {
@@ -189,35 +197,42 @@ export default {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .7s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.7s;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
-  animation: shake .7s;
+  animation: shake 0.7s;
 }
 
 .fail-combine {
   background-color: red;
   border-color: red;
-  animation: shake .7s;
+  animation: shake 0.7s;
 }
 
 @keyframes shake {
-  10%, 90% {
+  10%,
+  90% {
     transform: translate3d(-1px, 0, 0);
   }
 
-  20%, 80% {
+  20%,
+  80% {
     transform: translate3d(2px, 0, 0);
   }
 
-  30%, 50%, 70% {
+  30%,
+  50%,
+  70% {
     transform: translate3d(-4px, 0, 0);
   }
 
-  40%, 60% {
+  40%,
+  60% {
     transform: translate3d(4px, 0, 0);
   }
 }

@@ -1,18 +1,13 @@
 <template>
-  <div class='clear-game-field-button'>
-    <font-awesome-icon
-      id='clear-game-field-button'
-      class='icon'
-      icon='trash'
-      @click='onClick'
-    />
+  <div class="clear-game-field-button">
+    <font-awesome-icon id="clear-game-field-button" class="icon" icon="trash" @click="onClick" />
 
     <b-popover
-      target='clear-game-field-button'
-      placement='bottom'
-      content='Click for clear game field'
-      :show='showPopover'
-      @shown='onShown'
+      target="clear-game-field-button"
+      placement="bottom"
+      content="Click for clear game field"
+      :show="showPopover"
+      @shown="onShown"
     />
   </div>
 </template>
@@ -21,7 +16,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  data () {
+  data() {
     return {
       showPopover: false,
       isTimeout: false
@@ -31,7 +26,7 @@ export default {
     ...mapActions({
       removeAllActiveElements: 'elements/deleteActiveElements'
     }),
-    onClick () {
+    onClick() {
       if (!this.showPopover && !this.isTimeout) {
         this.showPopover = true
       } else if (this.showPopover && this.isTimeout) {
@@ -42,7 +37,7 @@ export default {
         }, 0)
       }
     },
-    onShown () {
+    onShown() {
       if (!this.isTimeout) {
         this.isTimeout = true
         setTimeout(() => {
@@ -55,7 +50,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .clear-game-field-button {
   .icon {
     cursor: pointer;
@@ -65,7 +60,7 @@ export default {
     padding: 0;
 
     &:hover {
-      color: map-get($colors, 'alchemy-green')
+      color: map-get($colors, 'alchemy-green');
     }
   }
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function getStats () {
+export async function getStats() {
   try {
     const response = await axios({
       method: 'get',

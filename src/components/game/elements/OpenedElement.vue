@@ -1,24 +1,29 @@
 <template>
   <vue-draggable-resizable
-    class-name='element'
-    :draggable='true'
-    :disable-user-select='true'
+    class-name="element"
+    :draggable="true"
+    :disable-user-select="true"
     :drag-handle="'.element-image'"
-    :resizable='false'
-    :minHeight='64'
-    :maxHeight='64'
-    :w='width'
-    :h='64'
-    :x='elementData.x'
-    :y='elementData.y'
-    :z='elementData.z'
-    :onDragStart='onDragStart'
-    @activated='onActivated'
-    @dragstop='onDragstop'
+    :resizable="false"
+    :min-height="64"
+    :max-height="64"
+    :w="width"
+    :h="64"
+    :x="elementData.x"
+    :y="elementData.y"
+    :z="elementData.z"
+    :on-drag-start="onDragStart"
+    @activated="onActivated"
+    @dragstop="onDragstop"
   >
-    <div class='data'>
-      <b-img class='element-image' :src='`/images/elements/${this.elementData.name}.png`' @error='setBaseIcon' :alt='elementData.name'/>
-      <span :class='{ "hidden": isDragging }'>{{ elementData.name }}</span>
+    <div class="data">
+      <b-img
+        class="element-image"
+        :src="`/images/elements/${elementData.name}.png`"
+        :alt="elementData.name"
+        @error="setBaseIcon"
+      />
+      <span :class="{ hidden: isDragging }">{{ elementData.name }}</span>
     </div>
   </vue-draggable-resizable>
 </template>
@@ -29,9 +34,18 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   props: {
     elementData: {
-      value: Object,
-      required: true,
-      default: {}
+      type: Object,
+      default: function() {
+        return {}
+      },
+      required: true
+    }
+  },
+  data() {
+    return {
+      width: 100,
+      isDragging: false,
+      elementDropped: false
     }
   },
   computed: {
@@ -41,7 +55,7 @@ export default {
       activeElements: 'elements/activeElements'
     })
   },
-  mounted () {
+  mounted() {
     const elementsList = document.getElementsByClassName('opened-elements-list')[0].clientWidth
     this.width = elementsList
     window.addEventListener('resize', () => {
@@ -50,13 +64,6 @@ export default {
         this.width = document.getElementsByClassName('opened-elements-list')[0].clientWidth
       }
     })
-  },
-  data () {
-    return {
-      width: 100,
-      isDragging: false,
-      elementDropped: false
-    }
   },
   methods: {
     ...mapActions({
@@ -68,17 +75,17 @@ export default {
     }),
 
     // Called whenever the component gets clicked, in order to show handles
-    onActivated () {
+    onActivated() {
       this.isDragging = true
     },
 
     // Called whenever the user clicks anywhere outside the component, in order to deactivate it
-    onDeactivated () {
+    onDeactivated() {
       this.deleteSelectedElement()
     },
 
     // Called when dragging starts (element is clicked or touched)
-    onDragStart () {
+    onDragStart() {
       this.setSelectedElement(this.elementData)
       this.setSelectedElementCoordinates({
         x: this.elementData.x,
@@ -88,10 +95,11 @@ export default {
     },
 
     // Called whenever the component stops getting dragged
-    onDragstop (x, y) {
+    onDragstop(x, y) {
       this.isDragging = false
 
-      if (x < -100) { // if element dropped on game board
+      if (x < -100) {
+        // if element dropped on game board
         let newX = 0
         let newY = 0
 
@@ -117,7 +125,9 @@ export default {
 
         this.addActiveElement(this.selectedElement)
         this.$nextTick(() => {
-          const lastElement = document.getElementsByClassName('active-element')[document.getElementsByClassName('active-element').length - 1]
+          const lastElement = document.getElementsByClassName('active-element')[
+            document.getElementsByClassName('active-element').length - 1
+          ]
           lastElement.dispatchEvent(new Event('mousedown'))
           lastElement.dispatchEvent(new Event('mouseup'))
         })
@@ -141,14 +151,14 @@ export default {
       })
     },
 
-    setBaseIcon (event) {
+    setBaseIcon(event) {
       event.target.src = '/images/elements/Base.png'
     }
   }
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .element {
   padding-left: 5px;
 
@@ -162,8 +172,8 @@ export default {
     width: 100%;
 
     .element-image {
-      transition: box-shadow .8s;
-      transition: border-radius .4s;
+      transition: box-shadow 0.8s;
+      transition: border-radius 0.4s;
       margin-left: 5px;
 
       &:hover {
@@ -191,7 +201,7 @@ export default {
   opacity: 0;
 }
 
-@media screen and (min-width: map-get($grid-breakpoints, 'md'))  {
+@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
   .element {
     font-size: 1.2em;
   }
@@ -203,7 +213,7 @@ export default {
   }
 }
 
-@media screen and (max-width: map-get($grid-breakpoints, 'md'))  {
+@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
   .element {
     font-size: 0.9rem;
   }

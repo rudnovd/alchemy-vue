@@ -1,105 +1,108 @@
 <template>
-  <section class='section-users'>
+  <section class="section-users">
     <b-container>
       <Table
-        target='user'
-        :data='users.data'
-        :fields='fields'
-        :totalRows='totalRows'
-        :loading='users.state.isLoading'
-        :error='users.state.error'
-        :commonButton='false'
-        :deleteButton='false'
-        @editButtonClick='beforeEditUser'
+        target="user"
+        :data="users.data"
+        :fields="fields"
+        :total-rows="totalRows"
+        :loading="users.state.isLoading"
+        :error="users.state.error"
+        :common-button="false"
+        :delete-button="false"
+        @editButtonClick="beforeEditUser"
       />
 
       <b-modal
-        v-model='modals.edit'
-        title='Edit user'
-        size='xl'
-        hide-header-close='hide-header-close'
-        ok-title='Save'
-        ok-variant='success'
-        cancel-variant='danger'
-        :ok-disabled='users.state.isLoading && users.state.method === "GET"'
-        :cancel-disabled='users.state.isLoading && users.state.method === "GET"'
-        @ok='userEditAction'
-        @hidden='afterEditUser'
+        v-model="modals.edit"
+        title="Edit user"
+        size="xl"
+        hide-header-close="hide-header-close"
+        ok-title="Save"
+        ok-variant="success"
+        cancel-variant="danger"
+        :ok-disabled="users.state.isLoading && users.state.method === 'GET'"
+        :cancel-disabled="users.state.isLoading && users.state.method === 'GET'"
+        @ok="userEditAction"
+        @hidden="afterEditUser"
       >
         <b-row>
-          <b-col cols='12' sm='12' md='12' lg='5' xl='5'>
+          <b-col cols="12" sm="12" md="12" lg="5" xl="5">
             <b-row>
-              <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Username:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.username'/>
+              <b-col cols="9">
+                <b-form-group :label-cols="4" label="Username:">
+                  <b-form-input v-model="user.username" type="text" readonly="readonly" />
                 </b-form-group>
               </b-col>
 
-              <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Email:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.email'/>
+              <b-col cols="9">
+                <b-form-group :label-cols="4" label="Email:">
+                  <b-form-input v-model="user.email" type="text" readonly="readonly" />
                 </b-form-group>
               </b-col>
 
-              <b-col class='pl-0' cols='3'>
-                <b-btn variant='primary' @click='resetPassword = true' :disabled='resetPassword'>
-                  <font-awesome-icon icon='key'/>
+              <b-col class="pl-0" cols="3">
+                <b-btn variant="primary" :disabled="resetPassword" @click="resetPassword = true">
+                  <font-awesome-icon icon="key" />
                 </b-btn>
               </b-col>
 
-              <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Created:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.created'/>
+              <b-col cols="9">
+                <b-form-group :label-cols="4" label="Created:">
+                  <b-form-input v-model="user.created" type="text" readonly="readonly" />
                 </b-form-group>
               </b-col>
 
-              <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Last entered:'>
-                  <b-form-input type='text' readonly='readonly' v-model='user.lastEntered'/>
+              <b-col cols="9">
+                <b-form-group :label-cols="4" label="Last entered:">
+                  <b-form-input v-model="user.lastEntered" type="text" readonly="readonly" />
                 </b-form-group>
               </b-col>
 
-              <b-col cols='9'>
-                <b-form-group :label-cols='4' label='Role:'>
+              <b-col cols="9">
+                <b-form-group :label-cols="4" label="Role:">
                   <b-button-group>
-                    <b-button variant='outline-success' :class='{ "active": user.role === "User" }' @click='user.role = "User"'>User</b-button>
-                    <b-button variant='outline-success' :class='{ "active": user.role === "Admin" }' @click='user.role = "Admin"'>Admin</b-button>
+                    <b-button
+                      variant="outline-success"
+                      :class="{ active: user.role === 'User' }"
+                      @click="user.role = 'User'"
+                      >User</b-button
+                    >
+                    <b-button
+                      variant="outline-success"
+                      :class="{ active: user.role === 'Admin' }"
+                      @click="user.role = 'Admin'"
+                      >Admin</b-button
+                    >
                   </b-button-group>
                 </b-form-group>
               </b-col>
 
-              <b-col cols='9'>
-                <b-form-checkbox
-                  v-model="user.isDisabled"
-                  :value='true'
-                  :unchecked-value='!user.isDisabled'
-                >
+              <b-col cols="9">
+                <b-form-checkbox v-model="user.isDisabled" :value="true" :unchecked-value="!user.isDisabled">
                   Disabled
                 </b-form-checkbox>
               </b-col>
             </b-row>
           </b-col>
 
-          <b-col cols='12' sm='12' md='12' lg='7' xl='7'>
+          <b-col cols="12" sm="12" md="12" lg="7" xl="7">
             <b-row>
-              <b-col cols='12'>
+              <b-col cols="12">
                 <h5>
                   Opened elements
                 </h5>
 
                 <b-progress
-                  class='mb-3'
-                  :value='user.elements.length'
-                  :max='elements.data.length'
-                  show-value='show-value'
+                  class="mb-3"
+                  :value="user.elements.length"
+                  :max="elements.data.length"
+                  show-value="show-value"
                 />
               </b-col>
 
-              <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12'>
-                <ElementsList
-                  :elements='user.elements'
-                  :categories='categories.data'
-                />
+              <b-col class="mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0" cols="12">
+                <ElementsList :elements="user.elements" :categories="categories.data" />
               </b-col>
             </b-row>
           </b-col>
@@ -111,9 +114,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
 import { getAccountElements } from '@/js/api/account'
-
 import Table from '@/components/admin/Table'
 import ElementsList from '@/components/admin/ElementsList'
 
@@ -122,21 +123,7 @@ export default {
     Table,
     ElementsList
   },
-  mounted () {
-    this.getUsers().then(() => {
-      this.totalRows = this.users.data.length
-    })
-    this.getElements()
-    this.getCategories()
-  },
-  computed: {
-    ...mapGetters({
-      elements: 'data/elements',
-      categories: 'data/categories',
-      users: 'data/users'
-    })
-  },
-  data () {
+  data() {
     return {
       user: {
         _id: '',
@@ -193,13 +180,27 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters({
+      elements: 'data/elements',
+      categories: 'data/categories',
+      users: 'data/users'
+    })
+  },
+  mounted() {
+    this.getUsers().then(() => {
+      this.totalRows = this.users.data.length
+    })
+    this.getElements()
+    this.getCategories()
+  },
   methods: {
     ...mapActions({
       getUsers: 'data/getUsers',
       getElements: 'data/getElements',
       getCategories: 'data/getCategories'
     }),
-    getUserElements () {
+    getUserElements() {
       this.loading.userElements = true
       getAccountElements(this.user._id)
         .then(response => {
@@ -210,7 +211,7 @@ export default {
         })
     },
 
-    beforeEditUser (row) {
+    beforeEditUser(row) {
       this.modals.edit = true
       this.user._id = row.item._id
       this.user.username = row.item.username
@@ -221,7 +222,7 @@ export default {
       this.user.role = row.item.role
       this.getUserElements()
     },
-    userEditAction () {
+    userEditAction() {
       this.putUser(this.user).then(() => {
         this.modals.edit = false
       })
@@ -230,7 +231,7 @@ export default {
         // })
       }
     },
-    afterEditUser () {
+    afterEditUser() {
       this.user._id = ''
       this.user.username = ''
       this.user.email = ''

@@ -1,9 +1,9 @@
 <template>
-  <section class='section-error'>
+  <section class="section-error">
     <b-container>
       <b-row>
-        <b-col cols='12'>
-          <div class='jumbotron'>
+        <b-col cols="12">
+          <div class="jumbotron">
             <h1>
               Page not found (404)
             </h1>
@@ -13,7 +13,7 @@
             </p>
 
             <p>
-              <b-link to='/'>
+              <b-link to="/">
                 Back to the main page
               </b-link>
             </p>

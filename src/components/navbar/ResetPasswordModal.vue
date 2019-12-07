@@ -1,63 +1,60 @@
 <template>
-  <b-modal
-    v-model='showModal'
-    :title='textStatus'
-    size='md'
-    hide-footer='hide-footer'
-    centered='centered'
-  >
-    <b-row class='ml-3 mr-3' v-if='!resetSuccess'>
-      <b-col class='mt-4' cols='8'>
+  <b-modal v-model="showModal" :title="textStatus" size="md" hide-footer="hide-footer" centered="centered">
+    <b-row v-if="!resetSuccess" class="ml-3 mr-3">
+      <b-col class="mt-4" cols="8">
         <h4>
           Reset password
         </h4>
       </b-col>
 
-      <b-col class='ml-auto text-right' cols='2'>
-        <button class='close-button' @click='showModal = false'>
-          <font-awesome-icon icon='times'/>
+      <b-col class="ml-auto text-right" cols="2">
+        <button class="close-button" @click="showModal = false">
+          <font-awesome-icon icon="times" />
         </button>
       </b-col>
 
-      <b-col class='mt-2' cols='12'>
-        <b-form-group label='Email' label-for='email'>
+      <b-col class="mt-2" cols="12">
+        <b-form-group label="Email" label-for="email">
           <b-form-input
-            required='required'
-            id='email'
-            type='text'
-            v-model='email'
-            v-model.trim.lazy='$v.email.$model'
-            :class='{ "form-error": $v.email.$error, "form-success": !$v.email.$error && this.email}'
+            id="email"
+            v-model="email"
+            v-model.trim.lazy="$v.email.$model"
+            required="required"
+            type="text"
+            :class="{ 'form-error': $v.email.$error, 'form-success': !$v.email.$error && email }"
           />
         </b-form-group>
       </b-col>
 
-      <b-col class='mt-2 mb-3' cols='12'>
-        <b-btn block='block' variant='success' @click='resetPassword'>
+      <b-col class="mt-2 mb-3" cols="12">
+        <b-btn block="block" variant="success" @click="resetPassword">
           Reset password
         </b-btn>
       </b-col>
 
-      <b-col class='mt-2' cols='12'>
-        <b-alert v-if='error' show='show' variant='danger'>
+      <b-col class="mt-2" cols="12">
+        <b-alert v-if="error" show="show" variant="danger">
           {{ error }}
         </b-alert>
       </b-col>
     </b-row>
 
-    <b-row class='ml-3 mr-3' v-if='resetSuccess'>
-      <b-col class='ml-auto text-right' cols='2'>
+    <b-row v-if="resetSuccess" class="ml-3 mr-3">
+      <b-col class="ml-auto text-right" cols="2">
         <b-button
-          class='close-button'
-          size='sm'
-          variant='link'
-          @click='showModal = false; resetSuccess = false'
+          class="close-button"
+          size="sm"
+          variant="link"
+          @click="
+            showModal = false
+            resetSuccess = false
+          "
         >
-          <font-awesome-icon class='fa-2x' icon='times'/>
+          <font-awesome-icon class="fa-2x" icon="times" />
         </b-button>
       </b-col>
 
-      <b-col class='mt-4' cols='12'>
+      <b-col class="mt-4" cols="12">
         <p>
           Check your email
         </p>
@@ -68,16 +65,10 @@
 
 <script>
 import { putResetPassword } from '@/js/api/account'
-
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
-  mounted () {
-    this.$root.$on('resetPasswordModalShow', () => {
-      this.showModal = true
-    })
-  },
-  data () {
+  data() {
     return {
       showModal: false,
       error: '',
@@ -87,8 +78,13 @@ export default {
       resetSuccess: ''
     }
   },
+  mounted() {
+    this.$root.$on('resetPasswordModalShow', () => {
+      this.showModal = true
+    })
+  },
   methods: {
-    validation () {
+    validation() {
       if (!this.email) {
         return false
       }
@@ -99,7 +95,7 @@ export default {
 
       return true
     },
-    resetPassword () {
+    resetPassword() {
       if (this.validation() === true) {
         putResetPassword(this.email).then(response => {
           if (response.status === 200) {
@@ -116,7 +112,7 @@ export default {
         })
       }
     },
-    clearInputs () {
+    clearInputs() {
       this.email = ''
       this.resetSuccess = ''
     }
@@ -130,7 +126,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .error {
   font-size: 0.75rem;
   margin-top: 0.5rem;

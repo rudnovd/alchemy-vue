@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function getRecipes () {
+export async function getRecipes() {
   try {
     const response = await axios({
       method: 'get',
@@ -12,7 +12,7 @@ export async function getRecipes () {
   }
 }
 
-export async function postRecipe (recipe, result) {
+export async function postRecipe(recipe, result) {
   try {
     const response = await axios({
       method: 'post',
@@ -28,7 +28,7 @@ export async function postRecipe (recipe, result) {
   }
 }
 
-export async function putRecipe (newRecipe, newResult, recipeId) {
+export async function putRecipe(newRecipe, newResult, recipeId) {
   try {
     const response = await axios({
       method: 'put',
@@ -45,7 +45,7 @@ export async function putRecipe (newRecipe, newResult, recipeId) {
   }
 }
 
-export async function deleteRecipe (recipeId) {
+export async function deleteRecipe(recipeId) {
   try {
     const response = await axios({
       method: 'delete',

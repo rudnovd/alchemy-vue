@@ -1,70 +1,55 @@
 <template>
   <b-container>
-    <b-navbar-brand class='navbar-brand' to='/'>
-      <b-img src='/images/logo.png'/>
+    <b-navbar-brand class="navbar-brand" to="/">
+      <b-img src="/images/logo.png" />
       <span>ALCHEMY</span>
     </b-navbar-brand>
 
-    <div class='navbar-icons' v-if='user.isLoggedIn'>
-      <button class='icon' v-if='$route.path === "/game"'>
-        <font-awesome-icon
-          id='opened-recipes-button'
-          title='Recipes'
-          icon='scroll'
-          @click='openedRecipesModalShow'
-        />
+    <div v-if="user.isLoggedIn" class="navbar-icons">
+      <button v-if="$route.path === '/game'" class="icon">
+        <font-awesome-icon id="opened-recipes-button" title="Recipes" icon="scroll" @click="openedRecipesModalShow" />
       </button>
 
-      <button class='icon' v-if='$route.path === "/game"'>
+      <button v-if="$route.path === '/game'" class="icon">
         <font-awesome-icon
-          v-if='!fullscreenEnabled'
-          title='Enable fullscreen'
-          icon='expand-arrows-alt'
-          @click='enableFullscreen'
+          v-if="!fullscreenEnabled"
+          title="Enable fullscreen"
+          icon="expand-arrows-alt"
+          @click="enableFullscreen"
         />
         <font-awesome-icon
-          v-if='fullscreenEnabled'
-          title='Disable fullscreen'
-          icon='compress-arrows-alt'
-          @click='disableFullScreen'
+          v-if="fullscreenEnabled"
+          title="Disable fullscreen"
+          icon="compress-arrows-alt"
+          @click="disableFullScreen"
         />
       </button>
     </div>
 
     <b-navbar-nav>
-      <b-btn
-        class='text-white'
-        v-if='!user.isLoggedIn'
-        variant='link'
-        @click='loginModalShow'
-      >
+      <b-btn v-if="!user.isLoggedIn" class="text-white" variant="link" @click="loginModalShow">
         Sign in
       </b-btn>
 
-      <b-btn
-        class='text-white'
-        v-if='!user.isLoggedIn'
-        variant='link'
-        @click='registrationModalShow'
-      >
+      <b-btn v-if="!user.isLoggedIn" class="text-white" variant="link" @click="registrationModalShow">
         Sign up
       </b-btn>
 
-      <b-nav-item-dropdown v-if='user.isLoggedIn' :text='user.username' left='left'>
-        <b-dropdown-item to='/game'>Game</b-dropdown-item>
-        <b-dropdown-divider v-if='user.role === "Admin"'/>
-        <b-dropdown-item to='/admin/dashboard' v-if='user.role === "Admin"'>Dashboard</b-dropdown-item>
-        <b-dropdown-item to='/admin/elements' v-if='user.role === "Admin"'>Elements</b-dropdown-item>
-        <b-dropdown-item to='/admin/recipes' v-if='user.role === "Admin"'>Recipes</b-dropdown-item>
-        <b-dropdown-item to='/admin/users' v-if='user.role === "Admin"'>Users</b-dropdown-item>
+      <b-nav-item-dropdown v-if="user.isLoggedIn" :text="user.username" left="left">
+        <b-dropdown-item to="/game">Game</b-dropdown-item>
+        <b-dropdown-divider v-if="user.role === 'Admin'" />
+        <b-dropdown-item v-if="user.role === 'Admin'" to="/admin/dashboard">Dashboard</b-dropdown-item>
+        <b-dropdown-item v-if="user.role === 'Admin'" to="/admin/elements">Elements</b-dropdown-item>
+        <b-dropdown-item v-if="user.role === 'Admin'" to="/admin/recipes">Recipes</b-dropdown-item>
+        <b-dropdown-item v-if="user.role === 'Admin'" to="/admin/users">Users</b-dropdown-item>
         <b-dropdown-divider />
-        <b-dropdown-item @click='logout()'>Logout</b-dropdown-item>
+        <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <LoginModal v-if='!user.isLoggedIn'/>
-    <RegistrationModal v-if='!user.isLoggedIn'/>
-    <ResetPasswordModal v-if='!user.isLoggedIn'/>
-    <OpenedRecipesModal v-if='user.isLoggedIn'/>
+    <LoginModal v-if="!user.isLoggedIn" />
+    <RegistrationModal v-if="!user.isLoggedIn" />
+    <ResetPasswordModal v-if="!user.isLoggedIn" />
+    <OpenedRecipesModal v-if="user.isLoggedIn" />
   </b-container>
 </template>
 
@@ -83,7 +68,7 @@ export default {
     ResetPasswordModal,
     OpenedRecipesModal
   },
-  data () {
+  data() {
     return {
       fullscreenEnabled: false
     }
@@ -97,25 +82,25 @@ export default {
     ...mapActions({
       getLogout: 'user/getLogout'
     }),
-    logout () {
+    logout() {
       this.getLogout().then(() => {
         this.$router.push({ path: '/' })
       })
     },
-    loginModalShow () {
+    loginModalShow() {
       this.$root.$emit('loginModalShow')
     },
-    registrationModalShow () {
+    registrationModalShow() {
       this.$root.$emit('registrationModalShow')
     },
-    openedRecipesModalShow () {
+    openedRecipesModalShow() {
       this.$root.$emit('openedRecipesModalShow')
     },
-    enableFullscreen () {
+    enableFullscreen() {
       document.documentElement.requestFullscreen()
       this.fullscreenEnabled = true
     },
-    disableFullScreen () {
+    disableFullScreen() {
       document.exitFullscreen()
       this.fullscreenEnabled = false
     }
@@ -123,7 +108,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 .navbar {
   height: 56px;
   background: rgb(33, 33, 33);
@@ -194,7 +179,6 @@ export default {
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function postAccount (email, username, password) {
+export async function postAccount(email, username, password) {
   try {
     const response = await axios({
       method: 'post',
@@ -17,7 +17,7 @@ export async function postAccount (email, username, password) {
   }
 }
 
-export async function updateAccount (_id, password, username, role) {
+export async function updateAccount(_id, password, username, role) {
   try {
     const response = await axios({
       method: 'put',
@@ -35,7 +35,7 @@ export async function updateAccount (_id, password, username, role) {
   }
 }
 
-export async function putResetPassword (email) {
+export async function putResetPassword(email) {
   try {
     const response = await axios({
       method: 'put',
@@ -50,7 +50,7 @@ export async function putResetPassword (email) {
   }
 }
 
-export async function getAccountElements () {
+export async function getAccountElements() {
   try {
     const response = await axios({
       method: 'get',
@@ -62,7 +62,7 @@ export async function getAccountElements () {
   }
 }
 
-export async function addOpenedElement (elementId) {
+export async function addOpenedElement(elementId) {
   try {
     const response = await axios({
       method: 'put',

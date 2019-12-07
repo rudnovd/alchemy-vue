@@ -1,221 +1,229 @@
 <template>
-  <section class='section-elements'>
+  <section class="section-elements">
     <b-container>
       <Table
-        :data='elementsData'
-        :fields='fields'
-        :totalRows='totalRows'
-        :loading='elements.state.isLoading && elements.state.method === "GET"'
-        :error='elements.state.error'
-        target='element'
-        @commonButtonClick='modals.create = true'
-        @editButtonClick='beforeEditElement'
-        @deleteButtonClick='beforeDeleteElement'
+        :data="elementsData"
+        :fields="fields"
+        :total-rows="totalRows"
+        :loading="elements.state.isLoading && elements.state.method === 'GET'"
+        :error="elements.state.error"
+        target="element"
+        @commonButtonClick="modals.create = true"
+        @editButtonClick="beforeEditElement"
+        @deleteButtonClick="beforeDeleteElement"
       >
-        <slot type='button'>
-          <b-btn class='mb-3' variant='success' @click='beforeCreateCategory'>
+        <slot type="button">
+          <b-btn class="mb-3" variant="success" @click="beforeCreateCategory">
             Create category
           </b-btn>
         </slot>
       </Table>
 
       <b-modal
-        v-model='modals.create'
-        title='Create new element'
-        size='xl'
-        hide-header-close='hide-header-close'
-        ok-title='Create'
-        ok-variant='success'
-        cancel-variant='danger'
-        :ok-disabled='(elements.state.isLoading && elements.state.method === "POST")'
-        :cancel-disabled='elements.state.isLoading && elements.state.method === "POST"'
-        @ok='elementCreateAction'
-        @hidden='afterCreateElement'
+        v-model="modals.create"
+        title="Create new element"
+        size="xl"
+        hide-header-close="hide-header-close"
+        ok-title="Create"
+        ok-variant="success"
+        cancel-variant="danger"
+        :ok-disabled="elements.state.isLoading && elements.state.method === 'POST'"
+        :cancel-disabled="elements.state.isLoading && elements.state.method === 'POST'"
+        @ok="elementCreateAction"
+        @hidden="afterCreateElement"
       >
         <b-row>
-          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+          <b-col cols="12" sm="12" md="12" lg="4" xl="4">
             <b-row>
-              <b-col cols='12'>
-                <b-form-group :label-cols='3' label='Name:' label-for='createElementName'>
+              <b-col cols="12">
+                <b-form-group :label-cols="3" label="Name:" label-for="createElementName">
                   <b-form-input
-                    id='createElementName'
-                    type='text'
-                    v-model='create.name'
-                    required='required'
-                    placeholder='Fire'
-                    :state='isUniqueName(create.name, elements.data)'
+                    id="createElementName"
+                    v-model="create.name"
+                    type="text"
+                    required="required"
+                    placeholder="Fire"
+                    :state="isUniqueName(create.name, elements.data)"
                   />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col cols='12'>
-                <b-form-group :label-cols='3' label='Category:' label-for='createElementCategory'>
+              <b-col cols="12">
+                <b-form-group :label-cols="3" label="Category:" label-for="createElementCategory">
                   <b-form-select
-                    id='createElementCategory'
-                    type='text'
-                    required='required'
-                    v-if='!newCategory.active'
-                    v-model='create.category._id'
-                    :options='categories.data'
-                    value-field='_id'
-                    text-field='name'
-                    :state='!isNull(create.category._id)'
-                    @change='create.category.name = categories.data.filter(category => { return category._id === create.category._id })[0].name'
+                    v-if="!newCategory.active"
+                    id="createElementCategory"
+                    v-model="create.category._id"
+                    type="text"
+                    required="required"
+                    :options="categories.data"
+                    value-field="_id"
+                    text-field="name"
+                    :state="!isNull(create.category._id)"
+                    @change="
+                      create.category.name = categories.data.filter(category => {
+                        return category._id === create.category._id
+                      })[0].name
+                    "
                   >
                   </b-form-select>
 
                   <b-form-input
-                    id='createElementCategory'
-                    v-if='newCategory.active'
-                    type='text'
-                    v-model='newCategory.name'
-                    required='required'
-                    placeholder='Elements'
-                    :state='isUniqueName(newCategory.name, categories.data)'
+                    v-if="newCategory.active"
+                    id="createElementCategory"
+                    v-model="newCategory.name"
+                    type="text"
+                    required="required"
+                    placeholder="Elements"
+                    :state="isUniqueName(newCategory.name, categories.data)"
                   />
                 </b-form-group>
               </b-col>
             </b-row>
             <b-row>
-              <b-col cols='12'>
-                <b-btn class='float-right' v-if='!newCategory.active' variant='light' size='sm' @click='newCategory.active = true; newCategory.name = ""'>
-                  <font-awesome-icon icon='plus'/> New category
+              <b-col cols="12">
+                <b-btn
+                  v-if="!newCategory.active"
+                  class="float-right"
+                  variant="light"
+                  size="sm"
+                  @click="
+                    newCategory.active = true
+                    newCategory.name = ''
+                  "
+                >
+                  <font-awesome-icon icon="plus" /> New category
                 </b-btn>
 
-                <b-btn class='float-right' v-if='newCategory.active' variant='light' size='sm' @click='newCategory.active = false; newCategory.name = ""'>
-                  <font-awesome-icon icon='clipboard'/> Choose category
+                <b-btn
+                  v-if="newCategory.active"
+                  class="float-right"
+                  variant="light"
+                  size="sm"
+                  @click="
+                    newCategory.active = false
+                    newCategory.name = ''
+                  "
+                >
+                  <font-awesome-icon icon="clipboard" /> Choose category
                 </b-btn>
               </b-col>
             </b-row>
           </b-col>
 
-           <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
-              <ElementsList
-                :elements='elements.data'
-                :categories='categories.data'
-                @elementClick='createElementClick'
-              />
-            </b-col>
-
+          <b-col class="mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0" cols="12" sm="12" md="12" lg="8" xl="8">
+            <ElementsList :elements="elements.data" :categories="categories.data" @elementClick="createElementClick" />
+          </b-col>
         </b-row>
       </b-modal>
 
       <b-modal
-        v-model='modals.edit'
-        title='Edit element'
-        size='xl'
-        hide-header-close='hide-header-close'
-        ok-title='Save'
-        ok-variant='success'
-        cancel-variant='danger'
-        :ok-disabled='elements.state.isLoading && elements.state.method === "PUT"'
-        :cancel-disabled='elements.state.isLoading && elements.state.method === "PUT"'
-        @ok='elementEditAction'
-        @hidden='afterEditElement'
+        v-model="modals.edit"
+        title="Edit element"
+        size="xl"
+        hide-header-close="hide-header-close"
+        ok-title="Save"
+        ok-variant="success"
+        cancel-variant="danger"
+        :ok-disabled="elements.state.isLoading && elements.state.method === 'PUT'"
+        :cancel-disabled="elements.state.isLoading && elements.state.method === 'PUT'"
+        @ok="elementEditAction"
+        @hidden="afterEditElement"
       >
         <b-row>
-          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
-            <b-form-group :label-cols='3' label='Name:' label-for='editElementName'>
-              <b-form-input
-                id='editElementName'
-                v-model='edit.name'
-                type='text'
-                required='required'
-              />
+          <b-col cols="12" sm="12" md="12" lg="4" xl="4">
+            <b-form-group :label-cols="3" label="Name:" label-for="editElementName">
+              <b-form-input id="editElementName" v-model="edit.name" type="text" required="required" />
             </b-form-group>
 
-            <b-form-group :label-cols='3' label='Category:' label-for='editCategory'>
-              <b-form-select
-                id='editCategory'
-                type='text'
-                v-model='edit.category'
-                required='required'
-              >
-                <option v-for='category in categories.data' :key='category._id' :value='{ _id: category._id, name: category.name }'>
+            <b-form-group :label-cols="3" label="Category:" label-for="editCategory">
+              <b-form-select id="editCategory" v-model="edit.category" type="text" required="required">
+                <option
+                  v-for="category in categories.data"
+                  :key="category._id"
+                  :value="{ _id: category._id, name: category.name }"
+                >
                   {{ category.name }}
                 </option>
               </b-form-select>
             </b-form-group>
 
-            <b-form-group :label-cols='3' label='Description:' label-for='editDescription'>
+            <b-form-group :label-cols="3" label="Description:" label-for="editDescription">
               <b-form-textarea
-                id='editDescription'
-                v-model='edit.description'
-                placeholder='Description'
-                rows='3'
-                required='required'
-                no-resize='no-resize'
+                id="editDescription"
+                v-model="edit.description"
+                placeholder="Description"
+                rows="3"
+                required="required"
+                no-resize="no-resize"
               />
             </b-form-group>
           </b-col>
 
-          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
-            <ElementsList
-              :elements='elements.data'
-              :categories='categories.data'
-            />
+          <b-col class="mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0" cols="12" sm="12" md="12" lg="8" xl="8">
+            <ElementsList :elements="elements.data" :categories="categories.data" />
           </b-col>
         </b-row>
       </b-modal>
 
       <b-modal
-        v-model='modals.remove'
-        size='md'
-        hide-header-close='hide-header-close'
-        ok-title='Delete'
-        ok-variant='success'
-        :ok-disabled='elements.state.isLoading && elements.state.method === "DELETE"'
-        :cancel-disabled='elements.state.isLoading && elements.state.method === "DELETE"'
-        cancel-variant='danger'
-        hide-header='hide-header'
-        @ok='elementDeleteAction'
-        @hidden='afterDeleteElement'
+        v-model="modals.remove"
+        size="md"
+        hide-header-close="hide-header-close"
+        ok-title="Delete"
+        ok-variant="success"
+        :ok-disabled="elements.state.isLoading && elements.state.method === 'DELETE'"
+        :cancel-disabled="elements.state.isLoading && elements.state.method === 'DELETE'"
+        cancel-variant="danger"
+        hide-header="hide-header"
+        @ok="elementDeleteAction"
+        @hidden="afterDeleteElement"
       >
-        <b-row class='text-center'>
-          <b-col cols='12'>
-            <h4>Delete element <strong class='text-danger'>{{ this.remove.name }}</strong>?</h4>
+        <b-row class="text-center">
+          <b-col cols="12">
+            <h4>
+              Delete element <strong class="text-danger">{{ remove.name }}</strong
+              >?
+            </h4>
           </b-col>
         </b-row>
       </b-modal>
 
       <b-modal
-        v-model='modals.createCategory'
-        title='Create new category'
-        size='xl'
-        hide-header-close='hide-header-close'
-        ok-title='Create'
-        ok-variant='success'
-        cancel-variant='danger'
-        :ok-disabled='categories.state.isLoading && elements.state.method === "POST"'
-        :cancel-disabled='categories.state.isLoading && elements.state.method === "POST"'
-        @ok='createCategory'
-        @hidden='afterCreateCategory'
+        v-model="modals.createCategory"
+        title="Create new category"
+        size="xl"
+        hide-header-close="hide-header-close"
+        ok-title="Create"
+        ok-variant="success"
+        cancel-variant="danger"
+        :ok-disabled="categories.state.isLoading && elements.state.method === 'POST'"
+        :cancel-disabled="categories.state.isLoading && elements.state.method === 'POST'"
+        @ok="createCategory"
+        @hidden="afterCreateCategory"
       >
         <b-row>
-          <b-col cols='12' sm='12' md='12' lg='4' xl='4'>
+          <b-col cols="12" sm="12" md="12" lg="4" xl="4">
             <b-row>
-              <b-col cols='12'>
-                <b-form-group :label-cols='3' label='Name:' label-for='createCategoryName'>
+              <b-col cols="12">
+                <b-form-group :label-cols="3" label="Name:" label-for="createCategoryName">
                   <b-form-input
-                    id='createCategoryName'
-                    type='text'
-                    v-model='createCategoryData.name'
-                    required='required'
-                    placeholder='Elements'
-                    :state='isUniqueName(createCategoryData.name, categories.data)'
+                    id="createCategoryName"
+                    v-model="createCategoryData.name"
+                    type="text"
+                    required="required"
+                    placeholder="Elements"
+                    :state="isUniqueName(createCategoryData.name, categories.data)"
                   />
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
 
-          <b-col class='mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0' cols='12' sm='12' md='12' lg='8' xl='8'>
-            <ElementsList
-              :categories='categories.data'
-              :elements='elements.data'
-            />
+          <b-col class="mt-2 mt-sm-2 mt-md-2 mt-lg-0 mt-xl-0" cols="12" sm="12" md="12" lg="8" xl="8">
+            <ElementsList :categories="categories.data" :elements="elements.data" />
           </b-col>
         </b-row>
       </b-modal>
@@ -234,25 +242,7 @@ export default {
     Table,
     ElementsList
   },
-  created () {
-    this.getElements()
-    this.getCategories()
-    this.getRecipes()
-  },
-  computed: {
-    ...mapGetters({
-      elements: 'data/elements',
-      categories: 'data/categories',
-      recipes: 'data/recipes'
-    }),
-    totalRows () {
-      return this.elements.data.length
-    },
-    elementsData () {
-      return this.findRecipes()
-    }
-  },
-  data () {
+  data() {
     return {
       fields: [
         {
@@ -328,6 +318,24 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({
+      elements: 'data/elements',
+      categories: 'data/categories',
+      recipes: 'data/recipes'
+    }),
+    totalRows() {
+      return this.elements.data.length
+    },
+    elementsData() {
+      return this.findRecipes()
+    }
+  },
+  created() {
+    this.getElements()
+    this.getCategories()
+    this.getRecipes()
+  },
   methods: {
     ...mapActions({
       getElements: 'data/getElements',
@@ -341,10 +349,10 @@ export default {
       getRecipes: 'data/getRecipes'
     }),
 
-    beforeCreateElement () {
+    beforeCreateElement() {
       this.modals.create = true
     },
-    elementCreateAction (event) {
+    elementCreateAction(event) {
       if (event) {
         event.preventDefault()
       }
@@ -371,14 +379,14 @@ export default {
         })
       }
     },
-    afterCreateElement () {
+    afterCreateElement() {
       this.create.name = ''
       this.create.category.name = ''
       this.create.category._id = ''
       this.newCategory.name = ''
     },
 
-    beforeEditElement (row) {
+    beforeEditElement(row) {
       this.modals.edit = true
       this.edit._id = row.item._id
       this.edit.name = row.item.name
@@ -394,7 +402,7 @@ export default {
         }
       }
     },
-    elementEditAction (event) {
+    elementEditAction(event) {
       if (event) {
         event.preventDefault()
       }
@@ -402,19 +410,19 @@ export default {
         this.modals.edit = false
       })
     },
-    afterEditElement () {
+    afterEditElement() {
       this.edit._id = ''
       this.edit.name = ''
       this.edit.description = ''
       this.edit.categoryId = ''
     },
 
-    beforeDeleteElement (row) {
+    beforeDeleteElement(row) {
       this.modals.remove = true
       this.remove._id = row.item._id
       this.remove.name = row.item.name
     },
-    elementDeleteAction (event) {
+    elementDeleteAction(event) {
       if (event) {
         event.preventDefault()
       }
@@ -422,24 +430,24 @@ export default {
         this.modals.remove = false
       })
     },
-    afterDeleteElement () {
+    afterDeleteElement() {
       this.remove._id = ''
       this.remove.name = ''
     },
 
-    beforeCreateCategory () {
+    beforeCreateCategory() {
       this.modals.createCategory = true
     },
-    createCategory () {
+    createCategory() {
       this.postCategory(this.createCategoryData).then(response => {
         this.modals.createCategory = false
       })
     },
-    afterCreateCategory () {
+    afterCreateCategory() {
       this.createCategoryData.name = ''
     },
 
-    isUniqueName (name, object) {
+    isUniqueName(name, object) {
       if (!name || !object) {
         return false
       }
@@ -454,7 +462,7 @@ export default {
         return true
       }
     },
-    isNull (object) {
+    isNull(object) {
       if (object) {
         return false
       } else {
@@ -462,11 +470,11 @@ export default {
       }
     },
 
-    createElementClick (element) {
+    createElementClick(element) {
       this.create.name = element.name
     },
 
-    findRecipes () {
+    findRecipes() {
       const foundRecipe = this.elements.data.map(element => {
         const recipe = this.recipes.data.filter(recipe => {
           return recipe.result._id === element._id

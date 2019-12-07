@@ -1,24 +1,30 @@
 <template>
-  <div class='categories-list'>
-    <div class='loading' v-if='state.isLoading && !state.error'>
-      <b-spinner class='spinner'/>
+  <div class="categories-list">
+    <div v-if="state.isLoading && !state.error" class="loading">
+      <b-spinner class="spinner" />
     </div>
 
-    <div class='error' v-if='state.error && !state.isLoading'>
-      <div class='error'>
+    <div v-if="state.error && !state.isLoading" class="error">
+      <div class="error">
         {{ state.error }}
       </div>
     </div>
 
-    <template v-if='!state.isLoading && !state.error'>
+    <template v-if="!state.isLoading && !state.error">
       <button
-        class='select-category-button'
-        v-for='openedCategory in openedCategories'
-        :key='openedCategory._id'
-        @click='selectCategory(openedCategory)'
-        :class='{ "active": openedCategory._id === selectedCategory._id}'
+        v-for="openedCategory in openedCategories"
+        :key="openedCategory._id"
+        class="select-category-button"
+        :class="{ active: openedCategory._id === selectedCategory._id }"
+        @click="selectCategory(openedCategory)"
       >
-        <b-img :src='`/images/categories/${openedCategory.name}.png`' @error='setBaseIcon' width='45' height='45' :alt='openedCategory.name'/>
+        <b-img
+          :src="`/images/categories/${openedCategory.name}.png`"
+          width="45"
+          height="45"
+          :alt="openedCategory.name"
+          @error="setBaseIcon"
+        />
         <span>{{ openedCategory.name }}</span>
       </button>
     </template>
@@ -42,7 +48,7 @@ export default {
       updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions'
     }),
-    selectCategory (category) {
+    selectCategory(category) {
       this.setSelectedCategory(category)
       this.updateOpenedElementsByCategory(category)
 
@@ -50,14 +56,14 @@ export default {
         this.updateOpenedElementsPositions()
       })
     },
-    setBaseIcon (event) {
+    setBaseIcon(event) {
       event.target.src = '/images/categories/Base.png'
     }
   }
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .categories-list {
   display: flex;
   justify-content: flex-start;
@@ -68,7 +74,8 @@ export default {
 
   @extend %scrollbar;
 
-  .loading, .error {
+  .loading,
+  .error {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,7 +83,7 @@ export default {
     width: 100%;
 
     .spinner {
-      color: map-get($colors, "alchemy-green");
+      color: map-get($colors, 'alchemy-green');
       width: 3em;
       height: 3em;
     }
@@ -94,7 +101,7 @@ export default {
     background: rgb(240, 240, 240);
     border: 1px solid map-get($colors, 'alchemy-light-green');
     border-radius: 6px;
-    transition: background-color .4s;
+    transition: background-color 0.4s;
 
     &.active {
       font-weight: bold;
@@ -127,7 +134,7 @@ export default {
 
       &:hover {
         opacity: 0.8;
-        border: 1px solid  map-get($colors, 'alchemy-dark-green');
+        border: 1px solid map-get($colors, 'alchemy-dark-green');
       }
 
       img {
@@ -157,9 +164,7 @@ export default {
         width: 25px;
       }
     }
-
   }
-
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'min')) {

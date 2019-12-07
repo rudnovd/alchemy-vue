@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function getLogin () {
+export async function getLogin() {
   try {
     const response = await axios({
       method: 'get',
@@ -12,7 +12,7 @@ export async function getLogin () {
   }
 }
 
-export async function postLogin (email, password, remember) {
+export async function postLogin(email, password, remember) {
   try {
     const response = await axios({
       method: 'post',
@@ -29,7 +29,7 @@ export async function postLogin (email, password, remember) {
   }
 }
 
-export async function getLogout () {
+export async function getLogout() {
   try {
     const response = await axios({
       method: 'get',

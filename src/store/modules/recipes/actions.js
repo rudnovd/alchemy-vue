@@ -1,7 +1,7 @@
 import { getRecipes } from '@/js/api/recipes'
 
 export default {
-  async getRecipes ({ state, commit }) {
+  async getRecipes({ state, commit }) {
     commit('LOADING_START')
     await getRecipes()
       .then(response => {
@@ -14,16 +14,16 @@ export default {
         commit('LOADING_END')
       })
   },
-  setOpenedRecipes ({ commit }, recipes) {
+  setOpenedRecipes({ commit }, recipes) {
     commit('SET_OPENED_RECIPES', recipes)
   },
-  addOpenedRecipe ({ commit }, recipe) {
+  addOpenedRecipe({ commit }, recipe) {
     commit('ADD_OPENED_RECIPE', recipe)
   },
-  setSelectedRecipe ({ commit }, recipe) {
+  setSelectedRecipe({ commit }, recipe) {
     commit('SET_SELECTED_RECIPE', recipe)
   },
-  deleteSelectedRecipe ({ commit }) {
+  deleteSelectedRecipe({ commit }) {
     commit('DELETE_SELECTED_RECIPE')
   }
 }

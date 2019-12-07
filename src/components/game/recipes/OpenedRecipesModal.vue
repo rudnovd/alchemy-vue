@@ -1,42 +1,32 @@
 <template>
-  <b-modal
-    v-model='showModal'
-    size='xl'
-    hide-header='hide-header'
-    hide-footer='hide-footer'
-    centered='centered'
-  >
-    <b-row class='ml-1 mr-1'>
-      <b-col cols='9'>
+  <b-modal v-model="showModal" size="xl" hide-header="hide-header" hide-footer="hide-footer" centered="centered">
+    <b-row class="ml-1 mr-1">
+      <b-col cols="9">
         <h4>Opened recipes</h4>
       </b-col>
 
-      <b-col class='ml-auto text-right' cols='3'>
-        <button class='close-button' @click='showModal = false'>
-          <font-awesome-icon icon='times'/>
+      <b-col class="ml-auto text-right" cols="3">
+        <button class="close-button" @click="showModal = false">
+          <font-awesome-icon icon="times" />
         </button>
       </b-col>
     </b-row>
 
-    <b-row class='recipes-row'>
-      <b-col class='mt-2 opened-recipes-categories' cols='12' sm='12' md='12' lg='4' xl='4'>
+    <b-row class="recipes-row">
+      <b-col class="mt-2 opened-recipes-categories" cols="12" sm="12" md="12" lg="4" xl="4">
         <button
-          class='category'
-          v-for='category in openedCategories'
-          :key='category._id'
-          :class='{ "active": category._id === selectedCategory._id }'
-          @click='selectCategory(category)'
+          v-for="category in openedCategories"
+          :key="category._id"
+          class="category"
+          :class="{ active: category._id === selectedCategory._id }"
+          @click="selectCategory(category)"
         >
           {{ category.name }}
         </button>
       </b-col>
 
-      <b-col class='mt-2 recipes-list' cols='12' sm='12' md='12' lg='8' xl='8'>
-        <OpenedRecipe
-          v-for='recipe in filteredByCategoryRecipes'
-          :key='recipe._id'
-          :recipe='recipe'
-        />
+      <b-col class="mt-2 recipes-list" cols="12" sm="12" md="12" lg="8" xl="8">
+        <OpenedRecipe v-for="recipe in filteredByCategoryRecipes" :key="recipe._id" :recipe="recipe" />
       </b-col>
     </b-row>
   </b-modal>
@@ -51,38 +41,37 @@ export default {
   components: {
     OpenedRecipe
   },
-  data () {
+  data() {
     return {
       showModal: false,
       selectedCategory: {}
     }
-  },
-  mounted () {
-    this.$root.$on('openedRecipesModalShow', () => {
-      this.showModal = true
-    })
   },
   computed: {
     ...mapGetters({
       openedCategories: 'categories/openedCategories',
       openedRecipes: 'recipes/openedRecipes'
     }),
-    filteredByCategoryRecipes () {
+    filteredByCategoryRecipes() {
       return this.openedRecipes.filter(openedRecipe => {
         return openedRecipe.result.category === this.selectedCategory._id
       })
     }
   },
+  mounted() {
+    this.$root.$on('openedRecipesModalShow', () => {
+      this.showModal = true
+    })
+  },
   methods: {
-    selectCategory (category) {
+    selectCategory(category) {
       this.selectedCategory = category
     }
   }
 }
 </script>
 
-<style lang='scss' scoped>
-
+<style lang="scss" scoped>
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
   .opened-recipes-categories {
     max-height: 80vh;
@@ -110,7 +99,7 @@ export default {
   background: rgb(240, 240, 240);
   border: 1px solid map-get($colors, 'alchemy-light-green');
   border-radius: 6px;
-  transition: background-color .4s;
+  transition: background-color 0.4s;
   width: 100%;
   height: 40px;
   margin-bottom: 10px;
@@ -118,7 +107,7 @@ export default {
   &.active {
     font-weight: bold;
     opacity: 1;
-    color: #FFFFFF;
+    color: #ffffff;
     background-color: map-get($colors, 'alchemy-green');
     border: 1px solid map-get($colors, 'alchemy-light-green');
   }

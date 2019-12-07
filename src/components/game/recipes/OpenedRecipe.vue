@@ -1,58 +1,57 @@
 <template>
-  <div class='opened-recipe' :class='{"active": showRecipe}'>
-    <div class='base-info'>
-      <div class='title'>
-        <b-img
-          :src='elementIcon'
-          @error='setBaseIcon'
-          :alt='recipe.result.name'
-          width='45px'
-          height="45px"
-        />
+  <div class="opened-recipe" :class="{ active: showRecipe }">
+    <div class="base-info">
+      <div class="title">
+        <b-img :src="elementIcon" :alt="recipe.result.name" width="45px" height="45px" @error="setBaseIcon" />
         <strong>{{ recipe.result.name }}</strong>
       </div>
 
-      <div class='buttons'>
-        <b-btn variant='success' v-if='!showRecipe' @click='showRecipe = true'>Show recipe</b-btn>
-        <b-btn variant='success' v-if='showRecipe' @click='showRecipe = false'>Hide recipe</b-btn>
+      <div class="buttons">
+        <b-btn v-if="!showRecipe" variant="success" @click="showRecipe = true">Show recipe</b-btn>
+        <b-btn v-if="showRecipe" variant="success" @click="showRecipe = false">Hide recipe</b-btn>
       </div>
     </div>
 
-    <div class='recipe' v-if='showRecipe'>
+    <div v-if="showRecipe" class="recipe">
       <span>Recipe: {{ recipe.recipe[0].name }} + {{ recipe.recipe[1].name }}</span>
     </div>
 
-    <div class='description' v-if='showRecipe'>
+    <div v-if="showRecipe" class="description">
       <span>Description</span>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    recipe: Object
-  },
-  computed: {
-    elementIcon () {
-      return `/images/elements/${this.recipe.result.name}.png`
+    recipe: {
+      type: Object,
+      default: function() {
+        return {}
+      },
+      required: false
     }
   },
-  data () {
+  data() {
     return {
       showRecipe: false
     }
   },
+  computed: {
+    elementIcon() {
+      return `/images/elements/${this.recipe.result.name}.png`
+    }
+  },
   methods: {
-    setBaseIcon (event) {
+    setBaseIcon(event) {
       event.target.src = '/images/elements/Base.png'
     }
   }
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .opened-recipe {
   padding: 5px;
   display: flex;
@@ -61,7 +60,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   height: 60px;
-  transition: height .2s;
+  transition: height 0.2s;
   background-color: rgb(253, 253, 253);
   border: 1px solid black;
   box-shadow: 0 0 5px 0 rgb(150, 150, 150);
@@ -102,6 +101,5 @@ export default {
     flex: 0 0 100%;
     margin-top: 10px;
   }
-
 }
 </style>

@@ -1,28 +1,22 @@
 <template>
-  <div class='elements-list'>
-    <b-card no-body='no-body'>
-      <b-tabs
-        card='card'
-        pills='pills'
-        vertical='vertical'
-        small='small'
-        nav-wrapper-class='w-30'
-      >
+  <div class="elements-list">
+    <b-card no-body="no-body">
+      <b-tabs card="card" pills="pills" vertical="vertical" small="small" nav-wrapper-class="w-30">
         <b-tab
-          v-for='category in categories'
-          :title='category.name'
-          :key='category._id'
-          @click='selectedCategory = category'
+          v-for="category in categories"
+          :key="category._id"
+          :title="category.name"
+          @click="selectedCategory = category"
         >
           <slot></slot>
 
           <b-btn
-            class='element'
-            size='sm'
-            variant='outline-success'
-            v-for='element in selectedCategory.elements'
-            :key='element._id'
-            @click='elementClick(element)'
+            v-for="element in selectedCategory.elements"
+            :key="element._id"
+            class="element"
+            size="sm"
+            variant="outline-success"
+            @click="elementClick(element)"
           >
             {{ element.name }}
           </b-btn>
@@ -36,33 +30,35 @@
 export default {
   props: {
     categories: {
-      value: Array,
-      default: [],
+      type: Array,
+      default: function() {
+        return []
+      },
       required: true
     },
     elements: {
-      value: Array,
-      default: [],
+      type: Array,
+      default: function() {
+        return []
+      },
       required: true
     }
   },
-  data () {
+  data() {
     return {
       selectedCategory: this.categories[0]
     }
   },
   methods: {
-    elementClick (element) {
+    elementClick(element) {
       this.$emit('elementClick', element)
     }
   }
-
 }
 </script>
 
 <style lang="scss" scoped>
 .elements-list {
-
   .element {
     margin-right: 5px;
     margin-top: 5px;

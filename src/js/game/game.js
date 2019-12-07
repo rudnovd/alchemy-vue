@@ -1,5 +1,6 @@
-export function findClosestElement (element, elements) {
-  if (elements.length < 2) { // need two elements for mixing
+export function findClosestElement(element, elements) {
+  if (elements.length < 2) {
+    // need two elements for mixing
     return {}
   }
 
@@ -26,9 +27,12 @@ export function findClosestElement (element, elements) {
   return closestElement
 }
 
-export function findRecipeOfTwoElements (firstElement, secondElement, recipes) {
+export function findRecipeOfTwoElements(firstElement, secondElement, recipes) {
   const result = recipes.filter(recipe => {
-    return (firstElement._id === recipe.recipe[0]._id && secondElement._id === recipe.recipe[1]._id) || (secondElement._id === recipe.recipe[0]._id && firstElement._id === recipe.recipe[1]._id)
+    return (
+      (firstElement._id === recipe.recipe[0]._id && secondElement._id === recipe.recipe[1]._id) ||
+      (secondElement._id === recipe.recipe[0]._id && firstElement._id === recipe.recipe[1]._id)
+    )
   })
 
   if (result.length > 0) {

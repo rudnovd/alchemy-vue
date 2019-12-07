@@ -1,7 +1,7 @@
 import { getLogin, getLogout } from '@/js/api/authentication'
 
 export default {
-  async getLogin ({ state, commit }) {
+  async getLogin({ state, commit }) {
     if (!state.isLoggedIn) {
       commit('LOADING_START')
       await getLogin()
@@ -18,7 +18,7 @@ export default {
         })
     }
   },
-  async getLogout ({ commit }) {
+  async getLogout({ commit }) {
     commit('LOADING_START')
     await getLogout()
       .then(() => {
@@ -31,7 +31,7 @@ export default {
         commit('LOADING_END')
       })
   },
-  setUser ({ commit }, user) {
+  setUser({ commit }, user) {
     commit('SET_USER', user)
   }
 }

@@ -1,13 +1,14 @@
 <template>
-  <div id='active-elements-history' class='active-elements-history' @click='onClick'>
-    <span v-show='history.last.firstElement && history.last.secondElement'>{{ history.last.firstElement }} + {{ history.last.secondElement }}</span>
-    <span v-show='history.last.result'> = {{ history.last.result }}</span>
+  <div id="active-elements-history" class="active-elements-history" @click="onClick">
+    <span v-show="history.last.firstElement && history.last.secondElement">
+      {{ history.last.firstElement }} + {{ history.last.secondElement }}
+    </span>
+    <span v-show="history.last.result"> = {{ history.last.result }}</span>
 
-    <b-popover
-      target='active-elements-history' placement='bottom' :show='showPopover' @shown='onShown'>
+    <b-popover target="active-elements-history" placement="bottom" :show="showPopover" @shown="onShown">
       <template v-slot:default>
-        <div class='active-elements-history-popover'>
-          <span v-for='text in historyText' :key='text'>{{ text }}</span>
+        <div class="active-elements-history-popover">
+          <span v-for="text in historyText" :key="text">{{ text }}</span>
         </div>
       </template>
     </b-popover>
@@ -18,20 +19,20 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: {
-    ...mapGetters({
-      history: 'game/history'
-    })
-  },
-  data () {
+  data() {
     return {
       showPopover: false,
       isTimeout: false,
       historyText: []
     }
   },
+  computed: {
+    ...mapGetters({
+      history: 'game/history'
+    })
+  },
   methods: {
-    onClick () {
+    onClick() {
       if (!this.showPopover && !this.isTimeout) {
         this.showPopover = true
         this.showHistory()
@@ -42,7 +43,7 @@ export default {
         }, 0)
       }
     },
-    onShown () {
+    onShown() {
       if (!this.isTimeout) {
         this.isTimeout = true
         setTimeout(() => {
@@ -51,7 +52,7 @@ export default {
         }, 5000)
       }
     },
-    showHistory () {
+    showHistory() {
       this.historyText = []
       this.history.past.forEach(historyValue => {
         if (historyValue.result) {
@@ -65,7 +66,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .active-elements-history {
   opacity: 0.5;
 

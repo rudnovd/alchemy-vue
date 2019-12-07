@@ -1,11 +1,11 @@
 <template>
-  <div class='opened-elements-list'>
-    <div class='loading' v-if='openedCategories.length === 0 && state.isLoading && !state.error'>
-      <b-spinner class='spinner'/>
+  <div class="opened-elements-list">
+    <div v-if="openedCategories.length === 0 && state.isLoading && !state.error" class="loading">
+      <b-spinner class="spinner" />
     </div>
 
-    <div class='error' v-if='openedCategories.length === 0 && state.error && !state.isLoading'>
-      <div class='error'>
+    <div v-if="openedCategories.length === 0 && state.error && !state.isLoading" class="error">
+      <div class="error">
         {{ state.error }}
       </div>
     </div>
@@ -27,7 +27,7 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .opened-elements-list {
   position: relative;
   height: 100%;
@@ -37,7 +37,8 @@ export default {
     position: absolute;
   }
 
-  .loading, .error {
+  .loading,
+  .error {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +46,7 @@ export default {
     width: 100%;
 
     .spinner {
-      color: map-get($colors, "alchemy-green");
+      color: map-get($colors, 'alchemy-green');
       width: 3rem;
       height: 3rem;
     }
@@ -53,7 +54,6 @@ export default {
 }
 
 @media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-
 }
 
 @media screen and (max-width: map-get($grid-breakpoints, 'md')) {
