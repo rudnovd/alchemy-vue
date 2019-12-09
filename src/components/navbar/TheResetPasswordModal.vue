@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { putResetPassword } from '@/js/api/account'
+import User from '@/services/api/user'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
@@ -97,7 +97,7 @@ export default {
     },
     resetPassword() {
       if (this.validation() === true) {
-        putResetPassword(this.email).then(response => {
+        User.resetPassword(this.email).then(response => {
           if (response.status === 200) {
             this.resetSuccess = true
             this.clearInputs()

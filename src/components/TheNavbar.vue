@@ -46,9 +46,9 @@
         <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <LoginModal v-if="!user.isLoggedIn" />
-    <RegistrationModal v-if="!user.isLoggedIn" />
-    <ResetPasswordModal v-if="!user.isLoggedIn" />
+    <TheLoginModal v-if="!user.isLoggedIn" />
+    <TheRegistrationModal v-if="!user.isLoggedIn" />
+    <TheResetPasswordModal v-if="!user.isLoggedIn" />
     <OpenedRecipesModal v-if="user.isLoggedIn" />
   </b-container>
 </template>
@@ -56,16 +56,16 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import LoginModal from '@/components/navbar/LoginModal.vue'
-import RegistrationModal from '@/components/navbar/RegistrationModal.vue'
-import ResetPasswordModal from '@/components/navbar/ResetPasswordModal.vue'
+import TheLoginModal from '@/components/navbar/TheLoginModal.vue'
+import TheRegistrationModal from '@/components/navbar/TheRegistrationModal.vue'
+import TheResetPasswordModal from '@/components/navbar/TheResetPasswordModal.vue'
 import OpenedRecipesModal from '@/components/game/recipes/OpenedRecipesModal.vue'
 
 export default {
   components: {
-    LoginModal,
-    RegistrationModal,
-    ResetPasswordModal,
+    TheLoginModal,
+    TheRegistrationModal,
+    TheResetPasswordModal,
     OpenedRecipesModal
   },
   data() {

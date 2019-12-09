@@ -69,7 +69,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { postAccount } from '@/js/api/account'
+import User from '@/services/api/user'
 import { required, email, minLength } from 'vuelidate/lib/validators'
 
 export default {
@@ -104,7 +104,7 @@ export default {
     },
     registration() {
       if (this.validation() === true) {
-        postAccount(this.email, this.username, this.password).then(response => {
+        User.register(this.email, this.username, this.password).then(response => {
           if (response.status === 200) {
             this.showModal = false
             this.clearInputs()

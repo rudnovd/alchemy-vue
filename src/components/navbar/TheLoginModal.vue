@@ -70,7 +70,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { postLogin } from '@/js/api/authentication'
+import User from '@/services/api/user'
 
 export default {
   data() {
@@ -113,7 +113,7 @@ export default {
     },
     login() {
       if (this.validation() === true) {
-        postLogin(this.usernameOrEmail, this.password, this.rememberLogin).then(response => {
+        User.login(this.usernameOrEmail, this.password, this.rememberLogin).then(response => {
           if (response.status === 200) {
             this.showModal = false
             this.setUser(response.data.user)
