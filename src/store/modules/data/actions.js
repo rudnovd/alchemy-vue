@@ -1,15 +1,15 @@
-import { getElements, postElement, putElement, deleteElement } from '@/js/api/elements'
-import { getCategories, postCategory, putCategory, deleteCategory } from '@/js/api/categories'
-import { getRecipes, postRecipe, putRecipe, deleteRecipe } from '@/js/api/recipes'
-import { updateAccount } from '@/js/api/account'
-import { getUsers } from '@/js/api/users'
-import { getStats } from '@/js/api/stats'
+import Elements from '@/services/api/elements'
+import Categories from '@/services/api/categories'
+import Recipes from '@/services/api/recipes'
+import User from '@/services/api/user'
+import Users from '@/services/api/users'
+import Stats from '@/services/api/stats'
 
 export default {
   async getElements({ commit }) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'GET' })
-    await getElements()
+    await Elements.get()
       .then(response => {
         commit('SET_ELEMENTS', response.data.response)
         this.totalRows = response.data.response.length // Total rows for pagination
@@ -25,7 +25,7 @@ export default {
   async postElement({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'POST' })
-    await postElement(element.name, element.category._id)
+    await Elements.post(element.name, element.category._id)
       .then(() => {
         commit('ADD_ELEMENT', {
           _id: element._id,
@@ -44,7 +44,7 @@ export default {
   async putElement({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'PUT' })
-    await putElement(element._id, element.name, element.description, element.category._id)
+    await Elements.update(element._id, element.name, element.description, element.category._id)
       .then(() => {
         commit('EDIT_ELEMENT', {
           _id: element._id,
@@ -64,7 +64,7 @@ export default {
   async deleteElement({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'DELETE' })
-    await deleteElement(element._id)
+    await Elements.delete(element._id)
       .then(() => {
         commit('DELETE_ELEMENT', element)
       })
@@ -80,7 +80,7 @@ export default {
   async getCategories({ commit }) {
     commit('LOADING_START', 'categories')
     commit('SET_METHOD', { object: 'categories', method: 'GET' })
-    await getCategories()
+    await Categories.get()
       .then(response => {
         commit('SET_CATEGORIES', response.data.response)
       })
@@ -95,7 +95,7 @@ export default {
   async postCategory({ commit }, category) {
     commit('LOADING_START', 'categories')
     commit('SET_METHOD', { object: 'categories', method: 'POST' })
-    await postCategory(category.name)
+    await Categories.add(category.name)
       .then(response => {
         commit('ADD_CATEGORY', {
           _id: response.data.response._id,
@@ -113,7 +113,7 @@ export default {
   async putCategory({ commit }, category) {
     commit('LOADING_START', 'categories')
     commit('SET_METHOD', { object: 'categories', method: 'PUT' })
-    await putCategory(category.name, category._id)
+    await Categories.update(category.name, category._id)
       .then(() => {
         commit('EDIT_CATEGORY', {
           _id: category._id,
@@ -132,7 +132,7 @@ export default {
   async deleteCategory({ commit }, category) {
     commit('LOADING_START', 'categories')
     commit('SET_METHOD', { object: 'categories', method: 'DELETE' })
-    await deleteCategory(category)
+    await Categories.delete(category)
       .then(() => {
         commit('DELETE_CATEGORY', category)
       })
@@ -148,7 +148,7 @@ export default {
   async getRecipes({ commit }) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'GET' })
-    await getRecipes()
+    await Recipes.get()
       .then(response => {
         commit('SET_RECIPES', response.data.response)
       })
@@ -163,7 +163,7 @@ export default {
   async postRecipe({ commit }, recipe) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'POST' })
-    await postRecipe([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id)
+    await Recipes.add([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id)
       .then(response => {
         commit('ADD_RECIPE', {
           _id: response.data.response._id,
@@ -182,7 +182,7 @@ export default {
   async putRecipe({ commit }, recipe) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'PUT' })
-    await putRecipe([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id, recipe._id)
+    await Recipes.update([recipe.firstElement._id, recipe.secondElement._id], recipe.result._id, recipe._id)
       .then(() => {
         commit('EDIT_RECIPE', {
           _id: recipe._id,
@@ -201,7 +201,7 @@ export default {
   async deleteRecipe({ commit }, recipe) {
     commit('LOADING_START', 'recipes')
     commit('SET_METHOD', { object: 'recipes', method: 'DELETE' })
-    await deleteRecipe(recipe._id)
+    await Recipes.delete(recipe._id)
       .then(() => {
         commit('DELETE_RECIPE', recipe)
       })
@@ -217,7 +217,7 @@ export default {
   async getUsers({ commit }) {
     commit('LOADING_START', 'users')
     commit('SET_METHOD', { object: 'users', method: 'GET' })
-    await getUsers()
+    await Users.get()
       .then(response => {
         commit('SET_USERS', response.data.response)
       })
@@ -232,7 +232,7 @@ export default {
   async putUser({ commit }, user) {
     commit('LOADING_START', 'users')
     commit('SET_METHOD', { object: 'users', method: 'PUT' })
-    await updateAccount(user._id, user.password, user.username, user.role)
+    await User.update(user._id, user.password, user.username, user.role)
       .then(() => {
         commit('EDIT_USER', {
           _id: user._id,
@@ -253,7 +253,7 @@ export default {
   async getStats({ commit }) {
     commit('LOADING_START', 'stats')
     commit('SET_METHOD', { object: 'stats', method: 'GET' })
-    await getStats()
+    await Stats.get()
       .then(response => {
         commit('SET_STATS', response.data)
       })

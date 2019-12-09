@@ -1,9 +1,9 @@
-import { getRecipes } from '@/js/api/recipes'
+import Recipes from '@/services/api/recipes'
 
 export default {
   async getRecipes({ state, commit }) {
     commit('LOADING_START')
-    await getRecipes()
+    await Recipes.get()
       .then(response => {
         commit('SET_RECIPES', response.data.response)
       })

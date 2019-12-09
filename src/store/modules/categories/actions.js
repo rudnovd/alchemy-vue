@@ -1,9 +1,9 @@
-import { getCategories } from '@/js/api/categories'
+import Categories from '@/services/api/categories'
 
 export default {
   async getOpenedCategories({ commit }, openedElements) {
     commit('LOADING_START')
-    await getCategories()
+    await Categories.get()
       .then(response => {
         let openedCategories = []
         openedElements.forEach(openedElement => {
