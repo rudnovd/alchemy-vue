@@ -114,7 +114,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getAccountElements } from '@/js/api/account'
+import User from '@/services/api/users'
 import Table from '@/components/admin/Table'
 import ElementsList from '@/components/admin/ElementsList'
 
@@ -202,7 +202,7 @@ export default {
     }),
     getUserElements() {
       this.loading.userElements = true
-      getAccountElements(this.user._id)
+      User.getElements(this.user._id)
         .then(response => {
           this.user.elements = response.data.elements
         })
