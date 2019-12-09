@@ -24,6 +24,12 @@
   </section>
 </template>
 
+<script>
+export default {
+  name: 'Errors'
+}
+</script>
+
 <style lang="scss" scoped>
 .section-recipes {
   margin-top: 10px;

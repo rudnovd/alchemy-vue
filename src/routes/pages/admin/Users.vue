@@ -119,6 +119,7 @@ import Table from '@/components/admin/Table'
 import ElementsList from '@/components/admin/ElementsList'
 
 export default {
+  name: 'Users',
   components: {
     Table,
     ElementsList

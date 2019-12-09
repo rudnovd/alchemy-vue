@@ -33,6 +33,7 @@ import ActiveElementsHistory from '@/components/game/elements/ActiveElementsHist
 import NewElementModal from '@/components/game/elements/NewElementModal.vue'
 
 export default {
+  name: 'Game',
   components: {
     ActiveElement,
     OpenedElement,

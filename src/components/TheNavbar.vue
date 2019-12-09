@@ -62,6 +62,7 @@ import TheResetPasswordModal from '@/components/navbar/TheResetPasswordModal.vue
 import OpenedRecipesModal from '@/components/game/recipes/OpenedRecipesModal.vue'
 
 export default {
+  name: 'TheNavbar',
   components: {
     TheLoginModal,
     TheRegistrationModal,

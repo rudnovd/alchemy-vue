@@ -32,6 +32,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  name: 'OpenedElement',
   props: {
     elementData: {
       type: Object,

@@ -38,6 +38,7 @@ import { mapGetters } from 'vuex'
 import OpenedRecipe from '@/components/game/recipes/OpenedRecipe.vue'
 
 export default {
+  name: 'OpenedRecipesModal',
   components: {
     OpenedRecipe
   },

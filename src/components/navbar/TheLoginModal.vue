@@ -73,6 +73,7 @@ import { mapGetters, mapActions } from 'vuex'
 import User from '@/services/api/user'
 
 export default {
+  name: 'TheLoginModal',
   data() {
     return {
       showModal: false,

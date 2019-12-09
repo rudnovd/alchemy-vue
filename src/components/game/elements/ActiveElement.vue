@@ -39,6 +39,7 @@ import { mapGetters, mapActions } from 'vuex'
 import * as game from '@/js/game/game'
 
 export default {
+  name: 'ActiveElement',
   props: {
     elementData: {
       type: Object,

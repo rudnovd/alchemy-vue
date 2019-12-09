@@ -24,6 +24,7 @@
 
 <script>
 export default {
+  name: 'OpenedRecipe',
   props: {
     recipe: {
       type: Object,

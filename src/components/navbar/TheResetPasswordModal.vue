@@ -68,6 +68,7 @@ import User from '@/services/api/user'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
+  name: 'TheResetPasswordModal',
   data() {
     return {
       showModal: false,

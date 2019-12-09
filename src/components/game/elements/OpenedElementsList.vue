@@ -18,6 +18,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'OpenedElementsList',
   computed: {
     ...mapGetters({
       state: 'elements/state',

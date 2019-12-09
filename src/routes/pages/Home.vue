@@ -29,7 +29,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+
 export default {
+  name: 'Home',
   computed: {
     ...mapGetters({
       user: 'user/user'

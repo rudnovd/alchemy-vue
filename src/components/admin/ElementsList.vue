@@ -28,6 +28,7 @@
 
 <script>
 export default {
+  name: 'ElementsList',
   props: {
     categories: {
       type: Array,

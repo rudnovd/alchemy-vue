@@ -30,6 +30,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  name: 'NewElementModal',
   data() {
     return {
       showModal: false

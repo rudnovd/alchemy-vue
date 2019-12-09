@@ -16,6 +16,7 @@
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'ClearGameField',
   data() {
     return {
       showPopover: false,

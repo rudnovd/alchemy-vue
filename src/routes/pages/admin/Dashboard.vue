@@ -101,6 +101,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
+  name: 'Dashboard',
   computed: {
     ...mapGetters({
       stats: 'data/stats'

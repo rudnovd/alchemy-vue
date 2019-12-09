@@ -19,6 +19,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'ActiveElementsHistory',
   data() {
     return {
       showPopover: false,
