@@ -12,6 +12,9 @@ html, body {
   height: 100%;
 }
 
-[v-cloak] {
-  display: none;
+.fade-enter-active {
+  transition: opacity .8s
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0
 }

@@ -8,22 +8,24 @@
 
     <header>
       <b-navbar type="dark" variant="dark">
-        <Navbar />
+        <TheNavbar />
       </b-navbar>
     </header>
 
     <main>
-      <router-view :key="$route.fullPath" />
+      <transition name="fade">
+        <router-view :key="$route.fullPath" />
+      </transition>
     </main>
   </body>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue'
+import TheNavbar from '@/components/TheNavbar.vue'
 
 export default {
   components: {
-    Navbar: Navbar
+    TheNavbar
   }
 }
 </script>
