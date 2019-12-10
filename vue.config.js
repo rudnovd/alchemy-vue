@@ -1,10 +1,12 @@
 module.exports = {
   css: {
+    sourceMap: process.env.NODE_ENV === 'development',
     loaderOptions: {
       sass: {
         prependData: `
           @import "~@/css/_variables.scss";
           @import "~@/css/_placeholders.scss";
+          @import "~@/css/_mixins.scss";
         `
       }
     }
