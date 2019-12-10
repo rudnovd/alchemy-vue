@@ -52,17 +52,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.clear-game-field-button {
-  .icon {
-    cursor: pointer;
-    color: black;
-    width: 30px;
-    height: 30px;
-    padding: 0;
+.icon {
+  cursor: pointer;
+  color: black;
+  width: 30px;
+  height: 30px;
+  padding: 0;
 
-    &:hover {
-      color: map-get($colors, 'alchemy-green');
-    }
+  &:hover {
+    color: map-get($colors, 'green');
   }
 }
 </style>
