@@ -1,6 +1,60 @@
 import { http } from '@/services/http'
 
-export const User = {
+export const Account = {
+  async addOpenedElement(elementId) {
+    try {
+      const response = await http({
+        method: 'put',
+        url: '/account/element/add',
+        data: {
+          elementId
+        }
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+  async changeRole(_id, role) {
+    try {
+      const response = await http({
+        method: 'put',
+        url: '/account/role/update',
+        data: {
+          _id,
+          role
+        }
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+  async disable(_id) {
+    try {
+      const response = await http({
+        method: 'put',
+        url: '/account/disable',
+        data: {
+          _id
+        }
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+  async getElements() {
+    try {
+      const response = await http({
+        method: 'get',
+        url: '/account/elements'
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
   async register(email, username, password) {
     try {
       const response = await http({
@@ -13,7 +67,21 @@ export const User = {
         }
       })
       return response
-    } catch (error) {
+    } catch {
+      throw error.response
+    }
+  },
+  async resetPassword(email) {
+    try {
+      const response = await http({
+        method: 'put',
+        url: '/account/password/reset',
+        data: {
+          email
+        }
+      })
+      return response
+    } catch {
       throw error.response
     }
   },
@@ -30,87 +98,27 @@ export const User = {
         }
       })
       return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   },
-  async login(email, password, remember) {
+  async updateInformation(_id, password, username, role) {
     try {
       const response = await http({
-        method: 'post',
-        url: '/login',
+        method: 'put',
+        url: '/account/update',
         data: {
-          email,
+          _id,
           password,
-          remember
+          username,
+          role
         }
       })
       return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async getData() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/login'
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async resetPassword(email) {
-    try {
-      const response = await http({
-        method: 'put',
-        url: '/account/password/reset',
-        data: {
-          email
-        }
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async getElements() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/account/elements'
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async addOpenedElement(elementId) {
-    try {
-      const response = await http({
-        method: 'put',
-        url: '/account/element/add',
-        data: {
-          elementId
-        }
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async logout() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/logout'
-      })
-      return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   }
 }
 
-export default User
+export default Account
