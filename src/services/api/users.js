@@ -8,7 +8,7 @@ export const Users = {
         url: '/users'
       })
       return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   }

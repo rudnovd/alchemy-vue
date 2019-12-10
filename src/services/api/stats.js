@@ -8,7 +8,7 @@ export const Stats = {
         url: '/stats'
       })
       return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   }

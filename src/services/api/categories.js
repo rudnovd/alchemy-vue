@@ -1,17 +1,6 @@
 import { http } from '@/services/http'
 
 export const Categories = {
-  async get() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/categories'
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
   async add(name) {
     try {
       const response = await http({
@@ -22,7 +11,32 @@ export const Categories = {
         }
       })
       return response
-    } catch (error) {
+    } catch {
+      throw error.response
+    }
+  },
+  async delete(categoryId) {
+    try {
+      const response = await http({
+        method: 'detele',
+        url: '/category/delete',
+        data: {
+          categoryId
+        }
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+  async get() {
+    try {
+      const response = await http({
+        method: 'get',
+        url: '/categories'
+      })
+      return response
+    } catch {
       throw error.response
     }
   },
@@ -37,21 +51,7 @@ export const Categories = {
         }
       })
       return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async delete(categoryId) {
-    try {
-      const response = await http({
-        method: 'detele',
-        url: '/category/delete',
-        data: {
-          categoryId
-        }
-      })
-      return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   }

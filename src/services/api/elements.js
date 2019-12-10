@@ -1,28 +1,6 @@
 import { http } from '@/services/http'
 
 export const Elements = {
-  async getInitialElements() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/initialElements'
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async get() {
-    try {
-      const response = await http({
-        method: 'get',
-        url: '/elements'
-      })
-      return response
-    } catch (error) {
-      throw error.response
-    }
-  },
   async add(name, category) {
     try {
       const response = await http({
@@ -34,7 +12,44 @@ export const Elements = {
         }
       })
       return response
-    } catch (error) {
+    } catch {
+      throw error.response
+    }
+  },
+  async delete(elementId) {
+    try {
+      const response = await http({
+        method: 'delete',
+        url: '/element/delete',
+        data: {
+          elementId
+        }
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+  async get() {
+    try {
+      const response = await http({
+        method: 'get',
+        url: '/elements'
+      })
+      return response
+    } catch {
+      throw error.response
+    }
+  },
+
+  async getInitialElements() {
+    try {
+      const response = await http({
+        method: 'get',
+        url: '/elements/initial'
+      })
+      return response
+    } catch {
       throw error.response
     }
   },
@@ -51,21 +66,7 @@ export const Elements = {
         }
       })
       return response
-    } catch (error) {
-      throw error.response
-    }
-  },
-  async delete(elementId) {
-    try {
-      const response = await http({
-        method: 'delete',
-        url: '/element/delete',
-        data: {
-          elementId
-        }
-      })
-      return response
-    } catch (error) {
+    } catch {
       throw error.response
     }
   }
