@@ -2,14 +2,12 @@
   <body>
     <noscript>
       <strong>
-        We're sorry but public doesn't work properly without JavaScript enabled. Please enable it to continue.
+        We're sorry but Alchemy game doesn't work properly without JavaScript enabled. Please enable it to continue.
       </strong>
     </noscript>
 
     <header>
-      <b-navbar type="dark" variant="dark">
-        <TheNavbar />
-      </b-navbar>
+      <TheNavbar />
     </header>
 
     <main>
