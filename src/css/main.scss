@@ -10,6 +10,7 @@ $body-color: #333333;
 html, body {
   margin: 0;
   height: 100%;
+  min-width: 320px;
 }
 
 .fade-enter-active {
@@ -17,4 +18,31 @@ html, body {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0
+}
+
+
+.close-button {
+  background: none;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 1.3em;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.loading-section, .error-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.loading-spinner {
+  color: map-get($colors, 'green');
+  height: 3em;
+  width: 3em;
 }
