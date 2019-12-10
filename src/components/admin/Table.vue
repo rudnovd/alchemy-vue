@@ -12,43 +12,15 @@
         </b-input-group>
       </b-col>
 
-      <b-col
-        class="pr-xl-0 pr-lg-0 pr-md-0 mt-2 mt-sm-2 mt-md-0 mt-lg-0 mt-xl-0 text-right text-sm-right text-md-left text-lg-left text-xl-left"
-        cols="12"
-        sm="12"
-        md="6"
-        lg="6"
-        xl="6"
-        order="2"
-        order-sm="2"
-        order-md="1"
-        order-lg="1"
-        order-xl="1"
-      >
-        <b-btn v-if="commonButton" class="mb-3 mr-2" variant="success" @click="commonButtonClick">
+      <b-col class="pr-md-0 mt-2 mt-md-0 text-right text-md-left" cols="12" md="6" order="2" order-md="1">
+        <b-btn v-if="commonButton" class="mb-3 mr-2" variant="success" @click="$emit('commonButtonClick')">
           Create {{ target }}
         </b-btn>
 
         <slot type="button"></slot>
       </b-col>
 
-      <b-col
-        cols="4"
-        sm="4"
-        md="2"
-        lg="2"
-        xl="2"
-        order="1"
-        order-sm="1"
-        order-md="2"
-        order-lg="2"
-        order-xl="2"
-        offset="2"
-        offset-sm="2"
-        offset-md="0"
-        offset-lg="0"
-        offset-xl="0"
-      >
+      <b-col cols="4" md="2" order="1" order-md="2" offset="2" offset-md="0">
         <b-form-select v-model="pagination.perPage" :options="pagination.pageOptions" />
       </b-col>
     </b-row>
@@ -79,11 +51,11 @@
 
           <template v-slot:cell(action)="row">
             <b-button-group size="sm">
-              <b-btn v-if="editButton" variant="warning" size="sm" @click="editButtonClick(row)">
+              <b-btn v-if="editButton" variant="warning" size="sm" @click="$emit('editButtonClick', row)">
                 <font-awesome-icon icon="edit" />
               </b-btn>
 
-              <b-btn v-if="deleteButton" variant="danger" size="sm" @click="deleteButtonClick(row)">
+              <b-btn v-if="deleteButton" variant="danger" size="sm" @click="$emit('deleteButtonClick', row)">
                 <font-awesome-icon icon="trash" />
               </b-btn>
             </b-button-group>
@@ -107,16 +79,12 @@ export default {
   props: {
     data: {
       type: Array,
-      default: function() {
-        return []
-      },
+      default: () => [],
       required: false
     },
     fields: {
       type: Array,
-      default: function() {
-        return []
-      },
+      default: () => [],
       required: false
     },
     totalRows: {
@@ -163,17 +131,6 @@ export default {
         perPage: 10,
         pageOptions: [5, 10, 25, 50]
       }
-    }
-  },
-  methods: {
-    commonButtonClick() {
-      this.$emit('commonButtonClick')
-    },
-    editButtonClick(actionRow) {
-      this.$emit('editButtonClick', actionRow)
-    },
-    deleteButtonClick(actionRow) {
-      this.$emit('deleteButtonClick', actionRow)
     }
   }
 }
