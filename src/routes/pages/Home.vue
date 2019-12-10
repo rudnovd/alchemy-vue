@@ -17,8 +17,7 @@
             </p>
 
             <h4>
-              <router-link v-if="user.isLoggedIn" to="/game">Play</router-link>
-              <router-link v-if="!user.isLoggedIn" to="/demo">Play</router-link>
+              <router-link :to="user.isLoggedIn ? '/game' : '/demo'">Play</router-link>
             </h4>
           </div>
         </b-col>
