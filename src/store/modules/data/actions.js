@@ -1,7 +1,7 @@
 import Elements from '@/services/api/elements'
 import Categories from '@/services/api/categories'
 import Recipes from '@/services/api/recipes'
-import User from '@/services/api/user'
+import Account from '@/services/api/account'
 import Users from '@/services/api/users'
 import Stats from '@/services/api/stats'
 
@@ -25,7 +25,7 @@ export default {
   async postElement({ commit }, element) {
     commit('LOADING_START', 'elements')
     commit('SET_METHOD', { object: 'elements', method: 'POST' })
-    await Elements.post(element.name, element.category._id)
+    await Elements.add(element.name, element.category._id)
       .then(() => {
         commit('ADD_ELEMENT', {
           _id: element._id,
@@ -232,7 +232,7 @@ export default {
   async putUser({ commit }, user) {
     commit('LOADING_START', 'users')
     commit('SET_METHOD', { object: 'users', method: 'PUT' })
-    await User.update(user._id, user.password, user.username, user.role)
+    await Account.update(user._id, user.password, user.username, user.role)
       .then(() => {
         commit('EDIT_USER', {
           _id: user._id,

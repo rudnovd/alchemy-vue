@@ -1,10 +1,10 @@
 import * as shortid from 'shortid'
-import User from '@/services/api/user'
+import Account from '@/services/api/account'
 
 export default {
   async getOpenedElements({ commit }) {
     commit('LOADING_START')
-    await User.getElements()
+    await Account.getElements()
       .then(response => {
         response.data.elements.forEach(element => {
           element.x = 0
@@ -23,7 +23,7 @@ export default {
   },
   async addOpenedElement({ commit, rootState, dispatch }, element) {
     commit('LOADING_START')
-    await User.addOpenedElement(element._id)
+    await Account.addOpenedElement(element._id)
       .then(() => {
         const newElement = {
           ...element,

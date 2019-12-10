@@ -1,12 +1,11 @@
-import User from '@/services/api/user'
+import Authentication from '@/services/api/authentication'
 
 export default {
-  async getLogin({ state, commit }) {
+  async login({ state, commit }) {
     if (!state.isLoggedIn) {
       commit('LOADING_START')
-      await User.getData()
+      await Authentication.getUserData()
         .then(response => {
-          console.log(response)
           if (response.data.user) {
             commit('SET_USER', response.data.user)
           }
@@ -19,9 +18,9 @@ export default {
         })
     }
   },
-  async getLogout({ commit }) {
+  async logout({ commit }) {
     commit('LOADING_START')
-    await User.logout()
+    await Authentication.logout()
       .then(() => {
         commit('DELETE_USER')
       })
