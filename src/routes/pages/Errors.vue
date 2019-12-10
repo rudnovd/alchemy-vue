@@ -4,19 +4,13 @@
       <b-row>
         <b-col cols="12">
           <div class="jumbotron">
-            <h1>
-              Page not found (404)
-            </h1>
+            <h1>{{ error.name }}</h1>
 
-            <p>
-              You may have entered the wrong address or the page was deleted.
-            </p>
+            <p>{{ error.text }}</p>
 
-            <p>
-              <b-link to="/">
-                Back to the main page
-              </b-link>
-            </p>
+            <router-link to="/">
+              Back to the main page
+            </router-link>
           </div>
         </b-col>
       </b-row>
@@ -26,12 +20,27 @@
 
 <script>
 export default {
-  name: 'Errors'
+  name: 'Errors',
+  props: {
+    error: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {
+          name: 'Page not found',
+          text: 'You may have entered the wrong address or the page was deleted.'
+        }
+      },
+      validator(object) {
+        return object.name && object.text
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.section-recipes {
+.section-error {
   margin-top: 10px;
 }
 </style>
