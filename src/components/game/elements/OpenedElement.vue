@@ -1,9 +1,9 @@
 <template>
   <vue-draggable-resizable
-    class-name="element"
+    class-name="opened-element"
     :draggable="true"
     :disable-user-select="true"
-    :drag-handle="'.element-image'"
+    :drag-handle="'.opened-element-image'"
     :resizable="false"
     :min-height="64"
     :max-height="64"
@@ -16,14 +16,16 @@
     @activated="onActivated"
     @dragstop="onDragstop"
   >
-    <div class="data">
+    <div class="opened-element-data">
       <b-img
-        class="element-image"
+        class="opened-element-image"
         :src="`/images/elements/${elementData.name}.png`"
         :alt="elementData.name"
         @error="setBaseIcon"
       />
-      <span :class="{ hidden: isDragging }">{{ elementData.name }}</span>
+      <span class="opened-element-name">
+        {{ elementData.name }}
+      </span>
     </div>
   </vue-draggable-resizable>
 </template>
@@ -36,17 +38,13 @@ export default {
   props: {
     elementData: {
       type: Object,
-      default: function() {
-        return {}
-      },
+      default: () => {},
       required: true
     }
   },
   data() {
     return {
-      width: 100,
-      isDragging: false,
-      elementDropped: false
+      width: 100
     }
   },
   computed: {
@@ -76,9 +74,7 @@ export default {
     }),
 
     // Called whenever the component gets clicked, in order to show handles
-    onActivated() {
-      this.isDragging = true
-    },
+    onActivated() {},
 
     // Called whenever the user clicks anywhere outside the component, in order to deactivate it
     onDeactivated() {
@@ -97,8 +93,6 @@ export default {
 
     // Called whenever the component stops getting dragged
     onDragstop(x, y) {
-      this.isDragging = false
-
       if (x < -100) {
         // if element dropped on game board
         let newX = 0
@@ -160,69 +154,62 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.element {
+.opened-element {
   padding-left: 5px;
+  padding-right: 5px;
+  font-size: 1rem;
 
-  .data {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: 100%;
-    width: 100%;
+  @include media-md {
+    font-size: 1.2rem;
+  }
 
-    .element-image {
-      transition: box-shadow 0.8s;
-      transition: border-radius 0.4s;
-      margin-left: 5px;
-
-      &:hover {
-        cursor: grab;
-        padding: 5px;
-        border-radius: 100%;
-        box-shadow: inset 0 0 6px 0 rgb(60, 60, 60);
-      }
-
-      &:active {
-        cursor: grabbing;
-        box-shadow: none;
-      }
-    }
-
-    span {
-      text-align: left;
-      padding-left: 5px;
-      flex: 1 0 0;
-    }
+  &:active .opened-element-name {
+    opacity: 0;
   }
 }
 
-.hidden {
-  opacity: 0;
+.opened-element-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
 }
 
-@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .element {
-    font-size: 1.2em;
+.opened-element-name {
+  text-align: left;
+  padding-left: 5px;
+  flex: 1 0 0;
+}
+
+.opened-element-image {
+  transition: box-shadow 0.8s;
+  transition: border-radius 0.4s;
+  margin-left: 5px;
+  cursor: pointer;
+
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+
+  &:hover {
+    cursor: grab;
+    padding: 5px;
+    border-radius: 100%;
+    box-shadow: inset 0 0 6px 0 rgb(60, 60, 60);
   }
 
-  .element-image {
+  &:active {
+    cursor: grabbing;
+    box-shadow: none;
+  }
+
+  @include media-md {
     flex: 0 0 64px;
     width: 64px;
     height: 64px;
-  }
-}
-
-@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
-  .element {
-    font-size: 0.9rem;
-  }
-
-  .element-image {
-    flex: 0 0 48px;
-    width: 48px;
-    height: 48px;
   }
 }
 </style>
