@@ -8,7 +8,9 @@
     <b-popover target="active-elements-history" placement="bottom" :show="showPopover" @shown="onShown">
       <template v-slot:default>
         <div class="active-elements-history-popover">
-          <span v-for="text in historyText" :key="text">{{ text }}</span>
+          <span v-for="text in historyText" :key="text" class="popover-text">
+            {{ text }}
+          </span>
         </div>
       </template>
     </b-popover>
@@ -74,16 +76,16 @@ export default {
   &:hover {
     cursor: pointer;
     opacity: 1;
-    color: map-get($colors, 'alchemy-green');
+    color: map-get($colors, 'green');
   }
 }
 
 .active-elements-history-popover {
   display: flex;
   flex-direction: column;
+}
 
-  span {
-    margin-bottom: 5px;
-  }
+.popover-text * {
+  margin-bottom: 5px;
 }
 </style>
