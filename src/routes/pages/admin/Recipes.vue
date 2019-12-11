@@ -1,6 +1,14 @@
 <template>
   <section class="section-recipes">
-    <b-container>
+    <section v-if="recipes.state.isLoading" class="loading-section">
+      <b-spinner variant="success" class="loading-spinner" />
+    </section>
+
+    <section v-if="recipes.state.error && !recipes.state.isLoading" class="error-section">
+      <span>{{ recipes.state.error.data }}</span>
+    </section>
+
+    <b-container v-show="!recipes.state.error && !recipes.state.isLoading">
       <Table
         :data="recipes.data"
         :fields="fields"
@@ -380,17 +388,14 @@ export default {
 
 <style lang="scss" scoped>
 .section-recipes {
-  margin-top: 10px;
+  height: 100%;
+  padding-top: 10px;
 }
 
-@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .elements-tabs {
-    width: 25%;
-  }
-}
+.elements-tabs {
+  width: 50%;
 
-@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
-  .elements-tabs {
+  @include media-md {
     width: 50%;
   }
 }

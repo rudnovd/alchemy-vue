@@ -1,6 +1,14 @@
 <template>
   <section class="section-elements">
-    <b-container>
+    <section v-if="elements.state.isLoading" class="loading-section">
+      <b-spinner class="loading-spinner" />
+    </section>
+
+    <section v-if="elements.state.error && !elements.state.isLoading" class="error-section">
+      <span>{{ elements.state.error.data }}</span>
+    </section>
+
+    <b-container v-show="!elements.state.isLoading && !elements.state.error">
       <Table
         :data="elementsData"
         :fields="fields"
@@ -508,6 +516,7 @@ export default {
 
 <style lang="scss" scoped>
 .section-elements {
-  margin-top: 10px;
+  height: 100%;
+  padding-top: 10px;
 }
 </style>

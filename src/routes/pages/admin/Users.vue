@@ -1,6 +1,14 @@
 <template>
   <section class="section-users">
-    <b-container>
+    <section v-if="users.state.isLoading" class="loading-section">
+      <b-spinner variant="success" class="loading-spinner" />
+    </section>
+
+    <section v-if="users.state.error && !users.state.isLoading" class="error-section">
+      <span>{{ users.state.error.data }}</span>
+    </section>
+
+    <b-container v-show="!users.state.error && !users.state.isLoading">
       <Table
         target="user"
         :data="users.data"
@@ -247,6 +255,6 @@ export default {
 
 <style lang="scss" scoped>
 .section-users {
-  margin-top: 10px;
+  padding-top: 10px;
 }
 </style>
