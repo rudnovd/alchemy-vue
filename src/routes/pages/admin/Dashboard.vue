@@ -1,20 +1,20 @@
 <template>
   <section class="section-dashboard">
     <section v-if="stats.state.isLoading" class="loading-section">
-      <b-spinner variant="success" style="width: 5em; height: 5em;" />
+      <b-spinner variant="success" class="loading-spinner" />
     </section>
 
     <section v-if="stats.state.error && !stats.state.isLoading" class="error-section">
       <span>{{ stats.state.error.data }}</span>
     </section>
 
-    <b-container v-if="!stats.state.error && !stats.state.isLoading">
+    <b-container v-show="!stats.state.error && !stats.state.isLoading">
       <b-row class="border-bottom">
         <b-col class="text-center border-bottom mb-2" cols="12">
           <h3>Users</h3>
         </b-col>
 
-        <b-col class="mt-3 mt-sm-3 mt-md-3 mt-lg-0 mt-xl-0" cols="12" sm="12" md="6" lg="4" xl="4">
+        <b-col class="mt-3 mt-lg-0" cols="12" sm="12" md="6" lg="4" xl="4">
           <b-card bg-variant="primary" text-variant="white">
             <b-row>
               <b-col class="text-center" cols="4" sm="4" md="4" lg="4" xl="4">
@@ -29,7 +29,7 @@
           </b-card>
         </b-col>
 
-        <b-col class="mt-3 mt-sm-3 mt-md-3 mt-lg-0 mt-xl-0" cols="12" sm="12" md="6" lg="4" xl="4">
+        <b-col class="mt-3 mt-lg-0" cols="12" sm="12" md="6" lg="4" xl="4">
           <b-card bg-variant="success" text-variant="white">
             <b-row>
               <b-col class="text-center" cols="4" sm="4" md="4" lg="4" xl="4">
@@ -43,7 +43,7 @@
           </b-card>
         </b-col>
 
-        <b-col class="mt-3 mt-sm-3 mt-md-3 mt-lg-0 mt-xl-0 mb-2" cols="12" sm="12" md="6" lg="4" xl="4">
+        <b-col class="mt-3 mt-lg-0 mb-2" cols="12" sm="12" md="6" lg="4" xl="4">
           <b-card bg-variant="danger" text-variant="white">
             <b-row>
               <b-col class="text-center" cols="4" sm="4" md="4" lg="4" xl="4">
@@ -64,7 +64,7 @@
           <h3>Elements</h3>
         </b-col>
 
-        <b-col class="mt-3 mt-sm-3 mt-md-3 mt-lg-0 mt-xl-0" cols="12" sm="12" md="6" lg="4" xl="4">
+        <b-col class="mt-3 mt-lg-0" cols="12" sm="12" md="6" lg="4" xl="4">
           <b-card bg-variant="primary" text-variant="white">
             <b-row>
               <b-col class="text-center" cols="4" sm="4" md="4" lg="4" xl="4">
@@ -79,7 +79,7 @@
           </b-card>
         </b-col>
 
-        <b-col class="mt-3 mt-sm-3 mt-md-3 mt-lg-0 mt-xl-0 mb-2" cols="12" sm="12" md="6" lg="4" xl="4">
+        <b-col class="mt-3 mt-lg-0 mb-2" cols="12" sm="12" md="6" lg="4" xl="4">
           <b-card bg-variant="danger" text-variant="white">
             <b-row>
               <b-col class="text-center" cols="4" sm="4" md="4" lg="4" xl="4">
@@ -120,18 +120,7 @@ export default {
 
 <style lang="scss" scoped>
 .section-dashboard {
-  margin-top: 10px;
-}
-
-.section-dashboard {
-  height: 95vh;
-}
-
-.loading-section {
-  @extend %loading-section;
-}
-
-.error-section {
-  @extend %error-section;
+  height: 100%;
+  padding-top: 10px;
 }
 </style>
