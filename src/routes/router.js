@@ -1,7 +1,5 @@
 import Vue from 'vue'
-
 import Router from 'vue-router'
-
 import store from '@/store'
 
 Vue.use(Router)
@@ -12,6 +10,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
+      name: 'Home',
       component: () => import(/* webpackPrefetch: true, webpackChunkName: 'Home' */ '@/routes/pages/Home'),
       meta: {
         title: 'Alchemy'
@@ -19,6 +18,7 @@ const router = new Router({
     },
     {
       path: '/game',
+      name: 'Game',
       component: () => import(/* webpackChunkName: 'Game' */ '@/routes/pages/Game'),
       meta: {
         title: 'Game | Alchemy'
@@ -28,6 +28,7 @@ const router = new Router({
     // Admin routes
     {
       path: '/admin/dashboard/',
+      name: 'Dashboard',
       component: () => import(/* webpackChunkName: 'Dashboard' */ '@/routes/pages/admin/Dashboard'),
       meta: {
         title: 'Dashboard | Alchemy',
@@ -36,6 +37,7 @@ const router = new Router({
     },
     {
       path: '/admin/elements',
+      name: 'Elements',
       component: () => import(/* webpackChunkName: 'Elements' */ '@/routes/pages/admin/Elements'),
       meta: {
         title: 'Elements | Alchemy',
@@ -44,6 +46,7 @@ const router = new Router({
     },
     {
       path: '/admin/recipes',
+      name: 'Recipes',
       component: () => import(/* webpackChunkName: 'Recipes' */ '@/routes/pages/admin/Recipes'),
       meta: {
         title: 'Recipes | Alchemy',
@@ -52,6 +55,7 @@ const router = new Router({
     },
     {
       path: '/admin/users',
+      name: 'Users',
       component: () => import(/* webpackChunkName: 'Users' */ '@/routes/pages/admin/Users'),
       meta: {
         title: 'Users | Alchemy',
@@ -61,6 +65,7 @@ const router = new Router({
 
     // Errors page
     {
+      name: 'Error',
       path: '*',
       component: () => import(/* webpackChunkName: 'Errors' */ '@/routes/pages/Errors.vue'),
       meta: {
@@ -74,7 +79,7 @@ router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some(record => record.meta.authRequired)
   const adminRoleRequired = to.matched.some(record => record.meta.adminRoleRequired)
 
-  store.dispatch('user/getLogin').then(() => {
+  store.dispatch('user/getUserData').then(() => {
     if (authRequired || adminRoleRequired) {
       const isAuth = store.getters['user/user'].isLoggedIn
       const userRole = store.getters['user/user'].role
