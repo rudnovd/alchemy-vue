@@ -55,7 +55,7 @@
       />
       <TheRegistrationModal :show-modal="showRegistrationModal" @close="showRegistrationModal = false" />
       <TheResetPasswordModal :show-modal="showResetPasswordModal" @close="showResetPasswordModal = false" />
-      <OpenedRecipesModal v-if="showOpenedRecipesModal" :show-modal="showOpenedRecipesModal" />
+      <OpenedRecipesModal :show-modal="showOpenedRecipesModal" @close="showOpenedRecipesModal = false" />
     </b-container>
   </b-navbar>
 </template>
