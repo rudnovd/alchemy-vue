@@ -8,10 +8,10 @@ export default {
   SET_ERROR(state, error) {
     state.state.error = error
   },
-
-  SET_RECIPES(state, recipes) {
-    state.recipes = recipes
+  DELETE_ERROR(state) {
+    state.state.error = ''
   },
+
   SET_OPENED_RECIPES(state, recipes) {
     state.openedRecipes = recipes
   },
