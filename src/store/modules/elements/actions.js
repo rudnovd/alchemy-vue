@@ -3,6 +3,7 @@ import Account from '@/services/api/account'
 
 export default {
   async getOpenedElements({ commit }) {
+    commit('DELETE_ERROR')
     commit('LOADING_START')
     await Account.getElements()
       .then(response => {
@@ -22,6 +23,7 @@ export default {
       })
   },
   async addOpenedElement({ commit, rootState, dispatch }, element) {
+    commit('DELETE_ERROR')
     commit('LOADING_START')
     await Account.addOpenedElement(element._id)
       .then(() => {
@@ -50,6 +52,26 @@ export default {
       })
       .catch(error => {
         commit('SET_ERROR', error)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
+  },
+  async getInitialElements({ commit }) {
+    commit('DELETE_ERROR')
+    commit('LOADING_START')
+    await Account.getInitialElements()
+      .then(response => {
+        response.data.elements.forEach(element => {
+          element.x = 0
+          element.y = 0
+          element.z = 100
+          element.show = false
+        })
+        commit('SET_OPENED_ELEMENTS', response.data.elements)
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
       })
       .finally(() => {
         commit('LOADING_END')
