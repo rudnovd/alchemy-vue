@@ -50,7 +50,8 @@ export default {
       openedCategories: 'categories/openedCategories',
       recipes: 'recipes/recipes',
       selectedCategory: 'categories/selectedCategory',
-      history: 'game/history'
+      history: 'game/history',
+      openedRecipes: 'recipes/openedRecipes'
     }),
     filteredByOpenedElements() {
       return this.openedElements.filter(openedElement => {
@@ -70,24 +71,21 @@ export default {
       }
     })
 
-    if (this.openedElements.length === 0) {
+    if (!this.openedElements.length) {
       this.getOpenedElements().then(() => {
         this.getOpenedCategories(this.openedElements).then(() => {
           this.setSelectedCategory(this.openedCategories[0])
           this.updateOpenedElementsByCategory(this.openedCategories[0])
           this.updateOpenedElementsPositions()
-
-          this.getRecipes().then(() => {
-            this.findOpenedRecipes()
-          })
         })
       })
-    } else {
-      this.getRecipes().then(() => {
-        this.findOpenedRecipes()
-      })
+    }
+
+    if (!this.openedRecipes.length) {
+      this.getOpenedRecipes()
     }
   },
+
   methods: {
     ...mapActions({
       setGameFieldSize: 'game/setGameFieldSize',
@@ -96,111 +94,90 @@ export default {
       setSelectedCategory: 'categories/setSelectedCategory',
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',
       setOpenedRecipes: 'recipes/setOpenedRecipes',
-      getRecipes: 'recipes/getRecipes',
-      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
-      updateActiveElementsPositions: 'elements/updateActiveElementsPositions'
-    }),
-    findOpenedRecipes() {
-      let userRecipes = []
-      this.recipes.forEach(recipe => {
-        const firstElement = this.openedElements.filter(openedElement => {
-          return recipe.recipe[0]._id === openedElement._id
-        })
-        const secondElement = this.openedElements.filter(openedElement => {
-          return recipe.recipe[1]._id === openedElement._id
-        })
-        const resultElement = this.openedElements.filter(openedElement => {
-          return recipe.result._id === openedElement._id
-        })
-
-        if (firstElement.length > 0 && secondElement.length > 0 && resultElement.length > 0) {
-          userRecipes.push(recipe)
-        }
-      })
-      this.setOpenedRecipes(userRecipes)
-    }
+      getOpenedRecipes: 'recipes/getOpenedRecipes',
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
+    })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .section-game {
   display: flex;
-  flex: 1;
-  padding-top: 10px;
-  height: 90vh;
+  overflow: hidden;
+  flex: 0 0 100%;
+  padding-top: 0.5rem;
+
+  height: 100%;
   user-select: none;
+  flex-wrap: wrap;
 
-  .section-categories {
-    display: flex;
-    flex: 1 0 0;
-    order: 1;
+  padding-bottom: 1rem;
+
+  @include media-md {
+    padding-bottom: 0.5rem;
   }
 
-  .section-game-board {
-    position: relative;
-    flex: 2 0 0;
-    order: 2;
-    height: 100%;
-    padding: 5px;
-    box-shadow: 0 0 5px 0 rgb(170, 170, 170);
-
-    .control-panel {
-      display: flex;
-      height: 100%;
-      align-items: flex-end;
-
-      .clear-game-field-button {
-        margin-left: auto;
-      }
-    }
-  }
-
-  .section-opened-elements {
-    display: flex;
-    flex: 1 0 0;
-    order: 3;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-width: 300px;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 0 5px 0 rgb(170, 170, 170);
-    margin-right: 5px;
-
-    @extend %scrollbar;
+  @include media-lg {
+    flex-wrap: nowrap;
   }
 }
 
-@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-  .section-game-board {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
+.section-categories {
+  display: flex;
+  order: 1;
+  flex: 0 0 100%;
+  height: 115px;
 
-  .section-categories {
+  @include media-lg {
+    flex: 0 0 25%;
     height: 100%;
     max-width: 300px;
   }
 }
 
-@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
-  .section-game {
-    flex-wrap: wrap;
+.section-game-board {
+  position: relative;
+  flex: 1 0 0;
+  order: 2;
+  height: 80%;
+  padding: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  box-shadow: 0 0 5px 0 rgb(170, 170, 170);
 
-    .section-categories {
-      flex: 100% 0 0;
-      height: 110px;
-    }
+  @include media-lg {
+    height: 100%;
+  }
 
-    .section-game-board {
-      height: 80vh;
-    }
+  .control-panel {
+    display: flex;
+    height: 100%;
+    align-items: flex-end;
 
-    .section-opened-elements {
-      height: 80vh;
+    .clear-game-field-button {
+      margin-left: auto;
     }
   }
+}
+
+.section-opened-elements {
+  display: flex;
+  flex: 0 0 25%;
+  order: 3;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  width: 100%;
+  height: 80%;
+  box-shadow: 0 0 5px 0 rgb(170, 170, 170);
+
+  @include media-lg {
+    max-width: 300px;
+    height: 100%;
+  }
+
+  @extend %scrollbar;
 }
 </style>
