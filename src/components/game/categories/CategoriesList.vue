@@ -1,10 +1,10 @@
 <template>
   <div class="categories-list">
-    <div v-if="state.isLoading && !state.error" class="loading">
-      <b-spinner class="spinner" />
+    <div v-if="state.isLoading && !state.error" class="loading-section">
+      <b-spinner class="loading-spinner" />
     </div>
 
-    <div v-if="state.error && !state.isLoading" class="error">
+    <div v-if="state.error && !state.isLoading" class="error-section">
       <div class="error">
         {{ state.error }}
       </div>
