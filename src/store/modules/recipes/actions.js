@@ -1,11 +1,26 @@
 import Recipes from '@/services/api/recipes'
 
 export default {
-  async getRecipes({ state, commit }) {
+  async getOpenedRecipes({ commit }) {
+    commit('DELETE_ERROR')
     commit('LOADING_START')
     await Recipes.get()
       .then(response => {
-        commit('SET_RECIPES', response.data.response)
+        commit('SET_OPENED_RECIPES', response.data.response)
+      })
+      .catch(error => {
+        commit('SET_ERROR', error.data)
+      })
+      .finally(() => {
+        commit('LOADING_END')
+      })
+  },
+  async getInitialRecipes({ commit }) {
+    commit('DELETE_ERROR')
+    commit('LOADING_START')
+    await Recipes.getInitialRecipes()
+      .then(response => {
+        commit('SET_OPENED_RECIPES', response.data.response)
       })
       .catch(error => {
         commit('SET_ERROR', error.data)
