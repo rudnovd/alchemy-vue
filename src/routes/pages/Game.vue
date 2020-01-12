@@ -43,6 +43,11 @@ export default {
     ActiveElementsHistory,
     NewElementModal
   },
+  data() {
+    return {
+      showDemoToGameModal: false
+    }
+  },
   computed: {
     ...mapGetters({
       openedElements: 'elements/openedElements',
@@ -51,7 +56,9 @@ export default {
       recipes: 'recipes/recipes',
       selectedCategory: 'categories/selectedCategory',
       history: 'game/history',
-      openedRecipes: 'recipes/openedRecipes'
+      openedRecipes: 'recipes/openedRecipes',
+      user: 'user/user',
+      elementsState: 'elements/state'
     }),
     filteredByOpenedElements() {
       return this.openedElements.filter(openedElement => {
@@ -71,18 +78,42 @@ export default {
       }
     })
 
-    if (!this.openedElements.length) {
-      this.getOpenedElements().then(() => {
-        this.getOpenedCategories(this.openedElements).then(() => {
-          this.setSelectedCategory(this.openedCategories[0])
-          this.updateOpenedElementsByCategory(this.openedCategories[0])
-          this.updateOpenedElementsPositions()
+    if (this.user.isLoggedIn) {
+      if (!this.openedElements.length) {
+        this.getOpenedElements().then(() => {
+          this.getOpenedCategories(this.openedElements).then(() => {
+            this.setSelectedCategory(this.openedCategories[0])
+            this.updateOpenedElementsByCategory(this.openedCategories[0])
+            this.updateOpenedElementsPositions()
+          })
         })
-      })
-    }
+      }
 
-    if (!this.openedRecipes.length) {
-      this.getOpenedRecipes()
+      if (!this.openedRecipes.length) {
+        this.getOpenedRecipes()
+      }
+    } else {
+      if (!this.openedElements.length) {
+        this.getInitialElements().then(() => {
+          if (!this.elementsState.error) {
+            this.openedElements.forEach(initialElement => {
+              this.addActiveElement({
+                _id: initialElement._id,
+                category: initialElement.category,
+                name: initialElement.name,
+                x: gameField[0].clientWidth / 2 + 100,
+                y: gameField[0].clientHeight / 2
+              })
+            })
+          }
+        })
+      }
+
+      if (!this.openedRecipes.length) {
+        this.getInitialRecipes()
+      } else if (this.openedRecipes.length === 10) {
+        this.showDemoToGameModal = true
+      }
     }
   },
 
@@ -95,7 +126,9 @@ export default {
       updateOpenedElementsPositions: 'elements/updateOpenedElementsPositions',
       setOpenedRecipes: 'recipes/setOpenedRecipes',
       getOpenedRecipes: 'recipes/getOpenedRecipes',
-      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory'
+      updateOpenedElementsByCategory: 'elements/updateOpenedElementsByCategory',
+      getInitialElements: 'elements/getInitialElements',
+      getInitialRecipes: 'recipes/getInitialRecipes'
     })
   }
 }
