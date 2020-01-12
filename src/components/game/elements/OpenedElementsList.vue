@@ -1,13 +1,11 @@
 <template>
   <div class="opened-elements-list">
-    <div v-if="openedCategories.length === 0 && state.isLoading && !state.error" class="loading">
-      <b-spinner class="spinner" />
+    <div v-if="openedCategories.length === 0 && state.isLoading && !state.error" class="loading-section">
+      <b-spinner class="loading-spinner" />
     </div>
 
-    <div v-if="openedCategories.length === 0 && state.error && !state.isLoading" class="error">
-      <div class="error">
-        {{ state.error }}
-      </div>
+    <div v-if="openedCategories.length === 0 && state.error && !state.isLoading" class="error-section">
+      {{ state.error }}
     </div>
 
     <slot></slot>
@@ -37,26 +35,5 @@ export default {
   &:active {
     position: absolute;
   }
-
-  .loading,
-  .error {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-
-    .spinner {
-      color: map-get($colors, 'alchemy-green');
-      width: 3rem;
-      height: 3rem;
-    }
-  }
-}
-
-@media screen and (min-width: map-get($grid-breakpoints, 'md')) {
-}
-
-@media screen and (max-width: map-get($grid-breakpoints, 'md')) {
 }
 </style>
