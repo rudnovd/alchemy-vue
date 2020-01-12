@@ -1,14 +1,22 @@
 <template>
-  <b-modal v-model="showModal" :title="textStatus" size="md" hide-footer="hide-footer" centered="centered">
+  <b-modal
+    :visible="showModal"
+    :title="textStatus"
+    size="md"
+    hide-footer="hide-footer"
+    hide-header="hide-header"
+    centered="centered"
+    @hide="onClose"
+  >
     <b-row v-if="!resetSuccess" class="ml-3 mr-3">
-      <b-col class="mt-4" cols="8">
+      <b-col class="mt-4 mb-3" cols="8">
         <h4>
           Reset password
         </h4>
       </b-col>
 
       <b-col class="ml-auto text-right" cols="2">
-        <button class="close-button" @click="showModal = false">
+        <button class="close-button" @click="onClose">
           <font-awesome-icon icon="times" />
         </button>
       </b-col>
@@ -41,15 +49,7 @@
 
     <b-row v-if="resetSuccess" class="ml-3 mr-3">
       <b-col class="ml-auto text-right" cols="2">
-        <b-button
-          class="close-button"
-          size="sm"
-          variant="link"
-          @click="
-            showModal = false
-            resetSuccess = false
-          "
-        >
+        <b-button class="close-button" size="sm" variant="link" @click="onClose">
           <font-awesome-icon class="fa-2x" icon="times" />
         </b-button>
       </b-col>
@@ -64,14 +64,20 @@
 </template>
 
 <script>
-import User from '@/services/api/user'
+import Account from '@/services/api/account'
 import { required, email } from 'vuelidate/lib/validators'
 
 export default {
   name: 'TheResetPasswordModal',
+  props: {
+    showModal: {
+      type: Boolean,
+      default: false,
+      required: true
+    }
+  },
   data() {
     return {
-      showModal: false,
       error: '',
       textStatus: '',
 
@@ -79,26 +85,10 @@ export default {
       resetSuccess: ''
     }
   },
-  mounted() {
-    this.$root.$on('resetPasswordModalShow', () => {
-      this.showModal = true
-    })
-  },
   methods: {
-    validation() {
-      if (!this.email) {
-        return false
-      }
-
-      if (this.$v.email.$error) {
-        return false
-      }
-
-      return true
-    },
     resetPassword() {
-      if (this.validation() === true) {
-        User.resetPassword(this.email).then(response => {
+      if (this.email && !this.$v.email.$error) {
+        Account.resetPassword(this.email).then(response => {
           if (response.status === 200) {
             this.resetSuccess = true
             this.clearInputs()
@@ -116,6 +106,9 @@ export default {
     clearInputs() {
       this.email = ''
       this.resetSuccess = ''
+    },
+    onClose() {
+      this.$emit('close')
     }
   },
   validations: {
@@ -139,18 +132,6 @@ export default {
 }
 
 .form-success {
-  border-color: map-get($colors, 'alchemy-green');
-}
-
-.close-button {
-  background: none;
-  border: none;
-  outline: none;
-  color: black;
-  font-size: 1.3em;
-
-  &:hover {
-    opacity: 0.8;
-  }
+  border-color: map-get($colors, 'green');
 }
 </style>

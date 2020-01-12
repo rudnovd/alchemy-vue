@@ -1,14 +1,21 @@
 <template>
-  <b-modal v-model="showModal" size="md" hide-header="hide-header" hide-footer="hide-footer" centered="centered">
+  <b-modal
+    :visible="showModal"
+    size="md"
+    hide-header="hide-header"
+    hide-footer="hide-footer"
+    centered="centered"
+    @hide="onClose"
+  >
     <b-row class="ml-3 mr-3">
-      <b-col class="mt-4" cols="8">
+      <b-col class="mt-4 mb-3" cols="8">
         <h4>
           Sign up
         </h4>
       </b-col>
 
       <b-col class="ml-auto text-right" cols="2">
-        <button class="close-button" @click="showModal = false">
+        <button class="close-button" @click="onClose">
           <font-awesome-icon icon="times" />
         </button>
       </b-col>
@@ -52,61 +59,78 @@
             autocomplete="off"
             :class="{ 'form-error': $v.password.$error, 'form-success': !$v.password.$error && password }"
           />
-          <p v-show="$v.password.$error" class="error">
+          <small v-show="$v.password.$error" class="error">
             password must contain at least 4 characters
-          </p>
+          </small>
         </b-form-group>
       </b-col>
 
       <b-col class="mt-2 mb-3" cols="12">
-        <b-btn block="block" variant="success" @click="registration">
-          Sign up
-        </b-btn>
+        <vue-recaptcha ref="recaptcha" :sitekey="captchaKey" size="invisible" @verify="onRegister" @expired="onExpired">
+          <b-btn block="block" variant="success" type="submit">
+            Sign up
+          </b-btn>
+        </vue-recaptcha>
+      </b-col>
+
+      <b-col v-if="user.state.error" cols="12">
+        <b-alert show="show" variant="danger">
+          {{ user.state.error }}
+        </b-alert>
       </b-col>
     </b-row>
   </b-modal>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import User from '@/services/api/user'
+import { mapActions, mapGetters } from 'vuex'
 import { required, email, minLength } from 'vuelidate/lib/validators'
+import VueRecaptcha from 'vue-recaptcha'
 
 export default {
-  data() {
-    return {
-      showModal: false,
-
-      email: '',
-      username: '',
-      password: ''
+  name: 'TheRegistrationModal',
+  components: {
+    VueRecaptcha
+  },
+  props: {
+    showModal: {
+      type: Boolean,
+      default: false,
+      required: true
     }
   },
-  mounted() {
-    this.$root.$on('registrationModalShow', () => {
-      this.showModal = true
+  data() {
+    return {
+      email: '',
+      username: '',
+      password: '',
+
+      captchaKey: process.env.VUE_APP_RECAPTCHA_KEY
+    }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
     })
   },
   methods: {
     ...mapActions({
-      setUser: 'user/setUser'
+      register: 'user/register'
     }),
     validation() {
-      if (!this.username || !this.email || !this.password) {
-        return false
-      }
-
-      if (this.$v.username.$error || this.$v.email.$error || this.$v.password.$error) {
-        return false
-      }
-
+      if (!this.username || !this.email || !this.password) return false
+      if (this.$v.username.$error || this.$v.email.$error || this.$v.password.$error) return false
       return true
     },
-    registration() {
-      if (this.validation() === true) {
-        User.register(this.email, this.username, this.password).then(response => {
-          if (response.status === 200) {
-            this.showModal = false
+    onRegister(recaptchaToken) {
+      if (this.validation()) {
+        this.register({
+          email: this.email,
+          username: this.username,
+          password: this.password,
+          recaptchaToken
+        }).then(response => {
+          if (!user.state.error) {
             this.clearInputs()
             this.$router.push({ path: '/game' })
           }
@@ -117,6 +141,12 @@ export default {
       this.email = ''
       this.username = ''
       this.password = ''
+    },
+    onClose() {
+      this.$emit('close')
+    },
+    onExpired() {
+      this.$refs.recaptcha.reset()
     }
   },
   validations: {
@@ -136,29 +166,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.error {
-  font-size: 0.75rem;
-  margin-top: 0.5rem;
-  color: rgb(255, 62, 32);
-}
-
 .form-error {
   border-color: rgb(255, 62, 32);
 }
 
 .form-success {
-  border-color: map-get($colors, 'alchemy-green');
-}
-
-.close-button {
-  background: none;
-  border: none;
-  outline: none;
-  color: black;
-  font-size: 1.3em;
-
-  &:hover {
-    opacity: 0.8;
-  }
+  border-color: map-get($colors, 'green');
 }
 </style>
