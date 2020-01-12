@@ -7,10 +7,17 @@ $body-color: #333333;
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 
-html, body {
+html, body, main {
   margin: 0;
   height: 100%;
   min-width: 320px;
+  touch-action: none;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .fade-enter-active {
