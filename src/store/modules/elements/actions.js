@@ -1,11 +1,12 @@
 import * as shortid from 'shortid'
 import Account from '@/services/api/account'
+import Elements from '@/services/api/elements'
 
 export default {
   async getOpenedElements({ commit }) {
     commit('DELETE_ERROR')
     commit('LOADING_START')
-    await Account.getElements()
+    await Elements.get()
       .then(response => {
         response.data.elements.forEach(element => {
           element.x = 0
@@ -60,7 +61,7 @@ export default {
   async getInitialElements({ commit }) {
     commit('DELETE_ERROR')
     commit('LOADING_START')
-    await Account.getInitialElements()
+    await Elements.getInitialElements()
       .then(response => {
         response.data.elements.forEach(element => {
           element.x = 0
